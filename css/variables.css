@@ -1,0 +1,152 @@
+/* TransformX — Estilos globales */
+/* TransformX Design System — CSS Custom Properties */
+:root {
+  /* Brand Colors */
+  --transform-blue: #2563EB;
+  --intelligence-blue: #123B7A;
+  --transformation-cyan: #06B6D4;
+
+  --deep-navy: #071B3A;
+  --navy: #0B2545;
+  --navy-soft: #173B67;
+
+  --white: #FFFFFF;
+  --surface-primary: #F8FAFC;
+  --surface-secondary: #F1F5F9;
+  --surface-blue: #EFF6FF;
+  --surface-cyan: #ECFEFF;
+
+  --text-primary: #10233F;
+  --text-secondary: #52647A;
+  --text-muted: #718096;
+
+  --border: #DCE5F0;
+  --success: #12B76A;
+  --warning: #F79009;
+  --error: #D92D20;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+  --gradient-dark: linear-gradient(135deg, #071B3A 0%, #123B7A 100%);
+  --gradient-hero: linear-gradient(180deg, var(--surface-primary) 0%, var(--white) 100%);
+
+  /* Typography */
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Manrope", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.65;
+
+  /* Spacing — 8px scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(7, 27, 58, 0.04);
+  --shadow-sm: 0 2px 8px rgba(7, 27, 58, 0.06);
+  --shadow-md: 0 4px 16px rgba(7, 27, 58, 0.08);
+  --shadow-lg: 0 8px 32px rgba(7, 27, 58, 0.12);
+  --shadow-xl: 0 16px 48px rgba(7, 27, 58, 0.16);
+
+  /* Layout */
+  --container-max: 1200px;
+  --container-wide: 1280px;
+  --header-height: 72px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Focus */
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+  /* Z-index */
+  --z-header: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Letter spacing */
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.06em;
+
+  /* Line height */
+  --leading-snug: 1.4;
+
+  /* Alpha / glass surfaces */
+  --overlay-navy: rgba(7, 27, 58, 0.5);
+  --surface-glass: rgba(255, 255, 255, 0.85);
+  --surface-white-10: rgba(255, 255, 255, 0.1);
+  --surface-white-40: rgba(255, 255, 255, 0.4);
+  --border-blue-15: rgba(37, 99, 235, 0.15);
+  --border-cyan-20: rgba(6, 182, 212, 0.2);
+
+  /* Component sizes */
+  --size-logo-mark: 36px;
+  --size-icon-sm: 20px;
+  --size-icon-md: 24px;
+  --size-touch-target: 44px;
+  --size-nav-drawer: min(320px, 85vw);
+
+  /* Effects */
+  --blur-header: 12px;
+
+  /* Content widths */
+  --content-narrow: 520px;
+  --content-medium: 560px;
+  --content-wide: 720px;
+
+  /* Buttons */
+  --btn-border-width: 2px;
+
+  /* Bloque 6 — alias semánticos */
+  --color-primario: var(--transform-blue);
+  --color-borde: var(--border);
+  --color-texto: var(--text-primary);
+  --transicion-normal: var(--transition-base);
+  --radius-input: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+  }
+}

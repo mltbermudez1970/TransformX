@@ -75,7 +75,7 @@ Tras revisar todo el contenido existente, el journey actual tiene vacíos que de
 
 ## Verificación
 
-- Cada página nueva debe compartir el mismo header/footer/nav y estilos (`css/estilos.css`) que las páginas existentes.
+- Cada página nueva debe compartir el mismo header/footer/nav y los mismos 6 `<link>` de `css/` (`variables.css`, `base.css`, `components.css`, `layout.css`, `sections.css`, `utilities.css`, en ese orden) que las páginas existentes.
 - Confirmar que todos los enlaces nuevos (nav, footer, tarjetas de BizCaps, botón "Iniciar sesión") apuntan a destinos reales, sin anchors muertos.
 - Revisar en navegador (desktop y mobile) que el menú móvil incluya los nuevos enlaces.
 - Confirmar que `sitemap.xml` se actualiza para incluir las páginas nuevas una vez creadas.
