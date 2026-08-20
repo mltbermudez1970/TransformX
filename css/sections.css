@@ -268,13 +268,13 @@
 }
 
 .problem-solution__panel--problem {
-  background: #FEF3F2;
-  border: 1px solid rgba(217, 45, 32, 0.12);
+  background: var(--surface-problem);
+  border: 1px solid var(--surface-problem-border);
 }
 
 .problem-solution__panel--solution {
   background: var(--surface-blue);
-  border: 1px solid rgba(37, 99, 235, 0.12);
+  border: 1px solid var(--surface-solution-border);
 }
 
 .problem-solution__panel h3 {

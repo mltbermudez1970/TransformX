@@ -141,6 +141,80 @@
   --color-texto: var(--text-primary);
   --transicion-normal: var(--transition-base);
   --radius-input: 6px;
+
+  /* Page & feedback surfaces */
+  --bg-page: var(--white);
+  --surface-problem: #FEF3F2;
+  --surface-problem-border: rgba(217, 45, 32, 0.12);
+  --surface-solution-border: rgba(37, 99, 235, 0.12);
+  --feedback-error: #b00020;
+  --feedback-success: #0a7a3f;
+}
+
+/* Modo oscuro — preferencia del sistema */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg-page: var(--deep-navy);
+    --white: var(--navy);
+    --surface-primary: var(--navy);
+    --surface-secondary: var(--navy-soft);
+    --surface-blue: rgba(37, 99, 235, 0.18);
+    --surface-cyan: rgba(6, 182, 212, 0.14);
+    --text-primary: #E2E8F0;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --border: var(--navy-soft);
+    --surface-glass: rgba(7, 27, 58, 0.92);
+    --overlay-navy: rgba(0, 0, 0, 0.65);
+    --gradient-hero: linear-gradient(180deg, var(--deep-navy) 0%, var(--navy) 100%);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+    --focus-ring: 0 0 0 3px rgba(6, 182, 212, 0.35);
+    --surface-problem: rgba(217, 45, 32, 0.15);
+    --surface-problem-border: rgba(217, 45, 32, 0.25);
+    --surface-solution-border: rgba(37, 99, 235, 0.25);
+    --feedback-error: #ff8a8a;
+    --feedback-success: #34d399;
+  }
+}
+
+/* Modo oscuro — toggle manual */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-page: var(--deep-navy);
+  --white: var(--navy);
+  --surface-primary: var(--navy);
+  --surface-secondary: var(--navy-soft);
+  --surface-blue: rgba(37, 99, 235, 0.18);
+  --surface-cyan: rgba(6, 182, 212, 0.14);
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --border: var(--navy-soft);
+  --surface-glass: rgba(7, 27, 58, 0.92);
+  --overlay-navy: rgba(0, 0, 0, 0.65);
+  --gradient-hero: linear-gradient(180deg, var(--deep-navy) 0%, var(--navy) 100%);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.4);
+  --focus-ring: 0 0 0 3px rgba(6, 182, 212, 0.35);
+  --surface-problem: rgba(217, 45, 32, 0.15);
+  --surface-problem-border: rgba(217, 45, 32, 0.25);
+  --surface-solution-border: rgba(37, 99, 235, 0.25);
+  --feedback-error: #ff8a8a;
+  --feedback-success: #34d399;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 @media (prefers-reduced-motion: reduce) {
