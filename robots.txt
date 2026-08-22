@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://transformx.com/sitemap.xml
+Sitemap: https://transformx.app/sitemap.xml

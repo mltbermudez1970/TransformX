@@ -10,7 +10,7 @@ Tras revisar todo el contenido existente, el journey actual tiene vacíos que de
 - **Etapa:** landing de validación, sin producto/backend real todavía.
 - **Alcance:** solo contenido y páginas nuevas — nada de backend, auth real, ni envío real de formularios. Cualquier formulario nuevo debe seguir el mismo patrón simulado que ya usa `js/contacto.js` / el script inline de `index.html` (validación cliente + confirmación visual, sin persistencia real).
 - **Prioridad de negocio:** comunicar un modelo self-serve con **pricing visible** (el "signup" seguirá siendo simulado por ahora, no una cuenta real).
-- **Dominio canónico:** `transformx.com` (ya usado en `sitemap.xml`; hay que alinear `og:url`/`og:image` en las 3 páginas, que hoy apuntan a `transformingexperiences.com/TransformX/...`).
+- **Dominio canónico:** `transformx.app` (producción en Cloudflare Pages; alineado en HTML, `sitemap.xml` y `robots.txt`).
 
 ---
 
@@ -33,7 +33,7 @@ Tras revisar todo el contenido existente, el journey actual tiene vacíos que de
 - **Formularios simulados** (`demo-form`, `newsletter-form`, `form-contacto`): no envían datos a ningún backend real — es una maqueta de captación de leads.
 - **Chat de Capio** es 100% hardcodeado (`if/else` por palabra clave en el script inline), no IA real.
 - **Footer minimalista**: solo 2 columnas de enlaces, sin legales ni redes sociales.
-- **Inconsistencia de dominio**: sitemap usa `transformx.com`, pero `og:url`/`og:image` usan `transformingexperiences.com/TransformX/...`; además la carpeta `img/` referenciada no existe (imagen social rota).
+- ~~**Inconsistencia de dominio**~~: resuelto — `transformx.app` en HTML, sitemap y robots.
 - **`favicon.ico` pesa 4MB** — mal generado/exportado (nota técnica, fuera de alcance de este plan de contenido).
 - **Locales declarados sin contenido real**: `<meta>` declara `en_US`/`en_ES`/`en_MX` como alternates, pero todo el sitio está solo en español.
 
@@ -54,7 +54,7 @@ Tras revisar todo el contenido existente, el journey actual tiene vacíos que de
 - **`empresa.html`**: ampliar con misión/visión, valores y opcionalmente timeline/equipo — reforzar la narrativa "personas primero, IA responsable" ya prometida en el `<meta description>`.
 - **Duplicación `contacto.html` vs. `index.html#contacto-directo`**: mantener `contacto.html` como página dedicada y eliminar (o convertir en CTA corto hacia `contacto.html`) la sección duplicada de `index.html`.
 - **Footer**: agregar enlaces a `privacidad.html`, `terminos.html`, `precios.html`, `preguntas-frecuentes.html`.
-- **Consistencia de dominio/OG tags**: actualizar `og:url`/`og:image` en las 3 páginas a `transformx.com`; resolver la imagen social rota (`TransformX/img/og-image.png` no existe).
+- **Consistencia de dominio/OG tags**: ✅ alineado a `transformx.app` en las 4 páginas HTML, `sitemap.xml` y `robots.txt`.
 - **Header/nav**: agregar enlace a Precios y conectar "Iniciar sesión" a `registro.html` en las 3 páginas (comparten el mismo bloque de nav).
 
 ## Explícitamente fuera de alcance
