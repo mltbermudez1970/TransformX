@@ -121,3 +121,4 @@ Convención de mensajes: **Conventional Commits** en español (`feat`, `fix`, `r
 - Criterios y convenciones técnicas: `CLAUDE.md`
 - Roadmap de contenido: `PLAN.md`
 - Instalación y build: `README.md`
+- Guía de sustentación oral: `SUSTENTACION.md`
