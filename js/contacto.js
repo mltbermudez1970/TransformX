@@ -1,36 +1,83 @@
 "use strict";
-function esEmailValido(valor) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
-}
 function validarFormulario(datos) {
-    const errores = [];
+    const errores = {};
     if (datos.nombre.trim().length === 0)
-        errores.push("El nombre es requerido");
+        errores.nombre = "El nombre es requerido";
     if (!esEmailValido(datos.email))
-        errores.push("Email inválido");
+        errores.email = "Email inválido";
     if (datos.mensaje.trim().length < 10)
-        errores.push("El mensaje es muy corto");
+        errores.mensaje = "El mensaje es muy corto";
     return errores;
 }
-function inicializarFormulario() {
-    const form = document.querySelector(".form-contacto");
-    if (!form)
+function limpiarErroresFormulario(form) {
+    form.querySelectorAll("input, textarea").forEach((campo) => {
+        campo.removeAttribute("aria-invalid");
+        campo.removeAttribute("aria-describedby");
+    });
+    form.querySelectorAll(".form-contacto__error").forEach((el) => {
+        el.classList.remove("is-visible");
+        el.textContent = "";
+    });
+    const exito = form.querySelector(".form-contacto__success");
+    if (exito) {
+        exito.classList.remove("is-visible");
+        exito.textContent = "";
+    }
+}
+function mostrarErroresFormulario(form, errores) {
+    Object.keys(errores).forEach((nombre) => {
+        const campo = form.querySelector(`[name="${nombre}"]`);
+        const errorEl = form.querySelector(`#${nombre}-error`);
+        if (!campo || !errorEl)
+            return;
+        campo.setAttribute("aria-invalid", "true");
+        campo.setAttribute("aria-describedby", errorEl.id);
+        errorEl.textContent = errores[nombre] ?? "";
+        errorEl.classList.add("is-visible");
+    });
+}
+function mostrarExitoFormulario(form) {
+    const exito = form.querySelector(".form-contacto__success");
+    if (!exito)
         return;
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const nombreInput = document.getElementById("nombre");
-        const emailInput = document.getElementById("email");
-        const mensajeInput = document.getElementById("mensaje");
-        const datos = {
-            nombre: nombreInput.value,
-            email: emailInput.value,
-            mensaje: mensajeInput.value,
-        };
-        const errores = validarFormulario(datos);
-        mostrarFeedback(errores);
-        if (errores.length === 0) {
-            form.reset();
-        }
+    exito.textContent = "¡Mensaje enviado! Te responderemos pronto.";
+    exito.classList.add("is-visible");
+}
+function inicializarFormulario() {
+    document.querySelectorAll(".form-contacto").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            limpiarErroresFormulario(form);
+            const nombreInput = form.querySelector('[name="nombre"]');
+            const emailInput = form.querySelector('[name="email"]');
+            const mensajeInput = form.querySelector('[name="mensaje"]');
+            if (!nombreInput || !emailInput || !mensajeInput)
+                return;
+            const datos = {
+                nombre: nombreInput.value,
+                email: emailInput.value,
+                mensaje: mensajeInput.value,
+            };
+            const errores = validarFormulario(datos);
+            if (Object.keys(errores).length > 0) {
+                mostrarErroresFormulario(form, errores);
+                return;
+            }
+            const btn = form.querySelector('[type="submit"]');
+            const txt = btn?.textContent ?? "";
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Enviando…";
+            }
+            setTimeout(() => {
+                mostrarExitoFormulario(form);
+                form.reset();
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = txt;
+                }
+            }, 1000);
+        });
     });
 }
 document.addEventListener("DOMContentLoaded", inicializarFormulario);

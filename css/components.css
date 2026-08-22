@@ -291,9 +291,19 @@
   flex-wrap: wrap;
 }
 
+@media (max-width: 639px) {
+  .form-inline {
+    flex-direction: column;
+  }
+
+  .form-inline .btn {
+    width: 100%;
+  }
+}
+
 .form-inline .form-input {
   flex: 1;
-  min-width: 220px;
+  min-width: 0;
 }
 
 .form-contacto {
@@ -305,27 +315,54 @@
 }
 
 .form-contacto label {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-texto);
+  color: var(--text-primary);
 }
 
 .form-contacto input,
 .form-contacto textarea {
   font: inherit;
-  padding: 0.6rem;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radius-input);
-  transition: var(--transicion-normal);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
   width: 100%;
-  color: var(--color-texto);
+  color: var(--text-primary);
   background: var(--white);
 }
 
 .form-contacto input:focus,
 .form-contacto textarea:focus {
   outline: none;
-  border-color: var(--color-primario);
+  border-color: var(--transform-blue);
+}
+
+.form-contacto input:focus-visible,
+.form-contacto textarea:focus-visible {
+  border-color: var(--transform-blue);
+  box-shadow: var(--focus-ring);
+}
+
+.form-contacto__error {
+  font-size: var(--text-xs);
+  color: var(--error);
+  display: none;
+}
+
+.form-contacto__error.is-visible {
+  display: block;
+}
+
+.form-contacto__success {
+  font-size: var(--text-sm);
+  color: var(--success);
+  display: none;
+  text-align: center;
+}
+
+.form-contacto__success.is-visible {
+  display: block;
 }
 
 .form-contacto textarea {
@@ -335,14 +372,14 @@
 
 @media (min-width: 640px) {
   .form-contacto {
-    max-width: 560px;
+    max-width: var(--content-medium);
   }
 }
 
 .form-feedback {
-  transition: var(--transicion-normal);
+  transition: opacity var(--transition-base);
   opacity: 0;
-  max-width: 560px;
+  max-width: var(--content-medium);
   margin-inline: auto;
   margin-top: var(--space-4);
   font-size: var(--text-sm);
@@ -497,7 +534,7 @@
   transform: translateY(120%);
   opacity: 0;
   transition: transform var(--transition-base), opacity var(--transition-base);
-  max-width: 400px;
+  max-width: min(400px, calc(100vw - 2 * var(--space-6)));
 }
 
 .toast.is-visible {
@@ -522,12 +559,14 @@
 }
 
 .carousel-dot {
+  box-sizing: content-box;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  padding: 8px;
   background: var(--border);
+  background-clip: content-box;
+  border-radius: 50%;
   border: none;
-  padding: 0;
   cursor: pointer;
   transition: background var(--transition-fast), transform var(--transition-fast);
 }

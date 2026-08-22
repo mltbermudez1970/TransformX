@@ -21,15 +21,9 @@ function getEffectiveTheme(): ThemeChoice {
 }
 
 function applyTheme(preference: ThemeChoice | null): void {
-  const root = document.documentElement;
-
-  if (preference === "light" || preference === "dark") {
-    root.setAttribute("data-theme", preference);
-  } else {
-    root.removeAttribute("data-theme");
-  }
-
-  updateThemeToggleUI(getEffectiveTheme());
+  const effective = preference ?? getSystemTheme();
+  document.documentElement.setAttribute("data-theme", effective);
+  updateThemeToggleUI(effective);
 }
 
 function updateThemeToggleUI(effective: ThemeChoice): void {

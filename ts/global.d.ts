@@ -1,2 +1,3 @@
-declare function mostrarFeedback(errores: string[]): void;
-declare function esHTMLElement(el: Element | null): el is HTMLElement;
+/** Funciones globales compartidas entre scripts (sin módulos ES). */
+declare function esEmailValido(valor: string): boolean;
+declare function esEmailCorporativo(email: string): boolean;

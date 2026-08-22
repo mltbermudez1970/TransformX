@@ -6,10 +6,31 @@
   gap: var(--space-8);
 }
 
+@media (min-width: 768px) {
+  .pricing__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+  }
+
+  .pricing-card--featured {
+    grid-column: 1 / -1;
+    max-width: 480px;
+    justify-self: center;
+    width: 100%;
+  }
+}
+
 @media (min-width: 992px) {
   .pricing__grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-10);
+  }
+
+  .pricing-card--featured {
+    grid-column: auto;
+    max-width: none;
+    justify-self: stretch;
+    width: auto;
   }
 }
 
@@ -114,14 +135,25 @@
   padding: var(--space-5) var(--space-6);
 }
 
+.pricing-faq__item summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.pricing-faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
 .pricing-faq__question {
+  font-size: inherit;
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  cursor: pointer;
+  margin: 0;
+  display: inline;
   transition: color var(--transition-fast);
 }
 
-.pricing-faq__question:hover {
+.pricing-faq__item summary:hover .pricing-faq__question {
   color: var(--transform-blue);
 }
 

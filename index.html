@@ -3,29 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <script>
-    (function(){try{var t=localStorage.getItem('transformx-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}}());
+    (function(){try{var t=localStorage.getItem('transformx-theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:(d?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}}());
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="TransformX es una Plataforma SaaS que te permite adoptar capacidades de negocio inteligentes como servicios (BCaaS). Descubre, adopta y mejora BizCaps con Capio, tu Personal Business Advisor. Un producto de Transforming Experiences Inc.">
+  <meta name="description" content="TransformX es una plataforma BCaaS que te ayuda a descubrir, adoptar y mejorar capacidades de negocio (BizCaps) guiado por Capio, tu asesor de IA.">
   <meta name="author" content="Transforming Experiences Inc.">
-  <title>TransformX | Adopta capacidades de negocio inteligentes con IA | Business Capabilities as a Service (BCaaS)</title>
+  <title>TransformX | Adopta capacidades de negocio con IA</title>
+  <link rel="canonical" href="https://transformx.app/">
   <meta property="og:site_name" content="TransformX">
-  <meta property="og:title" content="TransformX | Adopta capacidades de negocio inteligentes con IA | Business Capabilities as a Service (BCaaS)">
-  <meta property="og:description" content="TransformX es una Plataforma SaaS que te permite adoptar capacidades de negocio inteligentes como servicios (BCaaS). Descubre, adopta y mejora BizCaps con Capio, tu Personal Business Advisor. Un producto de Transforming Experiences Inc.">
-  <meta property="og:image" content="TransformX/img/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
+  <meta property="og:title" content="TransformX | Adopta capacidades de negocio con IA">
+  <meta property="og:description" content="TransformX es una plataforma BCaaS que te ayuda a descubrir, adoptar y mejorar capacidades de negocio (BizCaps) guiado por Capio, tu asesor de IA.">
+  <meta property="og:image" content="https://transformx.app/icon/TransformX.png">
+  <meta property="og:image:width" content="1254">
+  <meta property="og:image:height" content="1254">
   <meta property="og:image:alt" content="TransformX - Adopta capacidades de negocio inteligentes con IA | Business Capabilities as a Service (BCaaS)">
   <meta property="og:image:type" content="image/png">
-  <meta property="og:image:url" content="TransformX/img/og-image.png">
+  <meta property="og:image:url" content="https://transformx.app/icon/TransformX.png">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://transformingexperiences.com/TransformX/index.html">
+  <meta property="og:url" content="https://transformx.app/">
   <meta property="og:locale" content="es_US">
   <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:locale:alternate" content="es_MX">
   <meta property="og:locale:alternate" content="en_US">
-  <meta property="og:locale:alternate" content="en_MX"> 
+  <meta property="og:locale:alternate" content="en_MX">
   <meta property="og:locale:alternate" content="en_ES">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TransformX | Adopta capacidades de negocio con IA">
+  <meta name="twitter:description" content="TransformX es una plataforma BCaaS que te ayuda a descubrir, adoptar y mejorar capacidades de negocio (BizCaps) guiado por Capio, tu asesor de IA.">
+  <meta name="twitter:image" content="https://transformx.app/icon/TransformX.png">
   <link rel="icon" href="icon/TransformX.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,22 +42,26 @@
   <link rel="stylesheet" href="css/sections.css">
   <link rel="stylesheet" href="css/utilities.css">
   <script src="js/theme.js" defer></script>
+  <script src="js/validators.js" defer></script>
   <script src="js/animaciones.js" defer></script>
   <script src="js/contacto.js" defer></script>
+  <script src="js/carousel.js" defer></script>
+  <script src="js/capio.js" defer></script>
+  <script src="js/forms-demo.js" defer></script>
 </head>
 <body>
 
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
   <!-- HEADER -->
-  <header class="header" role="banner">
+  <header class="header">
     <div class="container header__inner">
       <a href="#" class="logo-text" aria-label="TransformX — Inicio">
         <span class="logo-text__mark" aria-hidden="true">TX</span>
         Transform<span class="logo-text__suffix">X</span>
       </a>
       <nav class="nav" aria-label="Navegación principal">
-        <ul class="nav__list" role="list">
+        <ul class="nav__list">
           <li><a href="#plataforma" class="nav__link">Plataforma</a></li>
           <li><a href="#bizcaps" class="nav__link">BizCaps</a></li>
           <li><a href="#solucion" class="nav__link">Soluciones</a></li>
@@ -67,8 +76,16 @@
           <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <a href="#iniciar-sesion" class="btn btn--ghost btn--sm">Iniciar sesión</a>
-        <a href="#capio" class="btn btn--primary btn--sm" data-scroll-capio>Hablar con Capio</a>
+        <a href="#iniciar-sesion" class="btn btn--ghost btn--sm nav__action-btn">
+          <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          <span class="nav__action-label nav__action-label--long">Iniciar sesión</span>
+          <span class="nav__action-label nav__action-label--short">Entrar</span>
+        </a>
+        <a href="#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
+          <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span class="nav__action-label nav__action-label--long">Hablar con Capio</span>
+          <span class="nav__action-label nav__action-label--short">Capio</span>
+        </a>
         <button type="button" class="header__menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
@@ -77,7 +94,7 @@
   </header>
 
   <!-- Menú móvil -->
-  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Menú de navegación" aria-hidden="true">
+  <dialog class="mobile-menu" id="mobile-menu" aria-label="Menú de navegación">
     <div class="mobile-menu__panel">
       <div class="mobile-menu__header">
         <a href="#" class="logo-text"><span class="logo-text__mark" aria-hidden="true">TX</span>Transform<span class="logo-text__suffix">X</span></a>
@@ -85,21 +102,23 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       </div>
-      <ul class="nav__list nav__list--drawer" role="list">
-        <li><a href="#plataforma" class="nav__link--drawer">Plataforma</a></li>
-        <li><a href="#bizcaps" class="nav__link--drawer">BizCaps</a></li>
-        <li><a href="#solucion" class="nav__link--drawer">Soluciones</a></li>
-        <li><a href="#como-funciona" class="nav__link--drawer">Cómo funciona</a></li>
-        <li><a href="precios.html" class="nav__link--drawer">Precios</a></li>
-        <li><a href="empresa.html" class="nav__link--drawer">Empresa</a></li>
-        <li><a href="contacto.html" class="nav__link--drawer">Contacto</a></li>
-      </ul>
+      <nav class="mobile-menu__nav" aria-label="Navegación móvil">
+        <ul class="nav__list nav__list--drawer">
+          <li><a href="#plataforma" class="nav__link--drawer">Plataforma</a></li>
+          <li><a href="#bizcaps" class="nav__link--drawer">BizCaps</a></li>
+          <li><a href="#solucion" class="nav__link--drawer">Soluciones</a></li>
+          <li><a href="#como-funciona" class="nav__link--drawer">Cómo funciona</a></li>
+          <li><a href="precios.html" class="nav__link--drawer">Precios</a></li>
+          <li><a href="empresa.html" class="nav__link--drawer">Empresa</a></li>
+          <li><a href="contacto.html" class="nav__link--drawer">Contacto</a></li>
+        </ul>
+      </nav>
       <div class="mobile-menu__actions">
         <a href="#iniciar-sesion" class="btn btn--ghost">Iniciar sesión</a>
         <a href="#capio" class="btn btn--primary" data-scroll-capio>Hablar con Capio</a>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <main id="main-content">
 
@@ -122,11 +141,9 @@
             </div>
             <p class="hero__parent">Un producto de <a href="empresa.html">Transforming Experiences Inc.</a></p>
           </div>
-          <figure class="dashboard" data-animate aria-label="Vista previa del dashboard ejecutivo">
-            <div class="dashboard__header">
-              <figcaption class="dashboard__title">Resumen ejecutivo</figcaption>
-              <div class="dashboard__dots" aria-hidden="true"><span class="dashboard__dot dashboard__dot--red"></span><span class="dashboard__dot dashboard__dot--yellow"></span><span class="dashboard__dot dashboard__dot--green"></span></div>
-            </div>
+          <figure class="dashboard" data-animate aria-labelledby="dashboard-caption">
+            <figcaption id="dashboard-caption" class="dashboard__title">Resumen ejecutivo</figcaption>
+            <div class="dashboard__dots" aria-hidden="true"><span class="dashboard__dot dashboard__dot--red"></span><span class="dashboard__dot dashboard__dot--yellow"></span><span class="dashboard__dot dashboard__dot--green"></span></div>
             <div class="dashboard__body">
               <div class="dashboard__kpis" role="group" aria-label="Indicadores clave">
                 <div class="dashboard__kpi"><div class="dashboard__kpi-label">Ventas</div><div class="dashboard__kpi-value">+24%</div></div>
@@ -135,11 +152,11 @@
               </div>
               <div class="dashboard__chart">
                 <div class="dashboard__chart-title">Evolución de resultados</div>
-                <svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563EB" stop-opacity="0.3"/><stop offset="100%" stop-color="#2563EB" stop-opacity="0"/></linearGradient></defs><path d="M0,80 L50,65 L100,70 L150,45 L200,35 L250,25 L300,15" fill="none" stroke="#2563EB" stroke-width="2.5"/><path d="M0,80 L50,65 L100,70 L150,45 L200,35 L250,25 L300,15 L300,100 L0,100 Z" fill="url(#chartGrad)"/></svg>
+                <svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="currentColor" stop-opacity="0.3"/><stop offset="100%" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs><path d="M0,80 L50,65 L100,70 L150,45 L200,35 L250,25 L300,15" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M0,80 L50,65 L100,70 L150,45 L200,35 L250,25 L300,15 L300,100 L0,100 Z" fill="url(#chartGrad)"/></svg>
               </div>
               <aside class="dashboard__advisor" aria-label="Recomendaciones de Capio">
                 <div class="dashboard__advisor-title">Recomendaciones del Business Advisor</div>
-                <ul class="dashboard__advisor-list" role="list">
+                <ul class="dashboard__advisor-list">
                   <li class="dashboard__advisor-item">Optimizar inventario con IA</li>
                   <li class="dashboard__advisor-item">Mejorar conversión de ventas</li>
                   <li class="dashboard__advisor-item">Automatizar reportes semanales</li>
@@ -157,9 +174,30 @@
         <h2 id="social-proof-title" class="social-proof__title">Empresas que ya transforman con TransformX</h2>
         <div class="logo-carousel" role="region" aria-label="Logos de empresas clientes" aria-roledescription="carrusel">
           <div class="logo-carousel__track">
-            <div class="logo-carousel__slide" role="group" aria-label="Grupo 1"><span class="logo-carousel__item">Plasticforte</span><span class="logo-carousel__item">Claro</span><span class="logo-carousel__item">Ambensa</span><span class="logo-carousel__item">Tío</span></div>
-            <div class="logo-carousel__slide" role="group" aria-label="Grupo 2"><span class="logo-carousel__item">California</span><span class="logo-carousel__item">La Española</span><span class="logo-carousel__item">Deliportal</span><span class="logo-carousel__item">KFC</span></div>
-            <div class="logo-carousel__slide" role="group" aria-label="Grupo 3"><span class="logo-carousel__item">Banco de la Vivienda</span><span class="logo-carousel__item">Innova Foods</span><span class="logo-carousel__item">Grupo PDC</span><span class="logo-carousel__item">TechRetail</span></div>
+            <div class="logo-carousel__slide" id="carousel-panel-1" role="tabpanel" aria-labelledby="carousel-tab-1" tabindex="0">
+              <ul class="logo-carousel__list">
+                <li class="logo-carousel__item">Plasticforte</li>
+                <li class="logo-carousel__item">Claro</li>
+                <li class="logo-carousel__item">Ambensa</li>
+                <li class="logo-carousel__item">Tío</li>
+              </ul>
+            </div>
+            <div class="logo-carousel__slide" id="carousel-panel-2" role="tabpanel" aria-labelledby="carousel-tab-2" tabindex="-1" aria-hidden="true">
+              <ul class="logo-carousel__list">
+                <li class="logo-carousel__item">California</li>
+                <li class="logo-carousel__item">La Española</li>
+                <li class="logo-carousel__item">Deliportal</li>
+                <li class="logo-carousel__item">KFC</li>
+              </ul>
+            </div>
+            <div class="logo-carousel__slide" id="carousel-panel-3" role="tabpanel" aria-labelledby="carousel-tab-3" tabindex="-1" aria-hidden="true">
+              <ul class="logo-carousel__list">
+                <li class="logo-carousel__item">Banco de la Vivienda</li>
+                <li class="logo-carousel__item">Innova Foods</li>
+                <li class="logo-carousel__item">Grupo PDC</li>
+                <li class="logo-carousel__item">TechRetail</li>
+              </ul>
+            </div>
           </div>
           <div class="carousel-dots" role="tablist" aria-label="Controles del carrusel"></div>
         </div>
@@ -177,7 +215,7 @@
         <div class="problem-solution__grid">
           <article class="problem-solution__panel problem-solution__panel--problem" data-animate aria-labelledby="problem-heading">
             <h3 id="problem-heading">El problema que enfrentan las empresas hoy</h3>
-            <ul class="feature-list" role="list">
+            <ul class="feature-list">
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--problem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Datos dispersos y procesos manuales</li>
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--problem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Decisiones sin visibilidad ni contexto</li>
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--problem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Dificultad para adoptar IA sin equipos técnicos</li>
@@ -186,7 +224,7 @@
           <div class="problem-solution__bridge" aria-hidden="true" data-animate><div class="problem-solution__bridge-icon">TX</div></div>
           <article class="problem-solution__panel problem-solution__panel--solution" data-animate aria-labelledby="solution-heading">
             <h3 id="solution-heading">TransformX es la solución</h3>
-            <ul class="feature-list" role="list">
+            <ul class="feature-list">
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--solution" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Plataforma impulsada por IA con supervisión humana</li>
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--solution" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Decisiones inteligentes, explicables y oportunas</li>
               <li class="feature-list__item"><svg class="feature-list__icon feature-list__icon--solution" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Adopción simple y guiada con Capio</li>
@@ -204,7 +242,7 @@
           <h2 id="process-title" class="section__title">Cómo funciona TransformX</h2>
           <p class="section__subtitle">Seis pasos claros. Tú mantienes el control en cada etapa.</p>
         </header>
-        <ol class="process__steps" role="list">
+        <ol class="process__steps">
           <li class="process__step card" data-animate><span class="process__step-number" aria-hidden="true">1</span><h3 class="process__step-title">Diagnostica</h3><p class="process__step-text">Analiza tu negocio, procesos y datos.</p></li>
           <li class="process__step card" data-animate><span class="process__step-number" aria-hidden="true">2</span><h3 class="process__step-title">Recomienda</h3><p class="process__step-text">Capio sugiere las BizCaps prioritarias.</p></li>
           <li class="process__step card" data-animate><span class="process__step-number" aria-hidden="true">3</span><h3 class="process__step-title">Configura</h3><p class="process__step-text">Adapta cada capacidad a tu operación.</p></li>
@@ -218,14 +256,14 @@
     <!-- BIZCAPS -->
     <section class="section section--alt" id="bizcaps" aria-labelledby="bizcaps-title">
       <div class="container">
-        <div class="bizcaps__header" data-animate>
+        <header class="bizcaps__header" data-animate>
           <div>
             <span class="section__eyebrow">Oferta</span>
             <h2 id="bizcaps-title" class="section__title">Biblioteca de BizCaps</h2>
             <p class="section__subtitle">Capacidades empresariales listas para adoptar.</p>
           </div>
           <a href="#bizcaps" class="btn btn--secondary">Ver todas →</a>
-        </div>
+        </header>
         <div class="bizcaps__grid">
           <article class="card card--interactive bizcap-card" data-animate><div class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><h3 class="card__title">Gestión de Inventario</h3><p class="card__text">Optimiza stock y reduce quiebres.</p><p class="card__metric">+15% <span class="card__metric-label">impacto estimado</span></p><a href="#capio" class="bizcap-card__link" data-scroll-capio>Ver detalles →</a></article>
           <article class="card card--interactive bizcap-card" data-animate><div class="card__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><h3 class="card__title">Ventas Inteligentes</h3><p class="card__text">Prioriza oportunidades comerciales.</p><p class="card__metric">+25% <span class="card__metric-label">impacto estimado</span></p><a href="#capio" class="bizcap-card__link" data-scroll-capio>Ver detalles →</a></article>
@@ -252,8 +290,12 @@
               <button type="button" class="btn btn--outline-light btn--sm" data-capio-action="demo">Solicitar demo</button>
             </div>
           </div>
-          <div class="capio-chat" data-animate role="region" aria-label="Chat con Capio">
-            <div class="capio-chat__header"><span class="capio-chat__status" aria-label="En línea"></span><div><div class="capio-chat__name">Capio</div><div class="capio-chat__role">Personal Business Advisor</div></div></div>
+          <section class="capio-chat" data-animate aria-label="Chat con Capio">
+            <div class="capio-chat__header">
+              <span class="capio-chat__status" aria-hidden="true"></span>
+              <span class="sr-only">Capio está en línea</span>
+              <div><div class="capio-chat__name">Capio</div><div class="capio-chat__role">Personal Business Advisor</div></div>
+            </div>
             <div class="capio-chat__messages" aria-live="polite" aria-relevant="additions"></div>
             <div class="capio-chat__input-area">
               <label for="capio-input" class="sr-only">Pregunta a Capio</label>
@@ -261,7 +303,7 @@
               <button type="button" class="btn btn--primary capio-chat__send">Enviar</button>
             </div>
             <p class="capio-chat__disclaimer">Orientación basada en IA. No constituye garantía de resultados.</p>
-          </div>
+          </section>
         </div>
       </div>
     </section>
@@ -273,28 +315,64 @@
           <h2 id="results-title" class="section__title">Resultados que tu negocio puede lograr</h2>
         </header>
         <div class="results__grid">
-          <div class="results__card" data-animate><div class="metric__value">+25%</div><div class="metric__label">Ventas</div><div class="metric__note">estimado</div></div>
-          <div class="results__card" data-animate><div class="metric__value">-20%</div><div class="metric__label">Costos</div><div class="metric__note">estimado</div></div>
-          <div class="results__card" data-animate><div class="metric__value">+18%</div><div class="metric__label">Productividad</div><div class="metric__note">estimado</div></div>
-          <div class="results__card" data-animate><div class="metric__value">+30%</div><div class="metric__label">Satisfacción</div><div class="metric__note">estimado</div></div>
-          <div class="results__card" data-animate><div class="metric__value">-40%</div><div class="metric__label">Tiempo en reportes</div><div class="metric__note">estimado</div></div>
-          <div class="results__card" data-animate><div class="metric__value">+3x</div><div class="metric__label">ROI promedio</div><div class="metric__note">referencial</div></div>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">Ventas</dt>
+            <dd class="metric__value">+25%</dd>
+            <dd class="metric__note">estimado</dd>
+          </dl>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">Costos</dt>
+            <dd class="metric__value">-20%</dd>
+            <dd class="metric__note">estimado</dd>
+          </dl>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">Productividad</dt>
+            <dd class="metric__value">+18%</dd>
+            <dd class="metric__note">estimado</dd>
+          </dl>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">Satisfacción</dt>
+            <dd class="metric__value">+30%</dd>
+            <dd class="metric__note">estimado</dd>
+          </dl>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">Tiempo en reportes</dt>
+            <dd class="metric__value">-40%</dd>
+            <dd class="metric__note">estimado</dd>
+          </dl>
+          <dl class="results__card metric" data-animate>
+            <dt class="metric__label">ROI promedio</dt>
+            <dd class="metric__value">+3x</dd>
+            <dd class="metric__note">referencial</dd>
+          </dl>
         </div>
       </div>
     </section>
 
-    <!-- CASO DE ÉXITO -->
+    <!-- TESTIMONIOS -->
     <section class="section" aria-labelledby="case-study-title">
-      <div class="case-study" data-animate>
-        <div class="case-study__grid">
-          <div class="case-study__content">
-            <h2 id="case-study-title" class="sr-only">Caso de éxito</h2>
-            <blockquote class="case-study__quote">"TransformX aumentó nuestras ventas 32% y ahorró 15 horas semanales en reportes."</blockquote>
-            <cite class="case-study__author">— Carlos Ramírez, Innova Foods</cite>
-            <div class="case-study__metrics"><div><div class="case-study__metric-value">+32%</div><div class="case-study__metric-label">Ventas</div></div><div><div class="case-study__metric-value">-15h</div><div class="case-study__metric-label">Reportes/sem</div></div><div><div class="case-study__metric-value">+2.4x</div><div class="case-study__metric-label">ROI 6 meses</div></div></div>
+      <h2 id="case-study-title" class="sr-only">Testimonios de clientes</h2>
+      <div class="testimonials__grid">
+        <article class="case-study" data-animate aria-labelledby="testimonial-1-author">
+          <div class="case-study__grid">
+            <div class="case-study__content">
+              <blockquote class="case-study__quote">"TransformX aumentó nuestras ventas 32% y ahorró 15 horas semanales en reportes."</blockquote>
+              <cite id="testimonial-1-author" class="case-study__author">— Carlos Ramírez, Innova Foods</cite>
+              <div class="case-study__metrics"><div><div class="case-study__metric-value">+32%</div><div class="case-study__metric-label">Ventas</div></div><div><div class="case-study__metric-value">-15h</div><div class="case-study__metric-label">Reportes/sem</div></div><div><div class="case-study__metric-value">+2.4x</div><div class="case-study__metric-label">ROI 6 meses</div></div></div>
+            </div>
+            <div class="case-study__visual" aria-hidden="true"><div class="case-study__avatar"><div class="case-study__avatar-placeholder">👤</div></div></div>
           </div>
-          <div class="case-study__visual" aria-hidden="true"><div class="case-study__avatar"><div class="case-study__avatar-placeholder">👤</div></div></div>
-        </div>
+        </article>
+        <article class="case-study" data-animate aria-labelledby="testimonial-2-author">
+          <div class="case-study__grid">
+            <div class="case-study__content">
+              <blockquote class="case-study__quote">"Con la capacidad de negocio del Reloj de Cobranzas, he podido gestionar eficientemente la cobranza e incrementar la recuperación de la cartera en un 60%"</blockquote>
+              <cite id="testimonial-2-author" class="case-study__author">— Camila Ponce, Plasticfort</cite>
+              <div class="case-study__metrics"><div><div class="case-study__metric-value">+60%</div><div class="case-study__metric-label">Recuperación</div></div><div><div class="case-study__metric-value">+25%</div><div class="case-study__metric-label">Ventas</div></div><div><div class="case-study__metric-value">-15h</div><div class="case-study__metric-label">Seguimiento/sem</div></div></div>
+            </div>
+            <div class="case-study__visual" aria-hidden="true"><div class="case-study__avatar"><div class="case-study__avatar-placeholder">👤</div></div></div>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -302,16 +380,23 @@
     <section class="section section--alt" id="integraciones" aria-labelledby="integrations-title">
       <div class="container">
         <div class="integrations-security__grid">
-          <article data-animate>
+          <article data-animate aria-labelledby="integrations-title">
             <h2 id="integrations-title">Integraciones que ya usas</h2>
-            <div class="integrations__logos" role="list"><span class="integrations__logo" role="listitem">SAP</span><span class="integrations__logo" role="listitem">Salesforce</span><span class="integrations__logo" role="listitem">Microsoft 365</span><span class="integrations__logo" role="listitem">Google Workspace</span><span class="integrations__logo" role="listitem">Oracle</span><span class="integrations__logo" role="listitem">WhatsApp</span></div>
+            <ul class="integrations__logos">
+              <li class="integrations__logo">SAP</li>
+              <li class="integrations__logo">Salesforce</li>
+              <li class="integrations__logo">Microsoft 365</li>
+              <li class="integrations__logo">Google Workspace</li>
+              <li class="integrations__logo">Oracle</li>
+              <li class="integrations__logo">WhatsApp</li>
+            </ul>
           </article>
-          <article data-animate>
-            <h2>Seguridad empresarial</h2>
-            <ul class="security__list" role="list">
-              <li class="security__item"><div><div class="security__item-title">Enterprise-grade</div><p class="security__item-text">Cifrado y auditoría completa.</p></div></li>
-              <li class="security__item"><div><div class="security__item-title">99.9% disponibilidad</div><p class="security__item-text">SLA empresarial.</p></div></li>
-              <li class="security__item"><div><div class="security__item-title">IA Responsable</div><p class="security__item-text">Recomendaciones explicables.</p></div></li>
+          <article data-animate aria-labelledby="security-title">
+            <h2 id="security-title">Seguridad empresarial</h2>
+            <ul class="security__list">
+              <li class="security__item"><div><h3 class="security__item-title">Enterprise-grade</h3><p class="security__item-text">Cifrado y auditoría completa.</p></div></li>
+              <li class="security__item"><div><h3 class="security__item-title">99.9% disponibilidad</h3><p class="security__item-text">SLA empresarial.</p></div></li>
+              <li class="security__item"><div><h3 class="security__item-title">IA Responsable</h3><p class="security__item-text">Recomendaciones explicables.</p></div></li>
             </ul>
           </article>
         </div>
@@ -352,39 +437,52 @@
         </header>
         <form class="form-contacto" data-animate novalidate>
           <label for="nombre">Nombre completo</label>
-          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="name">
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="name" required aria-required="true">
+          <span class="form-contacto__error" id="nombre-error" role="alert"></span>
 
           <label for="email">Correo electrónico</label>
-          <input type="email" id="email" name="email" placeholder="nombre@tuempresa.com" autocomplete="email">
+          <input type="email" id="email" name="email" placeholder="nombre@tuempresa.com" autocomplete="email" required aria-required="true">
+          <span class="form-contacto__error" id="email-error" role="alert"></span>
 
           <label for="mensaje">Mensaje</label>
-          <textarea id="mensaje" name="mensaje" rows="4" placeholder="Cuéntanos en qué podemos ayudarte"></textarea>
+          <textarea id="mensaje" name="mensaje" rows="4" placeholder="Cuéntanos en qué podemos ayudarte" required minlength="10" aria-required="true"></textarea>
+          <span class="form-contacto__error" id="mensaje-error" role="alert"></span>
 
           <button type="submit" class="btn btn--primary btn--lg">Enviar mensaje</button>
+          <p class="form-contacto__success" role="status" aria-live="polite"></p>
         </form>
-        <div class="form-feedback"></div>
       </div>
     </section>
 
-    <div id="iniciar-sesion" class="sr-only" tabindex="-1">Iniciar sesión</div>
+    <div id="iniciar-sesion" class="sr-only" tabindex="-1">
+      <h2>Iniciar sesión</h2>
+      <p>El acceso a cuentas estará disponible próximamente.</p>
+    </div>
 
   </main>
 
-  <footer class="footer" role="contentinfo">
+  <footer class="footer">
     <div class="container">
+      <h2 class="sr-only">Información del sitio</h2>
       <div class="footer__grid">
         <div class="footer__brand">
           <a href="#" class="logo-text"><span class="logo-text__mark" aria-hidden="true">TX</span>Transform<span class="logo-text__suffix">X</span></a>
           <p>BCaaS de Transforming Experiences Inc.</p>
         </div>
-        <div><h3 class="footer__column-title">Plataforma</h3><ul class="footer__links" role="list"><li><a href="#plataforma" class="footer__link">Visión general</a></li><li><a href="#bizcaps" class="footer__link">BizCaps</a></li><li><a href="precios.html" class="footer__link">Precios</a></li></ul></div>
-        <div><h3 class="footer__column-title">Empresa</h3><ul class="footer__links" role="list"><li><a href="empresa.html" class="footer__link">Sobre nosotros</a></li><li><a href="contacto.html" class="footer__link">Contacto</a></li></ul></div>
+        <nav aria-labelledby="footer-nav-plataforma">
+          <h3 id="footer-nav-plataforma" class="footer__column-title">Plataforma</h3>
+          <ul class="footer__links"><li><a href="#plataforma" class="footer__link">Visión general</a></li><li><a href="#bizcaps" class="footer__link">BizCaps</a></li><li><a href="precios.html" class="footer__link">Precios</a></li></ul>
+        </nav>
+        <nav aria-labelledby="footer-nav-empresa">
+          <h3 id="footer-nav-empresa" class="footer__column-title">Empresa</h3>
+          <ul class="footer__links"><li><a href="empresa.html" class="footer__link">Sobre nosotros</a></li><li><a href="contacto.html" class="footer__link">Contacto</a></li></ul>
+        </nav>
         <div>
-          <h3 class="footer__column-title">Newsletter</h3>
-          <form id="newsletter-form" novalidate>
+          <h3 id="footer-newsletter-title" class="footer__column-title">Newsletter</h3>
+          <form id="newsletter-form" novalidate aria-labelledby="footer-newsletter-title">
             <div class="form-group">
               <label for="newsletter-email" class="sr-only">Correo</label>
-              <div class="form-inline"><input type="email" id="newsletter-email" name="newsletter-email" class="form-input" placeholder="tu@email.com"><button type="submit" class="btn btn--primary" aria-label="Suscribirse">→</button></div>
+              <div class="form-inline"><input type="email" id="newsletter-email" name="newsletter-email" class="form-input" placeholder="tu@email.com" required aria-required="true"><button type="submit" class="btn btn--primary" aria-label="Suscribirse">→</button></div>
               <span class="form-error" role="alert"></span>
             </div>
           </form>
@@ -394,171 +492,5 @@
     </div>
   </footer>
 
-</body>
-
-<script>
-
-(function () {
-  'use strict';
-  var capioResponses = {
-    default: 'Hola, soy Capio, tu Personal Business Advisor. Cuéntame sobre tu negocio y te ayudaré a identificar las BizCaps más relevantes. Recuerda: mis recomendaciones son orientativas, no garantías.',
-    inventario: 'Para optimizar inventario, recomendaría la BizCap de Gestión de Inventario. Impacto estimado: +15% en ventas.',
-    ventas: 'La BizCap de Ventas Inteligentes podría ayudarte. Impacto estimado: +25% en conversión.',
-    costos: 'Para reducir costos, sugiero Finanzas Predictivas y Operaciones Ágiles. Impacto estimado: -20%.',
-    ia: 'Adoptar IA no requiere desarrollar desde cero. TransformX te guía con BizCaps preconfiguradas y supervisión humana.',
-    demo: 'Solicita una demo en el formulario al final. Respuesta en menos de 24 horas, sin compromiso.'
-  };
-  var personalDomains = ['gmail.com','hotmail.com','outlook.com','yahoo.com','icloud.com','live.com','aol.com','protonmail.com'];
-
-  document.addEventListener('DOMContentLoaded', function () {
-    initNavigation(); initCarousel(); initCapio(); initForms();
-  });
-
-  function initNavigation() {
-    var header = document.querySelector('.header');
-    var navLinks = document.querySelectorAll('.nav__link, .nav__link--drawer');
-    var sections = document.querySelectorAll('section[id]');
-
-    function onScroll() {
-      var scrollPos = window.scrollY + header.offsetHeight + 100, current = '';
-      sections.forEach(function (s) { if (s.offsetTop <= scrollPos) current = s.id; });
-      navLinks.forEach(function (link) {
-        var active = link.getAttribute('href') === '#' + current;
-        link.classList.toggle('is-active', active);
-        if (active) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current');
-      });
-    }
-    window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-    navLinks.forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        var href = link.getAttribute('href');
-        if (!href || href[0] !== '#') return;
-        var target = document.querySelector(href); if (!target) return;
-        e.preventDefault();
-        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - header.offsetHeight, behavior: 'smooth' });
-        history.pushState(null, '', href);
-        target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true });
-      });
-    });
-  }
-
-  function initCarousel() {
-    var carousel = document.querySelector('.logo-carousel'); if (!carousel) return;
-    var track = carousel.querySelector('.logo-carousel__track');
-    var slides = carousel.querySelectorAll('.logo-carousel__slide');
-    var dotsContainer = carousel.querySelector('.carousel-dots');
-    var idx = 0, timer = null, reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    slides.forEach(function (_, i) {
-      var dot = document.createElement('button');
-      dot.className = 'carousel-dot' + (i ? '' : ' is-active');
-      dot.setAttribute('aria-label', 'Slide ' + (i + 1));
-      dot.setAttribute('role', 'tab');
-      dot.setAttribute('aria-selected', i ? 'false' : 'true');
-      dot.addEventListener('click', function () { go(i); reset(); });
-      dotsContainer.appendChild(dot);
-    });
-    var dots = dotsContainer.querySelectorAll('.carousel-dot');
-    function go(i) { idx = i; track.style.transform = 'translateX(-' + i * 100 + '%)';
-      dots.forEach(function (d, n) { d.classList.toggle('is-active', n === i); d.setAttribute('aria-selected', n === i ? 'true' : 'false'); }); }
-    function next() { go((idx + 1) % slides.length); }
-    function start() { if (!reduced) { stop(); timer = setInterval(next, 5000); } }
-    function stop() { if (timer) clearInterval(timer); timer = null; }
-    function reset() { stop(); start(); }
-    carousel.addEventListener('mouseenter', stop); carousel.addEventListener('mouseleave', start);
-    start();
-  }
-
-  function initCapio() {
-    var chat = document.querySelector('.capio-chat'); if (!chat) return;
-    var messages = chat.querySelector('.capio-chat__messages');
-    var input = chat.querySelector('.capio-chat__input');
-    var sendBtn = chat.querySelector('.capio-chat__send');
-    function append(c, t, type) {
-      var m = document.createElement('div'); m.className = 'capio-chat__message capio-chat__message--' + type;
-      m.setAttribute('role', type === 'bot' ? 'status' : 'log'); m.textContent = t; c.appendChild(m); c.scrollTop = c.scrollHeight;
-    }
-    append(messages, capioResponses.default, 'bot');
-    function reply(t) {
-      var l = t.toLowerCase();
-      if (/inventario|stock/.test(l)) return capioResponses.inventario;
-      if (/venta|comercial/.test(l)) return capioResponses.ventas;
-      if (/costo|gasto/.test(l)) return capioResponses.costos;
-      if (/ia|inteligencia|automat/.test(l)) return capioResponses.ia;
-      if (/demo|contacto/.test(l)) return capioResponses.demo;
-      return 'Explora nuestra biblioteca de BizCaps. Los impactos son estimaciones orientativas.';
-    }
-    function send() {
-      var t = input.value.trim(); if (!t) return;
-      append(messages, t, 'user'); input.value = ''; sendBtn.disabled = true;
-      setTimeout(function () { append(messages, reply(t), 'bot'); sendBtn.disabled = false; input.focus(); }, 700);
-    }
-    sendBtn.addEventListener('click', send);
-    input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
-    document.querySelectorAll('[data-capio-action]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var p = { inventario: 'Quiero optimizar mi inventario', ventas: 'Necesito mejorar mis ventas', demo: 'Quiero solicitar una demo' };
-        input.value = p[b.dataset.capioAction] || ''; send();
-      });
-    });
-    document.querySelectorAll('[data-scroll-capio]').forEach(function (el) {
-      el.addEventListener('click', function (e) {
-        e.preventDefault(); document.getElementById('capio').scrollIntoView({ behavior: 'smooth' });
-        setTimeout(function () { input.focus(); }, 600);
-      });
-    });
-  }
-
-  function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-  function isCorporate(e) { return isValidEmail(e) && personalDomains.indexOf(e.split('@')[1].toLowerCase()) === -1; }
-
-  function initForms() {
-    setup(document.getElementById('demo-form'), function (f) {
-      var fd = new FormData(f), err = {}, email = (fd.get('email') || '').trim();
-      if (!email) err.email = 'Ingresa tu correo corporativo.';
-      else if (!isCorporate(email)) err.email = 'Usa un correo corporativo válido.';
-      if (!fd.get('consent')) err.consent = 'Debes aceptar el tratamiento de datos.';
-      return { ok: !Object.keys(err).length, err: err };
-    });
-    setup(document.getElementById('newsletter-form'), function (f) {
-      var fd = new FormData(f), err = {}, email = (fd.get('newsletter-email') || '').trim();
-      if (!email) err['newsletter-email'] = 'Ingresa tu correo.';
-      else if (!isValidEmail(email)) err['newsletter-email'] = 'Correo inválido.';
-      return { ok: !Object.keys(err).length, err: err };
-    });
-  }
-
-  function setup(form, validate) {
-    if (!form) return;
-    form.addEventListener('submit', function (e) {
-      e.preventDefault(); clear(form);
-      var r = validate(form);
-      if (!r.ok) { show(form, r.err); return; }
-      var btn = form.querySelector('[type="submit"]'), txt = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Enviando…';
-      setTimeout(function () {
-        var t = document.createElement('div'); t.className = 'toast toast--success'; t.setAttribute('role', 'alert');
-        t.textContent = '¡Gracias! Te contactaremos en menos de 24 horas.'; document.body.appendChild(t);
-        requestAnimationFrame(function () { t.classList.add('is-visible'); });
-        setTimeout(function () { t.remove(); }, 5000);
-        form.reset(); btn.disabled = false; btn.textContent = txt;
-      }, 1000);
-    });
-  }
-  function show(form, errors) {
-    Object.keys(errors).forEach(function (n) {
-      var f = form.querySelector('[name="' + n + '"]'); if (!f) return;
-      f.setAttribute('aria-invalid', 'true');
-      var e = f.closest('.form-group').querySelector('.form-error');
-      if (e) { e.textContent = errors[n]; e.classList.add('is-visible'); e.id = n + '-err'; f.setAttribute('aria-describedby', e.id); }
-    });
-  }
-  function clear(form) { form.querySelectorAll('[aria-invalid]').forEach(function (f) {
-    f.removeAttribute('aria-invalid'); f.removeAttribute('aria-describedby');
-    var e = f.closest('.form-group').querySelector('.form-error'); if (e) e.classList.remove('is-visible');
-  }); }
-})();
-
-</script>
 </body>
 </html>

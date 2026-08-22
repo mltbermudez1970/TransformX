@@ -4,43 +4,96 @@ interface ContactForm {
   mensaje: string;
 }
 
-function esEmailValido(valor: string): valor is string {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
-}
+type FieldErrors = Partial<Record<keyof ContactForm, string>>;
 
-function validarFormulario(datos: ContactForm): string[] {
-  const errores: string[] = [];
+function validarFormulario(datos: ContactForm): FieldErrors {
+  const errores: FieldErrors = {};
 
-  if (datos.nombre.trim().length === 0) errores.push("El nombre es requerido");
-  if (!esEmailValido(datos.email)) errores.push("Email inválido");
-  if (datos.mensaje.trim().length < 10) errores.push("El mensaje es muy corto");
+  if (datos.nombre.trim().length === 0) errores.nombre = "El nombre es requerido";
+  if (!esEmailValido(datos.email)) errores.email = "Email inválido";
+  if (datos.mensaje.trim().length < 10) errores.mensaje = "El mensaje es muy corto";
 
   return errores;
 }
 
+function limpiarErroresFormulario(form: HTMLFormElement): void {
+  form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input, textarea").forEach((campo) => {
+    campo.removeAttribute("aria-invalid");
+    campo.removeAttribute("aria-describedby");
+  });
+
+  form.querySelectorAll<HTMLElement>(".form-contacto__error").forEach((el) => {
+    el.classList.remove("is-visible");
+    el.textContent = "";
+  });
+
+  const exito = form.querySelector<HTMLElement>(".form-contacto__success");
+  if (exito) {
+    exito.classList.remove("is-visible");
+    exito.textContent = "";
+  }
+}
+
+function mostrarErroresFormulario(form: HTMLFormElement, errores: FieldErrors): void {
+  (Object.keys(errores) as Array<keyof ContactForm>).forEach((nombre) => {
+    const campo = form.querySelector<HTMLElement>(`[name="${nombre}"]`);
+    const errorEl = form.querySelector<HTMLElement>(`#${nombre}-error`);
+    if (!campo || !errorEl) return;
+
+    campo.setAttribute("aria-invalid", "true");
+    campo.setAttribute("aria-describedby", errorEl.id);
+    errorEl.textContent = errores[nombre] ?? "";
+    errorEl.classList.add("is-visible");
+  });
+}
+
+function mostrarExitoFormulario(form: HTMLFormElement): void {
+  const exito = form.querySelector<HTMLElement>(".form-contacto__success");
+  if (!exito) return;
+
+  exito.textContent = "¡Mensaje enviado! Te responderemos pronto.";
+  exito.classList.add("is-visible");
+}
+
 function inicializarFormulario(): void {
-  const form = document.querySelector<HTMLFormElement>(".form-contacto");
-  if (!form) return;
+  document.querySelectorAll<HTMLFormElement>(".form-contacto").forEach((form) => {
+    form.addEventListener("submit", (event: SubmitEvent): void => {
+      event.preventDefault();
+      limpiarErroresFormulario(form);
 
-  form.addEventListener("submit", function (event: Event): void {
-    event.preventDefault();
+      const nombreInput = form.querySelector<HTMLInputElement>('[name="nombre"]');
+      const emailInput = form.querySelector<HTMLInputElement>('[name="email"]');
+      const mensajeInput = form.querySelector<HTMLTextAreaElement>('[name="mensaje"]');
+      if (!nombreInput || !emailInput || !mensajeInput) return;
 
-    const nombreInput = document.getElementById("nombre") as HTMLInputElement;
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const mensajeInput = document.getElementById("mensaje") as HTMLTextAreaElement;
+      const datos: ContactForm = {
+        nombre: nombreInput.value,
+        email: emailInput.value,
+        mensaje: mensajeInput.value,
+      };
 
-    const datos: ContactForm = {
-      nombre: nombreInput.value,
-      email: emailInput.value,
-      mensaje: mensajeInput.value,
-    };
+      const errores = validarFormulario(datos);
+      if (Object.keys(errores).length > 0) {
+        mostrarErroresFormulario(form, errores);
+        return;
+      }
 
-    const errores = validarFormulario(datos);
-    mostrarFeedback(errores);
+      const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      const txt = btn?.textContent ?? "";
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Enviando…";
+      }
 
-    if (errores.length === 0) {
-      form.reset();
-    }
+      setTimeout(() => {
+        mostrarExitoFormulario(form);
+        form.reset();
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = txt;
+        }
+      }, 1000);
+    });
   });
 }
 

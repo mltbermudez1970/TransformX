@@ -1,21 +1,7 @@
 "use strict";
-function esHTMLElement(el) {
-    return el !== null && el instanceof HTMLElement;
-}
-function mostrarFeedback(errores) {
-    const caja = document.querySelector(".form-feedback");
-    if (!esHTMLElement(caja))
-        return;
-    caja.classList.remove("error", "exito");
-    caja.classList.add(errores.length > 0 ? "error" : "exito");
-    caja.textContent =
-        errores.length > 0 ? errores.join(", ") : "¡Mensaje enviado!";
-}
 function resaltarNavActivo() {
     const rutaActual = window.location.pathname.split("/").pop() || "index.html";
-    document.querySelectorAll("nav a").forEach(function (link) {
-        if (!(link instanceof HTMLElement))
-            return;
+    document.querySelectorAll("nav a").forEach((link) => {
         const href = link.getAttribute("href") ?? "";
         const destino = href.split("#")[0] || "index.html";
         const coincide = destino === rutaActual ||
@@ -52,22 +38,29 @@ function initMobileMenu() {
     const menu = mobileMenu;
     const drawer = panel;
     const focusSel = 'a[href], button:not([disabled]), input:not([disabled])';
+    function setMenuState(isOpen) {
+        toggle.setAttribute("aria-expanded", String(isOpen));
+        toggle.setAttribute("aria-label", isOpen ? "Cerrar menú" : "Abrir menú");
+    }
     function openMenu() {
-        menu.classList.add("is-open");
-        menu.setAttribute("aria-hidden", "false");
-        toggle.setAttribute("aria-expanded", "true");
+        if (!menu.open)
+            menu.showModal();
+        setMenuState(true);
         document.body.style.overflow = "hidden";
         const first = drawer.querySelector(focusSel);
         first?.focus();
     }
     function closeMenu() {
-        menu.classList.remove("is-open");
-        menu.setAttribute("aria-hidden", "true");
-        toggle.setAttribute("aria-expanded", "false");
-        document.body.style.overflow = "";
+        if (menu.open)
+            menu.close();
     }
+    menu.addEventListener("close", () => {
+        setMenuState(false);
+        document.body.style.overflow = "";
+        toggle.focus();
+    });
     toggle.addEventListener("click", () => {
-        menu.classList.contains("is-open") ? closeMenu() : openMenu();
+        menu.open ? closeMenu() : openMenu();
     });
     mobileClose?.addEventListener("click", closeMenu);
     menu.addEventListener("click", (event) => {
@@ -75,12 +68,6 @@ function initMobileMenu() {
             closeMenu();
     });
     mobileLinks.forEach((link) => link.addEventListener("click", closeMenu));
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && menu.classList.contains("is-open")) {
-            closeMenu();
-            toggle.focus();
-        }
-    });
 }
 function initHeaderScroll() {
     const header = document.querySelector(".header");
