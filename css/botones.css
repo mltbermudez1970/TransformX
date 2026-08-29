@@ -1,9 +1,222 @@
-.c-btn { }
-.c-btn--primary { }
-.c-btn--secondary { }
-.c-btn--destructive { }
-.c-btn--icon { }
+/* Playground — botones de backoffice (.c-btn) */
 
-@media (max-width: 768px) { }
+#seccion-botones .playground-demo {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-@media (max-width: 480px) { }
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--c-btn-gap);
+  min-height: var(--size-touch-target);
+  padding: var(--c-btn-padding-y) var(--c-btn-padding-x);
+  font-family: var(--font-body);
+  font-size: var(--c-btn-font-size);
+  font-weight: var(--c-btn-font-weight);
+  line-height: var(--leading-snug);
+  border: var(--btn-border-width) solid transparent;
+  border-radius: var(--c-btn-radius);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transform: translateY(0);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-base),
+    filter var(--transition-fast);
+}
+
+.c-btn:focus {
+  outline: none;
+}
+
+.c-btn:focus-visible {
+  outline: var(--c-btn-focus-outline-width) solid var(--transformation-cyan);
+  outline-offset: var(--c-btn-focus-outline-offset);
+  box-shadow: var(--focus-ring-cyan);
+}
+
+.c-btn:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  transform: translateY(var(--c-btn-lift-y));
+}
+
+.c-btn:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  transform: translateY(var(--c-btn-press-y));
+  box-shadow: var(--c-btn-press-shadow);
+  transition-duration: 80ms;
+}
+
+.c-btn:disabled {
+  opacity: var(--c-btn-disabled-opacity);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Jerarquía: acción principal */
+.c-btn--primary {
+  background: var(--gradient-primary);
+  color: var(--c-btn-primary-text);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+.c-btn--primary:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  filter: brightness(1.05);
+  box-shadow: var(--c-btn-lift-shadow);
+}
+
+.c-btn--primary:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  filter: brightness(0.98);
+}
+
+/* Jerarquía: acción secundaria / cancelar */
+.c-btn--secondary {
+  background: var(--c-btn-secondary-bg);
+  color: var(--c-btn-secondary-text);
+  border-color: var(--c-btn-secondary-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.c-btn--secondary:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  background: var(--c-btn-secondary-bg-hover);
+  border-color: var(--transform-blue);
+  box-shadow: var(--c-btn-lift-shadow);
+}
+
+.c-btn--secondary:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  background: var(--surface-blue);
+}
+
+/* Jerarquía: acción destructiva */
+.c-btn--destructive {
+  background: var(--c-btn-destructive-bg);
+  color: var(--c-btn-destructive-text);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+.c-btn--destructive:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  background: var(--c-btn-destructive-bg-hover);
+  box-shadow: var(--c-btn-lift-shadow);
+}
+
+.c-btn--destructive:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  filter: brightness(0.95);
+}
+
+/* Affordance: control icónico cuadrado (44×44 mín.) */
+.c-btn--icon {
+  width: var(--size-touch-target);
+  min-width: var(--size-touch-target);
+  height: var(--size-touch-target);
+  padding: 0;
+  background: var(--c-btn-icon-bg);
+  color: var(--c-btn-icon-text);
+  border-color: var(--c-btn-icon-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.c-btn--icon:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  background: var(--c-btn-icon-bg-hover);
+  color: var(--transform-blue);
+  border-color: var(--transform-blue);
+  box-shadow: var(--c-btn-lift-shadow);
+}
+
+.c-btn--icon:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+  background: var(--surface-blue);
+}
+
+.c-btn--icon svg {
+  width: var(--size-icon-sm);
+  height: var(--size-icon-sm);
+  flex-shrink: 0;
+}
+
+/* Feedback: procesando acción */
+.c-btn--loading {
+  cursor: wait;
+}
+
+.c-btn--loading::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: c-btn-spin 0.65s linear infinite;
+}
+
+@keyframes c-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Feedback: acción completada */
+.c-btn--success {
+  cursor: default;
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.c-btn--success:not(.c-btn--primary) {
+  background: var(--c-btn-success-bg);
+  color: var(--c-btn-success-text);
+  border-color: transparent;
+}
+
+.c-btn--primary.c-btn--success {
+  background: var(--gradient-primary);
+  color: var(--c-btn-primary-text);
+  border-color: transparent;
+}
+
+.c-btn--success::before {
+  content: "✓";
+  font-size: var(--text-base);
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-btn:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success),
+  .c-btn:active:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
+    transform: none;
+  }
+
+  .c-btn--loading::before {
+    animation: none;
+    border-right-color: currentColor;
+    opacity: 0.65;
+  }
+}
+
+@media (max-width: 768px) {
+  .c-btn {
+    width: 100%;
+  }
+
+  .c-btn--icon {
+    width: var(--size-touch-target);
+  }
+
+  #seccion-botones .playground-demo {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .c-btn {
+    font-size: var(--text-base);
+    padding: var(--space-4) var(--space-6);
+  }
+}

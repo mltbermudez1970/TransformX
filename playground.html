@@ -115,9 +115,6 @@
       position: relative;
       display: inline-block;
     }
-    .c-menu-account[hidden] {
-      display: none;
-    }
     @media (max-width: 768px) {
       .playground-layout {
         grid-template-columns: 1fr;
@@ -202,20 +199,70 @@
         <h2 id="heading-botones">Botones</h2>
         <div class="playground-columns">
           <div class="playground-demo">
-            <button type="button" class="c-btn c-btn--primary">Guardar</button>
+            <button type="button" class="c-btn c-btn--primary" id="btn-guardar-demo">Guardar</button>
             <button type="button" class="c-btn c-btn--secondary">Cancelar</button>
-            <button type="button" class="c-btn c-btn--destructive">Eliminar</button>
-            <button type="button" class="c-btn c-btn--icon" aria-label="Más opciones">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
-            </button>
+            <button type="button" class="c-btn c-btn--destructive" id="btn-eliminar-demo" data-dialog-open="dialog-eliminar-botones">Eliminar</button>
+            <dialog
+              class="c-dialog c-dialog--destructive"
+              id="dialog-eliminar-botones"
+              aria-labelledby="dialog-eliminar-botones-title"
+              aria-describedby="dialog-eliminar-botones-desc"
+            >
+              <div class="c-dialog__icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              </div>
+              <h3 class="c-dialog-title" id="dialog-eliminar-botones-title">¿Eliminar este registro?</h3>
+              <p class="c-dialog-body" id="dialog-eliminar-botones-desc">
+                Estás a punto de eliminar <strong>Informe de ventas — Q3 2026</strong>. Los datos asociados dejarán de estar disponibles para tu equipo.
+              </p>
+              <p class="c-dialog-note">Esta acción es permanente y no se puede deshacer. Si solo quieres ocultarlo, considera archivarlo.</p>
+              <div class="c-dialog-actions">
+                <button type="button" class="c-btn c-btn--secondary" data-dialog-cancel>No, conservar</button>
+                <button type="button" class="c-btn c-btn--destructive" data-dialog-confirm>Sí, eliminar</button>
+              </div>
+            </dialog>
+            <div class="c-menu-wrapper">
+              <button
+                type="button"
+                class="c-btn c-btn--icon c-menu-account-toggle"
+                aria-label="Abrir menú de acciones"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="menu-botones-hamburger"
+                id="menu-trigger-botones"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <div class="c-menu-account c-menu-account--categorized" id="menu-botones-hamburger" role="menu" aria-labelledby="menu-trigger-botones" hidden>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-botones-cat-acciones">Acciones</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-botones-cat-acciones">
+                    <li role="none"><button type="button" role="menuitem">Duplicar registro</button></li>
+                    <li role="none"><button type="button" role="menuitem">Exportar PDF</button></li>
+                    <li role="none"><button type="button" role="menuitem">Imprimir</button></li>
+                  </ul>
+                </div>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-botones-cat-vista">Vista</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-botones-cat-vista">
+                    <li role="none"><button type="button" role="menuitem">Vista compacta</button></li>
+                    <li role="none"><button type="button" role="menuitem">Vista detallada</button></li>
+                    <li role="none"><button type="button" role="menuitem">Configurar columnas</button></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="playground-behavior">
             <h3>Teclado y foco</h3>
             <ul>
               <li><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> navegan entre botones en orden del DOM.</li>
               <li><kbd>Enter</kbd> o <kbd>Space</kbd> activan el botón enfocado (acción nativa de <code>&lt;button&gt;</code>).</li>
-              <li>El icon button no tiene texto visible; la acción se comunica con <code>aria-label="Más opciones"</code>.</li>
-              <li>El foco visible depende del CSS de <code>.c-btn</code> (a definir).</li>
+              <li>Hover eleva el botón (<code>translateY</code> + sombra); click lo hunde con sombra interna.</li>
+              <li>El foco visible usa <code>:focus-visible</code> en <code>.c-btn</code> (anillo cian + sombra).</li>
+              <li>«Guardar» transiciona a <strong>Guardando…</strong> (spinner) y luego a <strong>Guardado</strong> antes de volver al estado inicial.</li>
+              <li>«Eliminar» abre un modal de confirmación; el foco va a <strong>No, conservar</strong> para evitar eliminaciones accidentales.</li>
+              <li>El menú hamburguesa agrupa opciones en <strong>Acciones</strong> y <strong>Vista</strong>; hover aplica sombra en cada ítem.</li>
             </ul>
           </div>
         </div>
@@ -263,7 +310,8 @@
               <li><kbd>Tab</kbd> entra y sale de cada grupo; dentro del grupo, tabula entre inputs.</li>
               <li><kbd>Space</kbd> marca/desmarca el checkbox o radio enfocado.</li>
               <li>En radios del mismo <code>name</code>, las flechas ↑↓ (o ←→) mueven la selección sin salir del grupo (comportamiento nativo del SO/navegador).</li>
-              <li>El <code>&lt;legend&gt;</code> identifica cada fieldset para lectores de pantalla.</li>
+              <li>Hover resalta la fila con sombra; el control muestra borde azul al enfocarse.</li>
+              <li>Estado marcado: checkbox con check blanco; radio con punto central azul.</li>
             </ul>
           </div>
         </div>
@@ -274,15 +322,26 @@
         <h2 id="heading-dialogs">Dialogs</h2>
         <div class="playground-columns">
           <div class="playground-demo">
-            <button type="button" class="c-btn c-btn--destructive" id="dialog-open-trigger">
+            <button type="button" class="c-btn c-btn--destructive" id="dialog-open-trigger" data-dialog-open="dialog-eliminar-recurso">
               Eliminar recurso
             </button>
-            <dialog class="c-dialog" aria-labelledby="dialog-delete-title">
+            <dialog
+              class="c-dialog c-dialog--destructive"
+              id="dialog-eliminar-recurso"
+              aria-labelledby="dialog-delete-title"
+              aria-describedby="dialog-delete-desc"
+            >
+              <div class="c-dialog__icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              </div>
               <h3 class="c-dialog-title" id="dialog-delete-title">¿Eliminar este recurso?</h3>
-              <p>Esta acción no se puede deshacer. El recurso se eliminará permanentemente.</p>
+              <p class="c-dialog-body" id="dialog-delete-desc">
+                Se eliminará <strong>Plantilla de onboarding — Equipo comercial</strong> y todas sus referencias en proyectos activos.
+              </p>
+              <p class="c-dialog-note">Esta acción no se puede deshacer.</p>
               <div class="c-dialog-actions">
-                <button type="button" class="c-btn c-btn--destructive" data-dialog-confirm>Eliminar</button>
                 <button type="button" class="c-btn c-btn--secondary" data-dialog-cancel>Cancelar</button>
+                <button type="button" class="c-btn c-btn--destructive" data-dialog-confirm>Sí, eliminar recurso</button>
               </div>
             </dialog>
           </div>
@@ -293,8 +352,9 @@
               <li><kbd>Escape</kbd> cierra el diálogo (evento <code>cancel</code>).</li>
               <li>Mientras está abierto, el foco queda atrapado dentro del modal (comportamiento nativo de <code>&lt;dialog&gt;</code> modal).</li>
               <li><kbd>Tab</kbd> cicla entre los controles del diálogo sin salir al fondo.</li>
-              <li>Al cerrar (Escape, Cancelar o Eliminar), el foco vuelve al botón «Eliminar recurso».</li>
-              <li>No se usa <code>confirm()</code> nativo del navegador.</li>
+              <li>Cancelar va primero y recibe el foco inicial para reducir eliminaciones accidentales.</li>
+              <li>Máximo 3 toasts visibles a la vez (los más antiguos se eliminan del DOM).</li>
+              <li>El diálogo entra con animación suave de escala y el backdrop se atenúa progresivamente.</li>
             </ul>
           </div>
         </div>
@@ -304,7 +364,7 @@
       <section class="playground-section" id="seccion-menus" aria-labelledby="heading-menus">
         <h2 id="heading-menus">Menús</h2>
         <div class="playground-columns">
-          <div class="playground-demo">
+          <div class="playground-demo playground-demo--menus">
             <div class="c-menu-wrapper">
               <button
                 type="button"
@@ -314,11 +374,22 @@
                 aria-controls="menu-cuenta-texto"
                 id="menu-trigger-texto"
               >Cuenta ▾</button>
-              <ul class="c-menu-account" id="menu-cuenta-texto" role="menu" aria-labelledby="menu-trigger-texto" hidden>
-                <li role="none"><a href="#" role="menuitem">Perfil</a></li>
-                <li role="none"><a href="#" role="menuitem">Configuración</a></li>
-                <li role="none"><button type="button" role="menuitem">Cerrar sesión</button></li>
-              </ul>
+              <div class="c-menu-account c-menu-account--categorized" id="menu-cuenta-texto" role="menu" aria-labelledby="menu-trigger-texto" hidden>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-cat-cuenta">Cuenta</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-cat-cuenta">
+                    <li role="none"><a href="#" role="menuitem" data-menu-action="Perfil">Perfil</a></li>
+                    <li role="none"><a href="#" role="menuitem" data-menu-action="Configuración">Configuración</a></li>
+                    <li role="none"><a href="#" role="menuitem" data-menu-action="Notificaciones">Notificaciones</a></li>
+                  </ul>
+                </div>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-cat-sesion">Sesión</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-cat-sesion">
+                    <li role="none"><button type="button" role="menuitem" class="c-menu__item--danger" data-menu-action="Cerrar sesión">Cerrar sesión</button></li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="c-menu-wrapper">
               <button
@@ -332,11 +403,22 @@
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
               </button>
-              <ul class="c-menu-account" id="menu-cuenta-icono" role="menu" aria-labelledby="menu-trigger-icono" hidden>
-                <li role="none"><a href="#" role="menuitem">Perfil</a></li>
-                <li role="none"><a href="#" role="menuitem">Configuración</a></li>
-                <li role="none"><button type="button" role="menuitem">Cerrar sesión</button></li>
-              </ul>
+              <div class="c-menu-account c-menu-account--categorized" id="menu-cuenta-icono" role="menu" aria-labelledby="menu-trigger-icono" hidden>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-cat-acciones">Acciones</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-cat-acciones">
+                    <li role="none"><button type="button" role="menuitem" data-menu-action="Duplicar">Duplicar</button></li>
+                    <li role="none"><button type="button" role="menuitem" data-menu-action="Exportar">Exportar</button></li>
+                  </ul>
+                </div>
+                <div class="c-menu__group">
+                  <p class="c-menu__category" id="menu-cat-ayuda">Ayuda</p>
+                  <ul class="c-menu__list" role="group" aria-labelledby="menu-cat-ayuda">
+                    <li role="none"><a href="#" role="menuitem" data-menu-action="Documentación">Documentación</a></li>
+                    <li role="none"><a href="#" role="menuitem" data-menu-action="Soporte">Soporte</a></li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
           <div class="playground-behavior">
@@ -347,7 +429,9 @@
               <li><kbd>ArrowDown</kbd> / <kbd>ArrowUp</kbd> navegan entre ítems con el menú abierto.</li>
               <li><kbd>Escape</kbd> cierra el menú y devuelve el foco al trigger.</li>
               <li>Clic fuera del wrapper cierra el menú sin mover el foco automáticamente.</li>
-              <li>Ambos triggers (texto e icon button) comparten las clases <code>c-btn</code> + <code>c-menu-account-toggle</code>.</li>
+              <li>Las opciones están agrupadas por categoría; hover aplica sombra en cada ítem.</li>
+              <li>«Cerrar sesión» usa estilo destructivo (<code>.c-menu__item--danger</code>).</li>
+              <li>El trigger abierto muestra estado activo con borde azul y sombra.</li>
             </ul>
           </div>
         </div>
@@ -358,12 +442,30 @@
         <h2 id="heading-toasts">Toasts</h2>
         <div class="playground-columns">
           <div class="playground-demo">
-            <div class="c-toast-container" aria-live="polite" aria-atomic="false">
+            <div class="c-toast-demo-actions">
+              <button type="button" class="c-btn c-btn--primary" data-toast-trigger="success">Mostrar éxito</button>
+              <button type="button" class="c-btn c-btn--secondary" data-toast-trigger="error">Mostrar error</button>
+            </div>
+            <div class="c-toast-container c-toast-container--demo" aria-live="polite" aria-atomic="false">
               <div class="c-toast c-toast--success" role="status">
-                <p>Registro guardado correctamente.</p>
+                <span class="c-toast__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                </span>
+                <div class="c-toast__body">
+                  <p class="c-toast__title">Operación exitosa</p>
+                  <p>Registro guardado correctamente.</p>
+                </div>
+                <button type="button" class="c-toast-close" aria-label="Cerrar notificación">×</button>
               </div>
               <div class="c-toast c-toast--error" role="alert">
-                <p>Error al procesar la solicitud.</p>
+                <span class="c-toast__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+                </span>
+                <div class="c-toast__body">
+                  <p class="c-toast__title">Error al procesar</p>
+                  <p>No se pudo completar la solicitud. Intenta de nuevo.</p>
+                </div>
+                <button type="button" class="c-toast-close" aria-label="Cerrar notificación">×</button>
               </div>
             </div>
           </div>
@@ -374,7 +476,8 @@
               <li>El contenedor usa <code>aria-live="polite"</code> para anunciarlos sin interrumpir al usuario.</li>
               <li>Éxito: <code>role="status"</code>; error: <code>role="alert"</code>.</li>
               <li>Desaparecen solos a los 5 s; no bloquean la interacción con el resto de la página.</li>
-              <li>Máximo 3 toasts visibles a la vez (los más antiguos se eliminan del DOM).</li>
+              <li>Los botones de demo disparan toasts flotantes en la esquina inferior derecha.</li>
+              <li>Cada toast incluye ícono, título, mensaje y botón cerrar con hover.</li>
             </ul>
           </div>
         </div>
@@ -382,6 +485,8 @@
 
     </main>
   </div>
+
+  <div class="c-toast-container c-toast-container--viewport" id="playground-toasts" aria-live="polite" aria-atomic="false"></div>
 
   <script type="module" src="js/playground.js"></script>
 </body>

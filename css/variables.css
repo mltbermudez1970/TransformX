@@ -176,6 +176,62 @@
   /* Buttons */
   --btn-border-width: 2px;
 
+  /* Playground buttons (.c-btn) */
+  --c-btn-font-size: var(--text-sm);
+  --c-btn-font-weight: var(--font-weight-semibold);
+  --c-btn-padding-y: var(--space-3);
+  --c-btn-padding-x: var(--space-6);
+  --c-btn-gap: var(--space-2);
+  --c-btn-radius: var(--radius-sm);
+  --c-btn-primary-text: var(--white);
+  --c-btn-secondary-bg: var(--white);
+  --c-btn-secondary-text: var(--transform-blue);
+  --c-btn-secondary-border: var(--border);
+  --c-btn-secondary-bg-hover: var(--surface-blue);
+  --c-btn-destructive-bg: var(--error);
+  --c-btn-destructive-bg-hover: #B42318;
+  --c-btn-destructive-text: var(--white);
+  --c-btn-icon-bg: var(--white);
+  --c-btn-icon-text: var(--text-secondary);
+  --c-btn-icon-bg-hover: var(--surface-secondary);
+  --c-btn-icon-border: var(--border);
+  --c-btn-disabled-opacity: 0.55;
+  --c-btn-focus-outline-width: 2px;
+  --c-btn-focus-outline-offset: 2px;
+  --c-btn-lift-y: -2px;
+  --c-btn-press-y: 1px;
+  --c-btn-lift-shadow: var(--shadow-md);
+  --c-btn-press-shadow: inset 0 2px 6px rgba(7, 27, 58, 0.18);
+  --c-btn-success-bg: var(--semantic-success);
+  --c-btn-success-text: var(--white);
+
+  /* Dialogs (.c-dialog) */
+  --c-dialog-max-width: 420px;
+  --c-dialog-radius: var(--radius-md);
+  --c-dialog-bg: var(--white);
+  --c-dialog-border: var(--border);
+
+  /* Menus (.c-menu-*) */
+  --c-menu-min-width: 220px;
+  --c-menu-panel-bg: var(--white);
+  --c-menu-panel-border: var(--border);
+  --c-menu-panel-radius: var(--radius-sm);
+  --c-menu-panel-shadow: var(--shadow-lg);
+  --c-menu-item-shadow-hover: var(--shadow-md);
+
+  /* Checkboxes / radios (.c-check, .c-radio) */
+  --c-control-size: 20px;
+  --c-control-border: var(--border);
+  --c-control-bg: var(--white);
+  --c-control-checked-bg: var(--transform-blue);
+  --c-control-checked-border: var(--transform-blue);
+  --c-control-focus-ring: var(--focus-ring-cyan);
+  --c-fieldset-bg: var(--white);
+  --c-fieldset-border: var(--border);
+
+  /* Toasts (.c-toast) */
+  --c-toast-icon-size: var(--size-icon-sm);
+
   /* Page & feedback surfaces */
   --bg-page: var(--white);
   --surface-problem: #FEF3F2;
@@ -183,6 +239,11 @@
   --surface-solution-border: rgba(37, 99, 235, 0.12);
   --feedback-error: #b00020;
   --feedback-success: #0a7a3f;
+
+  --semantic-error: var(--error);
+  --semantic-success: var(--success);
+  --semantic-warning: var(--warning);
+  --semantic-info: var(--transform-blue);
 }
 
 /* Modo oscuro — requiere data-theme="dark" (aplicado por theme.js o script inline) */
@@ -214,6 +275,21 @@
   --feedback-error: #ff8a8a;
   --feedback-success: #34d399;
   --success: #12B76A;
+  --c-btn-secondary-bg: var(--navy-soft);
+  --c-btn-secondary-text: #93C5FD;
+  --c-btn-secondary-border: var(--border);
+  --c-btn-secondary-bg-hover: rgba(37, 99, 235, 0.22);
+  --c-btn-destructive-bg-hover: #F97066;
+  --c-btn-icon-bg: var(--navy-soft);
+  --c-btn-icon-text: var(--text-secondary);
+  --c-btn-icon-bg-hover: rgba(255, 255, 255, 0.08);
+  --c-btn-icon-border: var(--border);
+  --c-dialog-bg: var(--navy);
+  --c-dialog-border: var(--border);
+  --c-menu-panel-bg: var(--navy);
+  --c-menu-panel-border: var(--border);
+  --c-fieldset-bg: var(--navy);
+  --c-control-bg: var(--navy-soft);
 }
 
 :root[data-theme="light"] {

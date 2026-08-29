@@ -1,8 +1,151 @@
-.c-check-group { }
-.c-check { }
-.c-radio-group { }
-.c-radio { }
+/* Playground — checkboxes y radios (.c-check, .c-radio) */
 
-@media (max-width: 768px) { }
+#seccion-checkboxes-radios .playground-demo {
+  gap: var(--space-5);
+}
 
-@media (max-width: 480px) { }
+.c-check-group,
+.c-radio-group {
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--c-fieldset-border);
+  border-radius: var(--radius-md);
+  background: var(--c-fieldset-bg);
+  box-shadow: var(--shadow-xs);
+}
+
+.c-check-group legend,
+.c-radio-group legend {
+  padding: 0 var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.c-check,
+.c-radio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.c-check:hover,
+.c-radio:hover {
+  background: var(--surface-primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.c-check:has(input:focus-visible),
+.c-radio:has(input:focus-visible) {
+  background: var(--surface-blue);
+  border-color: var(--border-blue-15);
+  box-shadow: var(--focus-ring-cyan);
+  outline: none;
+}
+
+.c-check input,
+.c-radio input {
+  appearance: none;
+  width: var(--c-control-size);
+  height: var(--c-control-size);
+  margin: 0;
+  flex-shrink: 0;
+  border: 2px solid var(--c-control-border);
+  background: var(--c-control-bg);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.c-check input {
+  border-radius: var(--radius-sm);
+}
+
+.c-radio input {
+  border-radius: var(--radius-pill);
+}
+
+.c-check input:hover,
+.c-radio input:hover {
+  border-color: var(--transform-blue);
+  box-shadow: var(--shadow-xs);
+}
+
+.c-check input:focus-visible,
+.c-radio input:focus-visible {
+  outline: none;
+  border-color: var(--transform-blue);
+  box-shadow: var(--c-control-focus-ring);
+}
+
+.c-check input:active,
+.c-radio input:active {
+  transform: scale(0.94);
+}
+
+.c-check input:checked {
+  border-color: var(--c-control-checked-border);
+  background-color: var(--c-control-checked-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.5'%3E%3Cpath d='M3 8l3 3 7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px;
+}
+
+.c-radio input:checked {
+  border-color: var(--c-control-checked-border);
+  background-color: var(--c-control-bg);
+  box-shadow: inset 0 0 0 5px var(--c-control-checked-bg);
+}
+
+.c-check input:disabled,
+.c-radio input:disabled {
+  opacity: var(--c-btn-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.c-check:has(input:disabled),
+.c-radio:has(input:disabled) {
+  opacity: var(--c-btn-disabled-opacity);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-check input:active,
+  .c-radio input:active {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .c-check-group,
+  .c-radio-group {
+    padding: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .c-check,
+  .c-radio {
+    padding: var(--space-4);
+  }
+}

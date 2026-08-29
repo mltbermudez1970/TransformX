@@ -1,3 +1,11 @@
+@import url("variables.css");
+@import url("base.css");
+@import url("layout.css");
+@import url("sections.css");
+@import url("pricing.css");
+@import url("utilities.css");
+
+@import url("components.css");
 @import url("alerts.css");
 @import url("botones.css");
 @import url("checkboxes-radios.css");
