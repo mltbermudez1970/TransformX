@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){try{var t=localStorage.getItem('transformx-theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:(d?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}}());
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Prototipo de acceso a TransformX. La autenticación productiva aún no está disponible en esta landing de validación.">
+  <title>Acceso — TransformX (prototipo)</title>
+  <link rel="canonical" href="https://transformx.app/acceso.html">
+  <link rel="icon" href="icon/TransformX.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme.js" defer></script>
+  <script src="js/animaciones.js" defer></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="logo-text" aria-label="TransformX — Inicio">
+        <span class="logo-text__mark" aria-hidden="true">TX</span>
+        Transform<span class="logo-text__suffix">X</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <ul class="nav__list">
+          <li><a href="index.html#plataforma" class="nav__link">Plataforma</a></li>
+          <li><a href="bizcaps.html" class="nav__link">BizCaps</a></li>
+          <li><a href="precios.html" class="nav__link">Precios</a></li>
+          <li><a href="contacto.html" class="nav__link">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="nav__actions">
+        <a href="index.html#capio" class="btn btn--primary btn--sm">Hablar con Capio</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="section" aria-labelledby="acceso-title">
+      <div class="container">
+        <header class="section__header" data-animate>
+          <span class="section__eyebrow">Authentication Boundary</span>
+          <h1 id="acceso-title" class="section__title">Iniciar sesión</h1>
+          <p class="section__subtitle">Prototipo UX estático — no hay autenticación productiva en esta landing de validación.</p>
+        </header>
+
+        <div class="prototype-notice" role="alert" data-animate>
+          TransformX aún no ofrece inicio de sesión real desde el sitio público. Este formulario es ilustrativo: no envía credenciales ni crea sesiones.
+        </div>
+
+        <form class="access-form" data-animate aria-labelledby="acceso-title" onsubmit="event.preventDefault();">
+          <label for="acceso-email">Correo corporativo</label>
+          <input type="email" id="acceso-email" name="email" class="form-input" placeholder="nombre@tuempresa.com" autocomplete="username" disabled aria-describedby="acceso-help">
+
+          <label for="acceso-password">Contraseña</label>
+          <input type="password" id="acceso-password" name="password" class="form-input" placeholder="••••••••" autocomplete="current-password" disabled>
+
+          <button type="submit" class="btn btn--primary" disabled>Iniciar sesión</button>
+          <p id="acceso-help" class="section__disclaimer">¿Necesitas acceso anticipado? <a href="contacto.html">Contacta al equipo</a> o explora BizCaps con <a href="index.html#capio">Capio</a>.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid footer__grid--compact">
+        <div class="footer__brand">
+          <a href="index.html" class="logo-text"><span class="logo-text__mark" aria-hidden="true">TX</span>Transform<span class="logo-text__suffix">X</span></a>
+          <p>Prototipo público de validación</p>
+        </div>
+        <nav aria-labelledby="footer-nav-links">
+          <h3 id="footer-nav-links" class="footer__column-title">Enlaces</h3>
+          <ul class="footer__links">
+            <li><a href="index.html" class="footer__link">Inicio</a></li>
+            <li><a href="privacidad.html" class="footer__link">Privacidad</a></li>
+            <li><a href="terminos.html" class="footer__link">Términos</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer__bottom"><p>&copy; 2026 TransformX</p></div>
+    </div>
+  </footer>
+</body>
+</html>

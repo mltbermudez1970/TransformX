@@ -634,6 +634,11 @@
   box-shadow: var(--focus-ring-cyan);
 }
 
+.capio-chat__message--action {
+  background: transparent;
+  padding: var(--space-2) 0;
+}
+
 .capio-chat__disclaimer {
   padding: var(--space-3) var(--space-6);
   font-size: var(--text-xs);

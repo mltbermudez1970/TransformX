@@ -1,100 +1,71 @@
 # TransformX
 
-Landing page de **TransformX**, plataforma SaaS de adopción de capacidades de negocio (Business Capabilities as a Service — BCaaS) impulsada por IA. Producto de Transforming Experiences Inc.
+Landing pública de **TransformX** — **Intelligent Business Capability Adoption Platform** (BCaaS). Producto de Transforming Experiences Inc.
 
 - **Repositorio:** https://github.com/mltbermudez1970/TransformX
 - **Producción:** https://transformx.app (Cloudflare Pages, deploy automático desde `main`)
 
 ## Descripción
 
-Sitio estático (HTML/CSS/JS) con capa TypeScript compilada a JavaScript. Es una **landing de validación**: no tiene backend ni autenticación real; los formularios (demo, newsletter, contacto) están simulados en el cliente. El chat de Capio usa respuestas hardcodeadas por palabra clave.
+Sitio estático (HTML/CSS/JS) con TypeScript compilado. Es un **prototipo público de validación**: sin backend, auth productiva ni billing real. Capio público es un asesor determinístico de discovery/pre-adopción (`ts/capio.ts`). El formulario de contacto en `contacto.html` está simulado en cliente.
+
+### Modelo (baseline)
+
+- **BizCaps controladas:** LAB-001 Lead Intake & Qualification, LAB-002 Quote & Proposal Management, LAB-003 Order Intake & Validation
+- **Comercial:** Platform Subscription + BizCap Adoption + Cap Credit Usage + Optional Professional Services
+- **CTA principal:** Hablar con Capio · **Login:** `acceso.html` (prototipo, noindex)
 
 ### Páginas
 
 | Archivo | Propósito |
 |---------|-----------|
-| `index.html` | Landing principal (hero, BizCaps, Capio, demo, CTA) |
-| `precios.html` | Planes y FAQ de pricing |
-| `empresa.html` | Sobre la empresa |
-| `contacto.html` | Formulario de contacto dedicado |
+| `index.html` | Landing: hero, BizCaps, Capio discovery, outcomes, CTA |
+| `bizcaps.html` | Catálogo controlado de BizCaps |
+| `bizcap-lead-intake-qualification.html` | Pre-adopción LAB-001 |
+| `precios.html` | Modelo comercial indicativo (sin precios oficiales) |
+| `empresa.html` | Propósito, outcome-first, IA responsable |
+| `contacto.html` | Formulario comercial simulado |
+| `privacidad.html`, `terminos.html` | Legales provisionales |
+| `acceso.html`, `adopcion.html` | Prototipos UX (noindex, no en sitemap) |
+| `playground.html` | Laboratorio de componentes UI (interno/diseño) |
 
 ## Requisitos
 
-- [Node.js](https://nodejs.org/) y npm (solo para compilar TypeScript)
+- [Node.js](https://nodejs.org/) y npm
 
-## Instalación
+## Instalación y uso
 
 ```bash
 git clone https://github.com/mltbermudez1970/TransformX.git
 cd TransformX
 npm install
+npm run build    # compila ts/ → js/
+npx serve .      # previsualizar
 ```
 
-## Uso
+**No editar `js/*.js` a mano.**
 
-### Compilar TypeScript
-
-Los archivos fuente en `ts/` se compilan a `js/` (cargados con `<script defer>` en las páginas HTML):
-
-```bash
-npm run build
-```
-
-**No editar `js/*.js` a mano** — se sobreescriben al compilar.
-
-### Previsualizar el sitio
-
-```bash
-npx serve .
-```
-
-## Estructura del proyecto
+## Estructura
 
 ```
-├── index.html, precios.html, empresa.html, contacto.html
-├── css/
-│   ├── variables.css      # Design tokens (:root), breakpoints, dark mode
-│   ├── base.css           # Reset, tipografía, .container
-│   ├── components.css     # Botones, forms, cards, toast
-│   ├── layout.css         # Header, menú móvil (<dialog>), footer
-│   ├── sections.css       # Secciones del home
-│   ├── pricing.css        # Estilos de precios.html
-│   └── utilities.css      # Scroll-reveal, utilidades
-├── ts/                    # Fuente TypeScript (editar aquí)
-│   ├── animaciones.ts     # Nav, fade-in, menú, header scroll
-│   ├── theme.ts           # Toggle modo claro/oscuro
-│   ├── contacto.ts        # Formulario .form-contacto
-│   ├── validators.ts      # esEmailValido, esEmailCorporativo
-│   ├── carousel.ts        # Carrusel logos (solo index)
-│   ├── capio.ts           # Chat Capio (solo index)
-│   ├── forms-demo.ts      # Demo + newsletter (solo index)
-│   └── global.d.ts        # Declaraciones globales compartidas
-├── js/                    # Salida compilada (generada, no editar)
-├── sitemap.xml, robots.txt
-├── CLAUDE.md              # Guía técnica para agentes/desarrolladores
-├── PLAN.md                # Roadmap de contenido pendiente
-├── AGENT-WORKFLOW.md      # Uso de herramientas agénticas (Punto 5)
-└── SUSTENTACION.md        # Guía para sustentación oral (Punto 6)
+├── index.html, bizcaps.html, bizcap-*.html, precios.html, empresa.html, contacto.html
+├── acceso.html, adopcion.html, privacidad.html, terminos.html, playground.html
+├── css/styles.css         # entry CSS (@import de módulos)
+├── ts/capio.ts            # Capio discovery (LAB-001/002/003)
+├── ts/contacto.ts         # Formulario .form-contacto
+├── ts/animaciones.ts, theme.ts, carousel.ts, validators.ts, forms-demo.ts
+├── js/                    # Salida compilada
+├── PLAN.md                # Baseline + decisiones deferred
+└── CLAUDE.md              # Convenciones para agentes
 ```
-
-## TypeScript
-
-- `strict: true` y `noUncheckedIndexedAccess: true` en `tsconfig.json`
-- Scripts globales (sin bundler ni módulos ES)
-- `index.html` carga scripts adicionales: `carousel.js`, `capio.js`, `forms-demo.js`
-- Todas las páginas cargan: `theme.js`, `validators.js`, `animaciones.js`, `contacto.js`
-
-## Despliegue
-
-Push a la rama `main` en GitHub dispara deploy automático en **Cloudflare Pages**.
-
-Dominio canónico: **transformx.app** (alineado en HTML, `sitemap.xml` y `robots.txt`).
 
 ## Documentación
 
 | Archivo | Contenido |
 |---------|-----------|
-| [CLAUDE.md](CLAUDE.md) | Convenciones, stack, reglas del repo |
-| [PLAN.md](PLAN.md) | Páginas y contenido pendiente |
-| [AGENT-WORKFLOW.md](AGENT-WORKFLOW.md) | Flujo agéntico: planificar vs. programar |
-| [SUSTENTACION.md](SUSTENTACION.md) | Guión y Q&A para presentación al panel |
+| [CLAUDE.md](CLAUDE.md) | Convenciones técnicas y reglas de negocio congeladas |
+| [PLAN.md](PLAN.md) | APPROVED / PENDING / ILLUSTRATIVE + tabla DC-01… |
+
+## Despliegue
+
+Push a `main` → Cloudflare Pages. Dominio canónico: **transformx.app**.

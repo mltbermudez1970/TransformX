@@ -6,46 +6,29 @@
     (function(){try{var t=localStorage.getItem('transformx-theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:(d?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}}());
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Conoce a Transforming Experiences Inc., la empresa detrás de TransformX. Personas primero, IA responsable y transformación organizacional con propósito.">
+  <meta name="description" content="Catálogo controlado de BizCaps de TransformX: Lead Intake, Quote & Proposal y Order Intake. Capacidades adoptables con outcomes medibles.">
   <meta name="author" content="Transforming Experiences Inc.">
-  <title>Empresa — TransformX | Transforming Experiences Inc.</title>
-  <link rel="canonical" href="https://transformx.app/empresa.html">
+  <title>BizCaps — TransformX | Catálogo de capacidades adoptables</title>
+  <link rel="canonical" href="https://transformx.app/bizcaps.html">
   <meta property="og:site_name" content="TransformX">
-  <meta property="og:title" content="Empresa — TransformX | Transforming Experiences Inc.">
-  <meta property="og:description" content="Conoce a Transforming Experiences Inc., la empresa detrás de TransformX. Personas primero, IA responsable y transformación organizacional con propósito.">
+  <meta property="og:title" content="BizCaps — TransformX">
+  <meta property="og:description" content="Catálogo controlado de BizCaps adoptables con Capio, tu TransformX Business Advisor.">
   <meta property="og:image" content="https://transformx.app/icon/TransformX.png">
-  <meta property="og:image:width" content="1254">
-  <meta property="og:image:height" content="1254">
-  <meta property="og:image:alt" content="TransformX - Adopta capacidades de negocio inteligentes con IA | Business Capabilities as a Service (BCaaS)">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:url" content="https://transformx.app/icon/TransformX.png">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://transformx.app/empresa.html">
+  <meta property="og:url" content="https://transformx.app/bizcaps.html">
   <meta property="og:locale" content="es_US">
-  <meta property="og:locale:alternate" content="es_ES">
-  <meta property="og:locale:alternate" content="es_MX">
-  <meta property="og:locale:alternate" content="en_US">
-  <meta property="og:locale:alternate" content="en_MX">
-  <meta property="og:locale:alternate" content="en_ES">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Empresa — TransformX | Transforming Experiences Inc.">
-  <meta name="twitter:description" content="Conoce a Transforming Experiences Inc., la empresa detrás de TransformX. Personas primero, IA responsable y transformación organizacional con propósito.">
-  <meta name="twitter:image" content="https://transformx.app/icon/TransformX.png">
   <link rel="icon" href="icon/TransformX.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/theme.js" defer></script>
-  <script src="js/validators.js" defer></script>
   <script src="js/animaciones.js" defer></script>
-  <script src="js/contacto.js" defer></script>
+  <script src="js/capio.js" defer></script>
 </head>
 <body>
-
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="container header__inner">
       <a href="index.html" class="logo-text" aria-label="TransformX — Inicio">
@@ -72,7 +55,7 @@
           <span class="nav__action-label nav__action-label--long">Iniciar sesión</span>
           <span class="nav__action-label nav__action-label--short">Entrar</span>
         </a>
-        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
+        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <span class="nav__action-label nav__action-label--long">Hablar con Capio</span>
           <span class="nav__action-label nav__action-label--short">Capio</span>
@@ -84,7 +67,6 @@
     </div>
   </header>
 
-  <!-- Menú móvil -->
   <dialog class="mobile-menu" id="mobile-menu" aria-label="Menú de navegación">
     <div class="mobile-menu__panel">
       <div class="mobile-menu__header">
@@ -111,36 +93,68 @@
   </dialog>
 
   <main id="main-content">
-    <section class="section" id="empresa" aria-labelledby="empresa-title">
+    <section class="section" aria-labelledby="bizcaps-catalog-title">
       <div class="container">
         <header class="section__header" data-animate>
-          <span class="section__eyebrow">Nuestra historia</span>
-          <h1 id="empresa-title" class="section__title">Transforming Experiences Inc.</h1>
-          <p class="section__subtitle">Personas primero, IA responsable y transformación organizacional con propósito.</p>
+          <span class="section__eyebrow">Catálogo controlado</span>
+          <h1 id="bizcaps-catalog-title" class="section__title">Biblioteca de BizCaps</h1>
+          <p class="section__subtitle">Cada BizCap resuelve un problema de negocio concreto y entrega outcomes medibles. La adopción es separada del consumo gobernado vía Cap Credits.</p>
         </header>
-        <p class="section__subtitle" data-animate>
-          Somos la empresa detrás de TransformX, la Intelligent Business Capability Adoption Platform (BCaaS)
-          que ayuda a las organizaciones a descubrir, adoptar y mejorar capacidades empresariales con impacto medible.
-        </p>
 
-        <div class="problem-solution__grid" data-animate>
-          <article class="card">
-            <h2 class="card__title">Business Outcome First</h2>
-            <p class="card__text">Partimos del problema de negocio y la brecha de capacidad — no de la tecnología por sí sola. Cada BizCap conecta problema, adopción y outcomes.</p>
+        <div class="bizcaps__grid">
+          <article class="card card--interactive bizcap-card" id="lab-001" data-animate>
+            <p class="bizcap-card__code">LAB-001</p>
+            <span class="bizcap-status bizcap-status--available">Disponible</span>
+            <h2 class="card__title">Lead Intake &amp; Qualification</h2>
+            <p class="card__text"><strong>Problema:</strong> Leads dispersos, respuesta tardía y calificación inconsistente.</p>
+            <p class="card__text"><strong>Outcome:</strong> Pipeline temprano más visible y oportunidades priorizadas.</p>
+            <a href="bizcap-lead-intake-qualification.html" class="bizcap-card__link">Ver detalles →</a>
           </article>
-          <article class="card">
-            <h2 class="card__title">People-centered</h2>
-            <p class="card__text">Capio guía, pero las personas mantienen autoridad. Configuration over Customization: adaptación sobre flujos canónicos, no desarrollo a medida por defecto.</p>
+
+          <article class="card card--interactive bizcap-card" id="lab-002" data-animate>
+            <p class="bizcap-card__code">LAB-002</p>
+            <span class="bizcap-status bizcap-status--available">Disponible</span>
+            <h2 class="card__title">Quote &amp; Proposal Management</h2>
+            <p class="card__text"><strong>Problema:</strong> Cotizaciones lentas, dependencia de personas clave y versiones inconsistentes.</p>
+            <p class="card__text"><strong>Outcome:</strong> Propuestas más rápidas, consistentes y trazables.</p>
+            <a href="index.html#capio" class="bizcap-card__link">Preguntar a Capio →</a>
           </article>
-          <article class="card">
-            <h2 class="card__title">Responsible AI</h2>
-            <p class="card__text">IA acotada (bounded AI), explicabilidad, provenance y supervisión humana en decisiones críticas — en descubrimiento público y en operación autenticada.</p>
+
+          <article class="card card--interactive bizcap-card" id="lab-003" data-animate>
+            <p class="bizcap-card__code">LAB-003</p>
+            <span class="bizcap-status bizcap-status--available">Disponible</span>
+            <h2 class="card__title">Order Intake &amp; Validation</h2>
+            <p class="card__text"><strong>Problema:</strong> Pedidos con datos incompletos o errores que generan reprocesos.</p>
+            <p class="card__text"><strong>Outcome:</strong> Entrada de pedidos predecible y handoff confiable a operaciones.</p>
+            <a href="index.html#capio" class="bizcap-card__link">Preguntar a Capio →</a>
+          </article>
+
+          <article class="card bizcap-card bizcap-card--planned" data-animate>
+            <p class="bizcap-card__code">LAB-004</p>
+            <span class="bizcap-status bizcap-status--planned">Planned</span>
+            <h2 class="card__title">Inventory Availability</h2>
+            <p class="card__text"><strong>Problema:</strong> Visibilidad limitada de disponibilidad real de inventario.</p>
+            <p class="card__text"><strong>Outcome:</strong> Promesas comerciales alineadas con stock y supply.</p>
+          </article>
+
+          <article class="card bizcap-card bizcap-card--planned" data-animate>
+            <p class="bizcap-card__code">LAB-005</p>
+            <span class="bizcap-status bizcap-status--planned">Planned</span>
+            <h2 class="card__title">Production Order Visibility</h2>
+            <p class="card__text"><strong>Problema:</strong> Poca visibilidad del estado de órdenes de producción.</p>
+            <p class="card__text"><strong>Outcome:</strong> Mejor coordinación entre planificación y ejecución.</p>
+          </article>
+
+          <article class="card bizcap-card bizcap-card--planned" data-animate>
+            <p class="bizcap-card__code">LAB-006</p>
+            <span class="bizcap-status bizcap-status--planned">Planned</span>
+            <h2 class="card__title">Customer Order Fulfillment</h2>
+            <p class="card__text"><strong>Problema:</strong> Seguimiento fragmentado del cumplimiento de pedidos al cliente.</p>
+            <p class="card__text"><strong>Outcome:</strong> Experiencia post-venta más transparente y predecible.</p>
           </article>
         </div>
 
-        <p class="section__subtitle" data-animate style="margin-top: var(--space-8);">
-          Este sitio público es un prototipo de validación. Para conversaciones comerciales o early access, visita <a href="contacto.html">contacto</a>.
-        </p>
+        <p class="section__disclaimer">Las BizCaps marcadas como Planned están en roadmap y no están disponibles para adopción en este prototipo público.</p>
       </div>
     </section>
   </main>
@@ -169,6 +183,5 @@
       <div class="footer__bottom"><p>&copy; 2026 TransformX · Prototipo público de validación.</p></div>
     </div>
   </footer>
-
 </body>
 </html>

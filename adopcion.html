@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){try{var t=localStorage.getItem('transformx-theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:(d?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}}());
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Prototipo del flujo Start Adoption de TransformX. Requiere organización autenticada e instancia gobernada de BizCap.">
+  <title>Comenzar adopción — TransformX (prototipo)</title>
+  <link rel="canonical" href="https://transformx.app/adopcion.html">
+  <link rel="icon" href="icon/TransformX.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme.js" defer></script>
+  <script src="js/animaciones.js" defer></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html" class="logo-text" aria-label="TransformX — Inicio">
+        <span class="logo-text__mark" aria-hidden="true">TX</span>
+        Transform<span class="logo-text__suffix">X</span>
+      </a>
+      <nav class="nav" aria-label="Navegación principal">
+        <ul class="nav__list">
+          <li><a href="bizcaps.html" class="nav__link">BizCaps</a></li>
+          <li><a href="precios.html" class="nav__link">Precios</a></li>
+          <li><a href="contacto.html" class="nav__link">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="nav__actions">
+        <a href="acceso.html" class="btn btn--ghost btn--sm">Iniciar sesión</a>
+        <a href="index.html#capio" class="btn btn--primary btn--sm">Hablar con Capio</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="section" aria-labelledby="adopcion-title">
+      <div class="container">
+        <header class="section__header" data-animate>
+          <span class="section__eyebrow">Start Adoption</span>
+          <h1 id="adopcion-title" class="section__title">Comenzar adopción de BizCap</h1>
+          <p class="section__subtitle">La adopción formal ocurre tras el límite de autenticación, dentro del Workspace de TransformX.</p>
+        </header>
+
+        <div class="prototype-notice" role="alert" data-animate>
+          Este paso es un prototipo estático. No crea tenants, instancias de BizCap ni configuraciones reales.
+        </div>
+
+        <div class="bizcap-detail__section" data-animate>
+          <h2>Qué implica la adopción</h2>
+          <ol class="bizcap-detail__list">
+            <li>Organización autenticada y gobernanza de acceso</li>
+            <li>Selección y contratación de BizCap Adoption (separado de Platform Subscription)</li>
+            <li>Creación de BizCap Instance gobernada</li>
+            <li>Configuración sobre flujos canónicos (Configuration over Customization)</li>
+            <li>Integraciones y readiness según alcance acordado</li>
+            <li>Activación y medición de outcomes con Cap Credits en uso</li>
+          </ol>
+        </div>
+
+        <div class="btn-group btn-group--spaced" data-animate>
+          <a href="contacto.html" class="btn btn--primary">Solicitar early access</a>
+          <a href="bizcaps.html" class="btn btn--secondary">Volver al catálogo</a>
+          <a href="index.html#capio" class="btn btn--ghost">Hablar con Capio</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid footer__grid--compact">
+        <div class="footer__brand">
+          <a href="index.html" class="logo-text"><span class="logo-text__mark" aria-hidden="true">TX</span>Transform<span class="logo-text__suffix">X</span></a>
+          <p>Prototipo público de validación</p>
+        </div>
+        <nav aria-labelledby="footer-nav-links">
+          <h3 id="footer-nav-links" class="footer__column-title">Enlaces</h3>
+          <ul class="footer__links">
+            <li><a href="index.html" class="footer__link">Inicio</a></li>
+            <li><a href="privacidad.html" class="footer__link">Privacidad</a></li>
+            <li><a href="terminos.html" class="footer__link">Términos</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="footer__bottom"><p>&copy; 2026 TransformX</p></div>
+    </div>
+  </footer>
+</body>
+</html>
