@@ -50,12 +50,16 @@ function createToastElement(
 
   const heading = document.createElement("p");
   heading.className = "c-toast__title";
+  heading.id = `toast-title-${Date.now()}`;
   heading.textContent = title;
 
   const text = document.createElement("p");
+  text.id = `toast-msg-${Date.now()}`;
   text.textContent = message;
 
   body.append(heading, text);
+  toast.setAttribute("aria-labelledby", heading.id);
+  toast.setAttribute("aria-describedby", text.id);
 
   const closeBtn = document.createElement("button");
   closeBtn.type = "button";
@@ -104,17 +108,20 @@ function initButtons(): void {
     saveBtn.classList.remove("c-btn--success");
     saveBtn.classList.add("c-btn--loading");
     saveBtn.setAttribute("aria-busy", "true");
+    saveBtn.setAttribute("aria-label", "Guardando cambios");
     saveBtn.textContent = "Guardando…";
 
     window.setTimeout(() => {
       saveBtn.classList.remove("c-btn--loading");
       saveBtn.classList.add("c-btn--success");
       saveBtn.removeAttribute("aria-busy");
+      saveBtn.setAttribute("aria-label", "Cambios guardados");
       saveBtn.textContent = "Guardado";
 
       resetTimer = window.setTimeout(() => {
         saveBtn.classList.remove("c-btn--success");
         saveBtn.disabled = false;
+        saveBtn.removeAttribute("aria-label");
         saveBtn.textContent = defaultLabel;
       }, SAVE_DONE_MS);
     }, SAVE_PROCESS_MS);
@@ -128,6 +135,7 @@ function initAlerts(): void {
 
     closeBtn.addEventListener("click", () => {
       alert.hidden = true;
+      alert.setAttribute("aria-hidden", "true");
     });
   });
 }
@@ -322,7 +330,67 @@ function initToasts(): void {
   if (viewport) enforceToastLimit(viewport);
 }
 
+function initPlaygroundNav(): void {
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(".playground-aside nav a[href^='#']")
+  );
+
+  if (links.length === 0) return;
+
+  const sections = links
+    .map((link) => {
+      const id = link.getAttribute("href")?.slice(1);
+      return id ? document.getElementById(id) : null;
+    })
+    .filter((section): section is HTMLElement => section !== null);
+
+  function setActiveLink(sectionId: string): void {
+    links.forEach((link) => {
+      const isActive = link.getAttribute("href") === `#${sectionId}`;
+      link.classList.toggle("is-active", isActive);
+
+      if (isActive) {
+        link.setAttribute("aria-current", "true");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      const id = link.getAttribute("href")?.slice(1);
+      if (id) setActiveLink(id);
+    });
+  });
+
+  window.addEventListener("hashchange", () => {
+    const id = window.location.hash.slice(1);
+    if (id) setActiveLink(id);
+  });
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        const current = visible[0]?.target;
+        if (current?.id) setActiveLink(current.id);
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.25, 0.5, 1] }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  }
+
+  const initialId = window.location.hash.slice(1) || sections[0]?.id;
+  if (initialId) setActiveLink(initialId);
+}
+
 function initPlayground(): void {
+  initPlaygroundNav();
   initAlerts();
   initButtons();
   initDialogs();

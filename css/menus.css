@@ -59,6 +59,7 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--text-muted);
+  line-height: var(--leading-snug);
 }
 
 .c-menu__list {
@@ -137,6 +138,12 @@
   .c-menu-account {
     right: auto;
     left: 0;
+    max-width: min(100vw - var(--space-8), 320px);
+  }
+
+  #seccion-menus .playground-demo {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
