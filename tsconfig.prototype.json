@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./js"
+  },
+  "include": ["prototype/**/*.ts", "workspace/**/*.ts"]
+}

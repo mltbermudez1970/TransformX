@@ -125,7 +125,7 @@
 
 .c-btn--icon:hover:not(:disabled):not(.c-btn--loading):not(.c-btn--success) {
   background: var(--c-btn-icon-bg-hover);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   border-color: var(--transform-blue);
   box-shadow: var(--c-btn-lift-shadow);
 }

@@ -40,12 +40,12 @@
   height: var(--size-touch-target);
   margin-bottom: var(--space-4);
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--semantic-warning) 14%, var(--white));
+  background: color-mix(in srgb, var(--semantic-warning) 14%, var(--surface-card));
   color: var(--semantic-warning);
 }
 
 .c-dialog--destructive .c-dialog__icon {
-  background: color-mix(in srgb, var(--semantic-error) 12%, var(--white));
+  background: color-mix(in srgb, var(--semantic-error) 12%, var(--surface-card));
   color: var(--semantic-error);
 }
 

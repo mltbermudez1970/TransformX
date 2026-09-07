@@ -37,7 +37,7 @@
   padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--white);
+  background: var(--surface-card);
   color: var(--text-primary);
   box-shadow: var(--shadow-lg);
   pointer-events: auto;
@@ -111,16 +111,16 @@
 
 .c-toast--success {
   border-color: color-mix(in srgb, var(--semantic-success) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-success) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-success) 8%, var(--surface-card));
 }
 
 .c-toast--success .c-toast__icon {
-  color: var(--semantic-success);
+  color: var(--semantic-success-text);
 }
 
 .c-toast--error {
   border-color: color-mix(in srgb, var(--semantic-error) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-error) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-error) 8%, var(--surface-card));
 }
 
 .c-toast--error .c-toast__icon {

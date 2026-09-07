@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && tsc -p tsconfig.prototype.json",
+    "build:site": "tsc",
+    "build:prototype": "tsc -p tsconfig.prototype.json"
   },
   "devDependencies": {
     "typescript": "^7.0.2"

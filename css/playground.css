@@ -26,6 +26,9 @@ body {
   font-size: var(--text-lg);
   margin: 0 0 var(--space-6);
   font-weight: var(--font-weight-bold);
+  /* `h1..h6` fijan `--text-primary` en base.css y pisan el color heredado del
+     panel oscuro: sin esto el título queda navy sobre navy (ratio 1.09). */
+  color: inherit;
 }
 
 .playground-aside nav ul {
@@ -128,7 +131,7 @@ body {
 .playground-behavior {
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  background: var(--white);
+  background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-5);

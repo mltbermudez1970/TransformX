@@ -70,13 +70,11 @@
         </button>
         <a href="acceso.html" class="btn btn--ghost btn--sm nav__action-btn">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-          <span class="nav__action-label nav__action-label--long">Iniciar sesión</span>
-          <span class="nav__action-label nav__action-label--short">Entrar</span>
+          <span class="nav__action-label">Iniciar sesión</span>
         </a>
         <a href="#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <span class="nav__action-label nav__action-label--long">Hablar con Capio</span>
-          <span class="nav__action-label nav__action-label--short">Capio</span>
+          <span class="nav__action-label">Hablar con Capio</span>
         </a>
         <button type="button" class="header__menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -111,7 +109,7 @@
     </div>
   </dialog>
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
 
     <!-- HERO -->
     <section class="hero" id="plataforma" aria-labelledby="hero-title">
@@ -162,7 +160,7 @@
     <!-- PRUEBA SOCIAL (ilustrativa) -->
     <section class="social-proof" aria-labelledby="social-proof-title">
       <div class="container">
-        <h2 id="social-proof-title" class="social-proof__title">Organizaciones que exploran capacidades adoptables</h2>
+        <h2 id="social-proof-title" class="social-proof__title">Organizaciones de referencia usadas en la validación</h2>
         <p class="section__disclaimer">Logos y referencias mostradas con fines ilustrativos de validación — no constituyen casos verificados ni endorsements.</p>
         <div class="logo-carousel" role="region" aria-label="Referencias ilustrativas" aria-roledescription="carrusel">
           <div class="logo-carousel__track">
@@ -252,7 +250,7 @@
           <div>
             <span class="section__eyebrow">Oferta</span>
             <h2 id="bizcaps-title" class="section__title">Biblioteca de BizCaps</h2>
-            <p class="section__subtitle">Capacidades empresariales listas para adoptar.</p>
+            <p class="section__subtitle">Capacidades empresariales controladas: disponibles para adopción o en roadmap.</p>
           </div>
           <a href="bizcaps.html" class="btn btn--secondary">Ver catálogo →</a>
         </header>
@@ -300,6 +298,7 @@
             <p class="card__text">Seguimiento transparente del cumplimiento al cliente.</p>
           </article>
         </div>
+        <p class="section__disclaimer">Las BizCaps marcadas como Planned están en roadmap y no están disponibles para adopción en este prototipo público.</p>
       </div>
     </section>
 
@@ -310,7 +309,7 @@
           <div data-animate>
             <div class="capio__avatar" aria-hidden="true">🤖</div>
             <span class="badge badge--cyan">Business Advisor</span>
-            <h2 id="capio-title">Capio — Tu Business Advisor</h2>
+            <h2 id="capio-title">Capio — TransformX Business Advisor</h2>
             <p>Capio diagnostica brechas, recomienda BizCaps y guía pre-adopción. En esta etapa pública no accede a KPIs privados, billing ni configuración de tenant.</p>
             <div class="btn-group btn-group--spaced">
               <button type="button" class="btn btn--outline-light btn--sm" data-capio-prompt="Respondemos tarde a los prospectos y perdemos oportunidades.">Prospectos tardíos</button>

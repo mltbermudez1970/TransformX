@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Laboratorio interno de componentes (OD-08): no forma parte del sitio
+       comercial ni de PROT-001, así que no debe indexarse. -->
+  <meta name="robots" content="noindex, nofollow">
   <title>Playground — Componentes de interacción | Backoffice</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/playground.css">
@@ -40,7 +43,7 @@
       </nav>
     </aside>
 
-    <main class="playground-main" id="main-content">
+    <main class="playground-main" id="main-content" tabindex="-1">
 
       <!-- 1. ALERTS -->
       <section class="playground-section" id="seccion-alerts" aria-labelledby="heading-alerts">

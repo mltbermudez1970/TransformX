@@ -28,6 +28,7 @@ Sitio estático (HTML/CSS/JS) con TypeScript compilado. Es un **prototipo públi
 | `privacidad.html`, `terminos.html` | Legales provisionales |
 | `acceso.html`, `adopcion.html` | Prototipos UX (noindex, no en sitemap) |
 | `playground.html` | Laboratorio de componentes UI (interno/diseño) |
+| `workspace/` | Prototipo del workspace autenticado TX-UX-014-PROT-002 (noindex, datos sintéticos) |
 
 ## Requisitos
 
@@ -39,9 +40,12 @@ Sitio estático (HTML/CSS/JS) con TypeScript compilado. Es un **prototipo públi
 git clone https://github.com/mltbermudez1970/TransformX.git
 cd TransformX
 npm install
-npm run build    # compila ts/ → js/
+npm run build    # compila ts/ + prototype/ + workspace/ → js/
 npx serve .      # previsualizar
 ```
+
+El prototipo autenticado se abre en `workspace/index.html`; desde las páginas
+públicas de prototipo (`acceso.html`, `adopcion.html`) se accede con `?prototype=true`.
 
 **No editar `js/*.js` a mano.**
 
@@ -54,7 +58,10 @@ npx serve .      # previsualizar
 ├── ts/capio.ts            # Capio discovery (LAB-001/002/003)
 ├── ts/contacto.ts         # Formulario .form-contacto
 ├── ts/animaciones.ts, theme.ts, carousel.ts, validators.ts, forms-demo.ts
-├── js/                    # Salida compilada
+├── js/                    # Salida compilada (incluye js/prototype/, js/workspace/)
+├── workspace/             # Prototipo autenticado TX-UX-014-PROT-002
+├── prototype/             # Fixtures, escenarios S-01…S-10, mock-api, state
+├── docs/ux/               # Documentación UX-14 + scaffold report
 ├── PLAN.md                # Baseline + decisiones deferred
 └── CLAUDE.md              # Convenciones para agentes
 ```

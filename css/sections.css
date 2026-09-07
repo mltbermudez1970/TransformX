@@ -70,7 +70,7 @@
   grid-template-areas:
     "title dots"
     "body body";
-  background: var(--white);
+  background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-xl);
@@ -152,11 +152,11 @@
   font-family: var(--font-mono);
   font-size: var(--text-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--success);
+  color: var(--success-text);
 }
 
 .dashboard__kpi-value--neutral {
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .dashboard__chart {
@@ -176,7 +176,7 @@
 .dashboard__chart svg {
   width: 100%;
   height: 100px;
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .dashboard__advisor {
@@ -192,7 +192,7 @@
   gap: var(--space-2);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   margin-bottom: var(--space-3);
 }
 
@@ -206,14 +206,14 @@
   font-size: var(--text-xs);
   color: var(--text-secondary);
   padding: var(--space-2);
-  background: var(--white);
+  background: var(--surface-card);
   border-radius: var(--radius-sm);
 }
 
 /* ========== SOCIAL PROOF ========== */
 .social-proof {
   padding-block: var(--space-12);
-  background: var(--white);
+  background: var(--surface-card);
   border-block: 1px solid var(--border);
 }
 
@@ -362,7 +362,7 @@
   width: 48px;
   height: 48px;
   margin: 0 auto var(--space-4);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .process__step-title {
@@ -418,10 +418,12 @@
   margin-top: auto;
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
+  /* WCAG 2.2 AA 2.5.8 — objetivo mínimo de 24px de alto. */
+  min-height: var(--size-icon-md);
 }
 
 .bizcap-card__link:hover {
@@ -611,6 +613,9 @@
 
 .capio-chat__input {
   flex: 1;
+  /* Sin esto, el min-width:auto de flexbox impide que el campo se encoja y
+     empuja el botón «Enviar» fuera del panel en pantallas estrechas. */
+  min-width: 0;
   padding: var(--space-3) var(--space-4);
   background: var(--surface-on-dark-08);
   border: 1px solid var(--surface-on-dark-15);
@@ -674,7 +679,7 @@
   display: flex;
   flex-direction: column;
   margin: 0;
-  background: var(--white);
+  background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
@@ -715,7 +720,7 @@
   justify-content: center;
   background: var(--surface-blue);
   border-radius: var(--radius-md);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 /* ========== CASE STUDY ========== */
@@ -886,7 +891,7 @@
   justify-content: center;
   background: var(--surface-blue);
   border-radius: var(--radius-sm);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .security__item-title {
@@ -926,7 +931,7 @@
 }
 
 .final-cta__form {
-  background: var(--white);
+  background: var(--surface-card);
   padding: var(--space-6);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function(){try{var t=localStorage.getItem('transformx-theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',(t==='dark'||t==='light')?t:(d?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}}());
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Superficie Dashboard del prototipo de workspace autenticado. Reservada en el App Shell.">
+  <title>Dashboard — Workspace TransformX (prototipo)</title>
+  <link rel="icon" href="../../icon/TransformX.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/workspace.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/prototype/fixtures/domain.js" defer></script>
+  <script src="../../js/prototype/fixtures/fixtures.js" defer></script>
+  <script src="../../js/prototype/fixtures/auth-fixtures.js" defer></script>
+  <script src="../../js/prototype/fixtures/work-items.js" defer></script>
+  <script src="../../js/prototype/fixtures/communications.js" defer></script>
+  <script src="../../js/prototype/fixtures/lead-operations.js" defer></script>
+  <script src="../../js/prototype/fixtures/reviews.js" defer></script>
+  <script src="../../js/prototype/fixtures/assignment.js" defer></script>
+  <script src="../../js/prototype/fixtures/opportunity.js" defer></script>
+  <script src="../../js/prototype/scenarios/scenarios.js" defer></script>
+  <script src="../../js/prototype/mock-api/mock-api.js" defer></script>
+  <script src="../../js/prototype/state/prototype-mode.js" defer></script>
+  <script src="../../js/prototype/state/prototype-state.js" defer></script>
+  <script src="../../js/prototype/state/session.js" defer></script>
+  <script src="../../js/prototype/state/view-state.js" defer></script>
+  <script src="../../js/workspace/shell/routes.js" defer></script>
+  <script src="../../js/workspace/shell/scenario-selector.js" defer></script>
+  <script src="../../js/workspace/shell/shell.js" defer></script>
+  <script src="../../js/workspace/shell/connectivity.js" defer></script>
+  <script src="../../js/workspace/work/work-item-view.js" defer></script>
+  <script src="../../js/workspace/work/commands.js" defer></script>
+</head>
+<body data-route="lab-001-dashboard" class="ws-body">
+  <div data-workspace-shell></div>
+  <div class="ws-layout">
+    <aside class="ws-sidebar" data-workspace-nav></aside>
+    <main id="main-content" tabindex="-1" class="ws-main">
+      <div class="ws-pending">
+        <p class="ws-pending__phase">PM-UX14-04</p>
+        <h1 class="ws-page__title">Dashboard</h1>
+        <p>Esta superficie está reservada en el App Shell y se construye en <strong>PM-UX14-04</strong>. Escenario asociado: <strong>S-01</strong>.</p>
+        <p>El shell, la navegación, los breadcrumbs y la guarda de sesión ya son funcionales aquí: sirve para validar la orientación dentro del workspace antes de que exista el contenido operativo.</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

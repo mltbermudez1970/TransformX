@@ -13,8 +13,8 @@
 }
 
 .bizcap-status--available {
-  background: color-mix(in srgb, var(--semantic-success) 12%, var(--white));
-  color: var(--semantic-success);
+  background: color-mix(in srgb, var(--semantic-success) 12%, var(--surface-card));
+  color: var(--semantic-success-text);
   border: 1px solid color-mix(in srgb, var(--semantic-success) 30%, var(--border));
 }
 

@@ -42,6 +42,7 @@
   display: block;
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);
+  white-space: nowrap;
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
   border-radius: var(--radius-sm);
@@ -52,12 +53,12 @@
 .nav__link:hover,
 .nav__link.is-active,
 .nav__link[aria-current="page"] {
-  color: var(--transform-blue);
+  color: var(--accent-text);
   background: var(--surface-blue);
 }
 
 nav a.active {
-  color: var(--transform-blue);
+  color: var(--accent-text);
   border-bottom: 2px solid var(--transform-blue);
 }
 
@@ -78,8 +79,8 @@ nav a.active {
   flex-shrink: 0;
 }
 
-.nav__action-label--short {
-  display: none;
+.nav__action-label {
+  white-space: nowrap;
 }
 
 @media (max-width: 639px) {
@@ -88,7 +89,9 @@ nav a.active {
   }
 
   .nav__action-btn {
-    padding: var(--space-2) var(--space-3);
+    min-width: var(--size-touch-target);
+    min-height: var(--size-touch-target);
+    padding: var(--space-2);
     font-size: var(--text-xs);
   }
 
@@ -96,12 +99,34 @@ nav a.active {
     display: block;
   }
 
-  .nav__action-label--long {
-    display: none;
+  /* El label es el nombre accesible del CTA: en móvil se oculta visualmente
+     (nunca con display:none) y nunca se sustituye por un sinónimo no canónico
+     como "Entrar" o "Capio". El ícono queda como etiqueta visual. */
+  .nav__action-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* WCAG 2.2 AA 1.4.10 (reflow) — a 320px CSS la fila logo + acciones no cabe.
+   Por debajo de 400px la cabecera conserva sólo el sello "TX"; el nombre
+   accesible del enlace lo aporta su aria-label, y el wordmark completo sigue
+   presente en el drawer y en el footer. */
+@media (max-width: 399px) {
+  .header .logo-text {
+    font-size: 0;
+    gap: 0;
   }
 
-  .nav__action-label--short {
-    display: inline;
+  .header .logo-text__mark {
+    font-size: var(--text-sm);
   }
 }
 
@@ -160,7 +185,7 @@ nav a.active {
   right: 0;
   width: var(--size-nav-drawer);
   height: 100%;
-  background: var(--white);
+  background: var(--surface-card);
   padding: var(--space-6);
   transform: translateX(100%);
   transition: transform var(--transition-base);
@@ -198,7 +223,7 @@ nav a.active {
 .nav__link--drawer.is-active,
 .nav__link--drawer[aria-current="page"] {
   background: var(--surface-blue);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .mobile-menu__actions {
@@ -218,6 +243,12 @@ nav a.active {
   color: var(--footer-text);
   padding-top: var(--space-16);
   padding-bottom: var(--space-8);
+}
+
+/* `p { color: var(--text-secondary) }` de base.css pisa la herencia y deja el
+   texto gris sobre el navy permanente del footer: devolvemos la herencia. */
+.footer p {
+  color: inherit;
 }
 
 .footer__grid {

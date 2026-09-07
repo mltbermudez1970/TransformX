@@ -15,6 +15,7 @@
     border-color var(--transition-fast), transform var(--transition-fast),
     box-shadow var(--transition-fast);
   white-space: nowrap;
+  max-width: 100%;
   text-decoration: none;
   cursor: pointer;
 }
@@ -37,15 +38,15 @@
 }
 
 .btn--secondary {
-  background: var(--white);
-  color: var(--transform-blue);
+  background: var(--surface-card);
+  color: var(--accent-text);
   border: var(--btn-border-width) solid var(--border);
 }
 
 .btn--secondary:hover {
   border-color: var(--transform-blue);
   background: var(--surface-blue);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 .btn--ghost {
@@ -55,7 +56,7 @@
 }
 
 .btn--ghost:hover {
-  color: var(--transform-blue);
+  color: var(--accent-text);
   background: var(--surface-blue);
 }
 
@@ -107,7 +108,7 @@
   font-weight: var(--font-weight-semibold);
   border-radius: var(--radius-pill);
   background: var(--surface-blue);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   border: 1px solid var(--border-blue-15);
 }
 
@@ -119,7 +120,7 @@
 
 /* Card */
 .card {
-  background: var(--white);
+  background: var(--surface-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
@@ -143,7 +144,7 @@
   justify-content: center;
   background: var(--surface-blue);
   border-radius: var(--radius-md);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   margin-bottom: var(--space-4);
 }
 
@@ -167,7 +168,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--success);
+  color: var(--success-text);
 }
 
 .card__metric-label {
@@ -186,7 +187,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   line-height: 1;
   margin-bottom: var(--space-2);
 }
@@ -221,7 +222,7 @@
   flex-shrink: 0;
   width: var(--size-icon-md);
   height: var(--size-icon-md);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   margin-top: 2px;
 }
 
@@ -230,7 +231,7 @@
 }
 
 .feature-list__icon--solution {
-  color: var(--success);
+  color: var(--success-text);
 }
 
 /* Form Elements */
@@ -251,7 +252,7 @@
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--white);
+  background: var(--surface-card);
   color: var(--text-primary);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -292,6 +293,12 @@
 }
 
 @media (max-width: 639px) {
+  /* Etiquetas largas ("Solicitar demo / Hablar con ventas") no pueden
+     desbordar el viewport: en pantallas estrechas el botón envuelve. */
+  .btn {
+    white-space: normal;
+  }
+
   .form-inline {
     flex-direction: column;
   }
@@ -329,7 +336,7 @@
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
   width: 100%;
   color: var(--text-primary);
-  background: var(--white);
+  background: var(--surface-card);
 }
 
 .form-contacto input:focus,
@@ -356,7 +363,7 @@
 
 .form-contacto__success {
   font-size: var(--text-sm);
-  color: var(--success);
+  color: var(--success-text);
   display: none;
   text-align: center;
 }
@@ -496,7 +503,7 @@
 }
 
 .logo-text__suffix {
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }
 
 /* Icon inline */
@@ -600,5 +607,5 @@
 .trust-badge svg {
   width: var(--size-icon-sm);
   height: var(--size-icon-sm);
-  color: var(--transform-blue);
+  color: var(--accent-text);
 }

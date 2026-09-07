@@ -39,7 +39,7 @@ svg {
 }
 
 a {
-  color: var(--transform-blue);
+  color: var(--accent-text);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
@@ -55,6 +55,14 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid var(--transform-blue);
   outline-offset: 2px;
+}
+
+/* Destinos de foco programático (el `<main>` del enlace de salto, el
+   encabezado del resultado tras una operación): reciben el foco para que el
+   lector de pantalla mueva su cursor, pero no son controles y no deben
+   dibujar un anillo de foco cuando el navegador no lo considera necesario. */
+[tabindex="-1"]:focus:not(:focus-visible) {
+  outline: none;
 }
 
 ul,
@@ -91,6 +99,12 @@ h4 { font-size: var(--text-xl); }
 p {
   color: var(--text-secondary);
   line-height: var(--leading-relaxed);
+}
+
+/* El atributo `hidden` debe ganar siempre. Sin esto, cualquier componente con
+   `display: flex/grid` (p. ej. .c-alert) se sigue pintando aunque esté oculto. */
+[hidden] {
+  display: none !important;
 }
 
 .sr-only {
@@ -156,7 +170,7 @@ p {
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   margin-bottom: var(--space-3);
 }
 

@@ -10,7 +10,7 @@
 .c-menu-account-toggle[aria-expanded="true"] {
   background: var(--c-btn-secondary-bg-hover);
   border-color: var(--transform-blue);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   box-shadow: var(--shadow-sm);
 }
 
@@ -98,7 +98,7 @@
 .c-menu-account [role="menuitem"]:hover,
 .c-menu-account [role="menuitem"]:focus-visible {
   background: var(--surface-blue);
-  color: var(--transform-blue);
+  color: var(--accent-text);
   border-color: var(--border-blue-15);
   box-shadow: var(--c-menu-item-shadow-hover);
   transform: translateX(2px);
@@ -122,7 +122,7 @@
 
 .c-menu__item--danger:hover,
 .c-menu__item--danger:focus-visible {
-  background: color-mix(in srgb, var(--semantic-error) 10%, var(--white));
+  background: color-mix(in srgb, var(--semantic-error) 10%, var(--surface-card));
   color: var(--semantic-error);
   border-color: color-mix(in srgb, var(--semantic-error) 25%, var(--border));
 }

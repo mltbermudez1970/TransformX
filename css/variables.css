@@ -25,7 +25,7 @@
 
   --text-primary: #10233F;
   --text-secondary: #52647A;
-  --text-muted: #64748B;
+  --text-muted: #5F6F84;
 
   --border: #DCE5F0;
   --success: #0A7A3F;
@@ -234,6 +234,19 @@
 
   /* Page & feedback surfaces */
   --bg-page: var(--white);
+  /* Rol SUPERFICIE (se invierte por tema). --white queda como blanco literal
+     para texto/bordes sobre superficies siempre oscuras (footer, Capio, CTAs). */
+  --surface-card: var(--white);
+  /* Rol TEXTO/ÍCONO de acento. En claro es el azul de marca; en oscuro se
+     aclara para conservar contraste AA sobre superficies navy.
+     --transform-blue se reserva para fondos y bordes (con texto blanco). */
+  --accent-text: var(--transform-blue);
+  /* Rol TEXTO de los estados semánticos. --error y --warning están pensados
+     como fondo/borde; usados como texto no alcanzan AA. Estos sí, y se
+     invierten por tema. */
+  --error-text: #B42318;
+  --warning-text: #B54708;
+  --success-text: var(--success);
   --surface-problem: #FEF3F2;
   --surface-problem-border: rgba(217, 45, 32, 0.12);
   --surface-solution-border: rgba(37, 99, 235, 0.12);
@@ -241,6 +254,11 @@
   --feedback-success: #0a7a3f;
 
   --semantic-error: var(--error);
+  /* Rol texto de los estados semánticos (ver --error-text/--warning-text). */
+  --semantic-error-text: var(--error-text);
+  --semantic-warning-text: var(--warning-text);
+  --semantic-success-text: var(--success-text);
+  --semantic-info-text: var(--accent-text);
   --semantic-success: var(--success);
   --semantic-warning: var(--warning);
   --semantic-info: var(--transform-blue);
@@ -251,13 +269,19 @@
   color-scheme: dark;
 
   --bg-page: var(--deep-navy);
-  --white: var(--navy);
+  --surface-card: var(--navy);
+  --accent-text: #93C5FD;
+  --error-text: #FCA5A5;
+  --warning-text: #FDBA74;
+  /* --success (#12B76A) sobre --navy-soft da 4.31: no alcanza AA como texto.
+     Este es el rol texto, igual que --error-text/--warning-text. */
+  --success-text: #34D399;
   --surface-primary: var(--navy);
   --surface-secondary: var(--navy-soft);
   --surface-blue: rgba(37, 99, 235, 0.18);
   --surface-cyan: rgba(6, 182, 212, 0.14);
   --text-primary: #E2E8F0;
-  --text-secondary: #94A3B8;
+  --text-secondary: #9AA9BD;
   --text-muted: #8797AD;
   --border: var(--navy-soft);
   --surface-glass: rgba(7, 27, 58, 0.92);

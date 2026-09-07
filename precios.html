@@ -69,13 +69,11 @@
         </button>
         <a href="acceso.html" class="btn btn--ghost btn--sm nav__action-btn">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-          <span class="nav__action-label nav__action-label--long">Iniciar sesión</span>
-          <span class="nav__action-label nav__action-label--short">Entrar</span>
+          <span class="nav__action-label">Iniciar sesión</span>
         </a>
         <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          <span class="nav__action-label nav__action-label--long">Hablar con Capio</span>
-          <span class="nav__action-label nav__action-label--short">Capio</span>
+          <span class="nav__action-label">Hablar con Capio</span>
         </a>
         <button type="button" class="header__menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -110,7 +108,7 @@
     </div>
   </dialog>
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
 
     <!-- INTRO DE PRECIOS -->
     <section class="section" id="precios-intro" aria-labelledby="precios-intro-title">
@@ -120,6 +118,7 @@
           <h1 id="precios-intro-title" class="section__title">Cómo funciona el precio</h1>
           <p class="section__subtitle">TransformX combina acceso a plataforma, adopción de BizCaps, consumo gobernado vía Cap Credits y servicios profesionales opcionales. Los montos definitivos están sujetos a unit economics.</p>
         </header>
+        <h2 class="sr-only">Los cuatro componentes del modelo comercial</h2>
         <ol class="process__steps">
           <li class="process__step card" data-animate><span class="process__step-number" aria-hidden="true">1</span><h3 class="process__step-title">Platform Subscription</h3><p class="process__step-text">Acceso al Workspace, gobernanza, soporte base y capacidades transversales de la plataforma.</p></li>
           <li class="process__step card" data-animate><span class="process__step-number" aria-hidden="true">2</span><h3 class="process__step-title">BizCap Adoption</h3><p class="process__step-text">Fee separado por cada BizCap adoptada — creación y activación de instancia gobernada.</p></li>

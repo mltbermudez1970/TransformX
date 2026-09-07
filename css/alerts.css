@@ -5,31 +5,31 @@
   padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--white);
+  background: var(--surface-card);
 }
 
 .c-alert--success {
-  color: var(--semantic-success);
+  color: var(--semantic-success-text);
   border-color: color-mix(in srgb, var(--semantic-success) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-success) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-success) 8%, var(--surface-card));
 }
 
 .c-alert--error {
-  color: var(--semantic-error);
+  color: var(--semantic-error-text);
   border-color: color-mix(in srgb, var(--semantic-error) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-error) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-error) 8%, var(--surface-card));
 }
 
 .c-alert--warning {
-  color: var(--semantic-warning);
+  color: var(--semantic-warning-text);
   border-color: color-mix(in srgb, var(--semantic-warning) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-warning) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-warning) 8%, var(--surface-card));
 }
 
 .c-alert--info {
-  color: var(--semantic-info);
+  color: var(--semantic-info-text);
   border-color: color-mix(in srgb, var(--semantic-info) 35%, var(--border));
-  background: color-mix(in srgb, var(--semantic-info) 8%, var(--white));
+  background: color-mix(in srgb, var(--semantic-info) 8%, var(--surface-card));
 }
 
 .c-alert-icon {

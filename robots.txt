@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /workspace/
+Disallow: /prototype/
+Disallow: /playground.html
 
 Sitemap: https://transformx.app/sitemap.xml
