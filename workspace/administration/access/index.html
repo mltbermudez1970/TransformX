@@ -7,8 +7,8 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="description" content="Overview de la instancia LAB-001 Lead Intake & Qualification en el prototipo de workspace autenticado.">
-  <title>LAB-001 Overview — Workspace TransformX (prototipo)</title>
+  <meta name="description" content="ADM-06 a ADM-09: administración de acceso de usuarios del Tenant activo. Prototipo de validación UX-14.">
+  <title>Acceso de usuarios — Workspace TransformX (prototipo)</title>
   <link rel="icon" href="../../../icon/TransformX.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,29 +41,13 @@
   <script src="../../../js/workspace/shell/connectivity.js" defer></script>
   <script src="../../../js/workspace/work/work-item-view.js" defer></script>
   <script src="../../../js/workspace/work/commands.js" defer></script>
+  <script src="../../../js/workspace/administration/access.js" defer></script>
 </head>
-<body data-route="lab-001" class="ws-body">
+<body data-route="administration-access" class="ws-body">
   <div data-workspace-shell></div>
   <div class="ws-layout">
     <aside class="ws-sidebar" data-workspace-nav></aside>
-    <main id="main-content" tabindex="-1" class="ws-main">
-      <h1 class="ws-page__title">LAB-001 Lead Intake &amp; Qualification</h1>
-      <p class="ws-page__lead">Overview de la instancia adoptada por la organización sintética.</p>
-      <dl class="ws-context">
-        <div><dt>Código</dt><dd>LAB-001</dd></div>
-        <div><dt>Instancia</dt><dd>Activa (sintética)</dd></div>
-        <div><dt>Alcance operativo</dt><dd>Captura, información faltante, calificación, revisión humana, asignación y readiness</dd></div>
-        <div><dt>Fuera de alcance</dt><dd>LAB-002 Quote &amp; Proposal — el handoff comercial ocurre fuera de esta BizCap</dd></div>
-      </dl>
-      <h2>Superficies operativas</h2>
-      <ul class="feature-list">
-        <li class="feature-list__item"><a href="../../leads/">Leads</a> — lista y detalle (PM-UX14-04)</li>
-        <li class="feature-list__item"><a href="../../work-queue/">Work Queue</a> — triage del equipo (PM-UX14-04)</li>
-        <li class="feature-list__item"><a href="../../reviews/">Reviews</a> — decisión humana y duplicados (PM-UX14-05)</li>
-        <li class="feature-list__item"><a href="../../dashboard/">Dashboard</a> — medición (PM-UX14-04)</li>
-        <li class="feature-list__item"><a href="../../configuration/">Configuration</a> — configuración sobre flujos canónicos (PM-UX14-06)</li>
-      </ul>
-    </main>
+    <main id="main-content" tabindex="-1" class="ws-main" data-adm-surface></main>
   </div>
 </body>
 </html>

@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../../css/workspace.css">
   <script src="../../js/theme.js" defer></script>
   <script src="../../js/prototype/fixtures/domain.js" defer></script>
+  <script src="../../js/prototype/fixtures/tenants.js" defer></script>
   <script src="../../js/prototype/fixtures/fixtures.js" defer></script>
   <script src="../../js/prototype/fixtures/auth-fixtures.js" defer></script>
   <script src="../../js/prototype/fixtures/work-items.js" defer></script>
@@ -31,8 +32,11 @@
   <script src="../../js/prototype/state/prototype-state.js" defer></script>
   <script src="../../js/prototype/state/session.js" defer></script>
   <script src="../../js/prototype/state/view-state.js" defer></script>
+  <script src="../../js/prototype/fixtures/access-admin.js" defer></script>
+  <script src="../../js/prototype/state/tenant-context.js" defer></script>
   <script src="../../js/workspace/shell/routes.js" defer></script>
   <script src="../../js/workspace/shell/scenario-selector.js" defer></script>
+  <script src="../../js/workspace/shell/tenant-switcher.js" defer></script>
   <script src="../../js/workspace/shell/shell.js" defer></script>
   <script src="../../js/workspace/shell/connectivity.js" defer></script>
   <script src="../../js/workspace/work/work-item-view.js" defer></script>
@@ -43,12 +47,16 @@
   <div class="ws-layout">
     <aside class="ws-sidebar" data-workspace-nav></aside>
     <main id="main-content" tabindex="-1" class="ws-main">
-      <div class="ws-pending">
-        <p class="ws-pending__phase">PM-UX14-06</p>
-        <h1 class="ws-page__title">Administration</h1>
-        <p>Esta superficie está reservada en el App Shell y se construye en <strong>PM-UX14-06</strong>. Escenario asociado: <strong>—</strong>.</p>
-        <p>El shell, la navegación, los breadcrumbs y la guarda de sesión ya son funcionales aquí: sirve para validar la orientación dentro del workspace antes de que exista el contenido operativo.</p>
-      </div>
+      <p class="ws-code">Administration</p>
+      <h1 class="ws-page__title">Administración de la organización</h1>
+      <p class="ws-page__lead">Sólo administras la organización en la que estás trabajando ahora mismo. Cambiar de organización cambia también lo que puedes administrar.</p>
+      <ul class="ws-cards">
+        <li class="ws-card">
+          <h2 class="ws-card__title"><a href="access/">Acceso de usuarios</a></h2>
+          <p>Quién pertenece a esta organización, a qué BizCaps tiene acceso y qué funciones ejerce en cada una.</p>
+          <p class="ws-muted ws-small">ADM-06 · ADM-07 · ADM-08 · ADM-09</p>
+        </li>
+      </ul>
     </main>
   </div>
 </body>

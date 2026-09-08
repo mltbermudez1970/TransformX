@@ -12,7 +12,10 @@ function protoSystemParam(nombre) {
 }
 function protoSystemStateId() {
     const s = protoSystemParam("state");
-    const validos = ["permission-denied", "not-found", "session-expired", "recoverable-error", "critical-error"];
+    const validos = [
+        "permission-denied", "not-found", "session-expired", "recoverable-error", "critical-error",
+        "no-tenant-access", "tenant-access-revoked", "tenant-context-stale",
+    ];
     return validos.find((v) => v === s) ?? "not-found";
 }
 /** Destino seguro al que devolver al usuario. */
@@ -20,7 +23,38 @@ function protoSystemVolver() {
     const ret = protoGetReturnTo();
     return ret ? protoResolveRoute(ret) : protoRouteHref("home");
 }
+/** Salida segura cuando el contexto de organización no es utilizable. */
+function protoTenantExitActions() {
+    return `
+    <a class="c-btn c-btn--primary" href="${protoRouteHref("auth", { screen: "select-organization" })}">Elegir otra organización</a>
+    <a class="c-btn c-btn--secondary" href="${protoRouteHref("auth", { screen: "sign-in" })}">Volver a iniciar sesión</a>`;
+}
 const PROTO_SYSTEM_STATES = {
+    "no-tenant-access": {
+        code: "SYS-09",
+        titulo: "Todavía no perteneces a ninguna organización",
+        explicacion: "Tu identidad es válida, pero no tienes ninguna membresía activa en TransformX.",
+        causa: "El acceso a una organización lo concede su administración, no se obtiene al crear la cuenta. No se abre un Workspace vacío porque no habría contexto en el que trabajar.",
+        live: "status",
+        acciones: () => `
+      <a class="c-btn c-btn--secondary" href="${protoRouteHref("auth", { screen: "sign-in" })}">Volver a iniciar sesión</a>`,
+    },
+    "tenant-access-revoked": {
+        code: "SYS-10",
+        titulo: "Tu acceso a esta organización ya no está activo",
+        explicacion: "La membresía con la que estabas trabajando fue revocada o suspendida.",
+        causa: "La administración de esa organización cambió tu acceso. El contexto se cierra de inmediato: no se sigue mostrando información de una organización a la que ya no perteneces.",
+        live: "alert",
+        acciones: protoTenantExitActions,
+    },
+    "tenant-context-stale": {
+        code: "SYS-11",
+        titulo: "El contexto de organización está desactualizado",
+        explicacion: "La organización guardada en esta sesión ya no coincide con tus membresías.",
+        causa: "Tu acceso cambió mientras la sesión estaba abierta. Hay que volver a resolver el contexto antes de continuar: seguir con el anterior mostraría datos que ya no te corresponden.",
+        live: "alert",
+        acciones: protoTenantExitActions,
+    },
     "permission-denied": {
         code: "SYS-01",
         titulo: "No tienes permiso para ver esto",

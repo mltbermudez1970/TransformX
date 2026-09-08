@@ -119,7 +119,7 @@ function protoRenderAssignmentException(host, exc) {
                 leadId: exc.leadId,
                 eventType: evento,
                 occurredAt: new Date().toISOString(),
-                actor: { actorType: "HUMAN", userId: user?.userId, displayName: user?.displayName ?? "Actor", role: user?.role },
+                actor: { actorType: "HUMAN", userId: user?.userId, displayName: user?.displayName ?? "Actor", role: user ? protoPrimaryRoleOf(user) : undefined },
                 fromOwner: null,
                 toOwner: cand ? { userId: cand.candidateId, displayName: cand.displayName } : null,
                 queue: r.code === "SEND_TO_SALES_OPS_QUEUE" ? "SALES_OPS" : null,

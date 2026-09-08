@@ -129,3 +129,16 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - No escribir copy que prometa cuentas, trials o adopción productiva real — CTAs van a Capio, catálogo, contacto o prototipos `acceso.html`/`adopcion.html`.
 - No agregar contenido en otros idiomas — el sitio es 100% español. Los `og:locale:alternate` (en_US, en_ES, etc.) están declarados en el `<head>` pero no tienen contenido real detrás; no agregar más alternates sin traducir la página completa.
 - Dominio canónico de producción: `transformx.app` — mantener alineado en HTML (`canonical`, `og:url`, `og:image`), `sitemap.xml` y `robots.txt`.
+
+## Modelo de acceso multi-Tenant (TX-UX-MTAC-AMD-001)
+
+**Regla maestra:** `Identidad ──< Membresía de Tenant ──< Asignación de BizCap ──< roles[]`.
+
+- **El rol NO pertenece a la identidad.** `ProtoAuthUser` es identidad pura (quién es, cómo se autentica, bajo qué política). Rol, ámbito y permisos viven en `prototype/fixtures/tenants.ts`, colgando de la asignación de BizCap. `protoActorTienePermiso()` y `protoRoleLabelOf()` delegan en el Tenant activo: son azúcar de compatibilidad, no una segunda fuente de verdad.
+- **Un rol es una función dentro de un BizCap**, no un cargo. `TENANT_ADMINISTRATOR` es la excepción y por eso vive en `membership.tenantRoles`, fuera de todo BizCap: administrar el acceso de la organización no responde a "¿qué hace esta persona dentro de esta capacidad?".
+- Varios roles simultáneos en el mismo BizCap son lo normal. **Nunca** se pide al usuario elegir un rol.
+- **El Tenant activo se guarda en la sesión** (`ProtoSession.tenantId`) y se resuelve después de MFA: 0 membresías → estado gobernado, 1 → automática, >1 → AUTH-13.
+- **Cambiar de Tenant es un cambio de contexto de seguridad**, no un filtro. `protoSwitchTenant()` vacía las claves de `PROTO_TENANT_SCOPED_KEYS` (comandos aplicados, oportunidades creadas, hilo de Capio) y el prefijo de estado de vista **antes** de establecer el nuevo contexto. Sobreviven identidad y nivel de aseguramiento.
+- **La navegación se genera** con `protoBuildNav(userId, tenantId)`: un BizCap sin asignación no está en el árbol, no es que esté oculto. Editar `PROTO_BIZCAP_NAV` en `routes.ts`, no la página.
+- LAB-002 y LAB-003 son **asignables pero sin superficie operativa**: aparecen en el catálogo con su estado declarado, nunca abren un workspace falso.
+- Toda página de `workspace/` carga, en este orden: `tenants.js` (tras `domain.js`), `access-admin.js` y `tenant-context.js` (tras `session.js`), y `tenant-switcher.js` (antes de `shell.js`).

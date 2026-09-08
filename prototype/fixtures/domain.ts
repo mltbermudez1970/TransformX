@@ -248,7 +248,14 @@ const PROTO_FIXTURE_ACTION_BASELINE_BY_STATE: Record<ProtoLeadState, ProtoAction
  * 7 y 8 — Roles, permisos y ámbitos
  * ========================================================================= */
 
-/** Capio NO es un rol RBAC: es un asesor con fronteras de autoridad propias. */
+/**
+ * Capio NO es un rol RBAC: es un asesor con fronteras de autoridad propias.
+ *
+ * Un rol es una **función dentro de un BizCap**, no un cargo de la persona ni
+ * un atributo global de la identidad (TX-UX-MTAC-AMD-001 §4). Por eso los roles
+ * viven en `ProtoBizCapAssignment.roles[]` dentro de una membresía de Tenant, y
+ * no en `ProtoAuthUser`.
+ */
 type ProtoRole =
   | "SALES_REPRESENTATIVE"
   | "SALES_OPERATIONS_ANALYST"
@@ -256,7 +263,10 @@ type ProtoRole =
   | "HUMAN_REVIEWER"
   | "BIZCAP_ADMINISTRATOR"
   | "TENANT_ADMINISTRATOR"
-  | "CUSTOMER_PROSPECT";
+  | "CUSTOMER_PROSPECT"
+  /** Introducido por TX-UX-MTAC-AMD-001 §9 para LAB-003. No está en los 7
+   *  roles congelados del Resolution Package §7: es vocabulario de la enmienda. */
+  | "ORDER_REVIEWER";
 
 type ProtoScope = "SELF" | "TEAM" | "BIZCAP" | "TENANT";
 
@@ -270,7 +280,11 @@ type ProtoPermission =
   | "opportunity_readiness.read" | "opportunity.convert"
   | "lead.disqualify" | "lead.close" | "lead.reopen" | "lead.requalify"
   | "communication.read" | "communication.draft" | "communication.send"
-  | "bizcap.configure" | "tenant.administer";
+  | "bizcap.configure" | "tenant.administer"
+  /* Administración de acceso del Tenant — TX-UX-MTAC-AMD-001 §8. */
+  | "tenant.user.read" | "tenant.access.assign" | "tenant.access.revoke"
+  /* LAB-003 Order Intake & Validation — sólo asignable, sin superficie operativa. */
+  | "order.review";
 
 const PROTO_ROLE_LABEL: Record<ProtoRole, string> = {
   SALES_REPRESENTATIVE: "Sales Representative",
@@ -280,6 +294,7 @@ const PROTO_ROLE_LABEL: Record<ProtoRole, string> = {
   BIZCAP_ADMINISTRATOR: "BizCap Administrator",
   TENANT_ADMINISTRATOR: "Tenant Administrator",
   CUSTOMER_PROSPECT: "Customer / Prospect",
+  ORDER_REVIEWER: "Order Reviewer",
 };
 
 /**
@@ -295,6 +310,7 @@ const PROTO_ROLE_NOTE: Record<ProtoRole, string> = {
   BIZCAP_ADMINISTRATOR: "Configura la BizCap. Sin autoridad comercial implícita.",
   TENANT_ADMINISTRATOR: "Administra usuarios, roles e integraciones. Sin autoridad sobre decisiones de lead.",
   CUSTOMER_PROSPECT: "Sólo envía consultas o aporta la aclaración solicitada.",
+  ORDER_REVIEWER: "Revisa y valida pedidos entrantes en LAB-003. Sin superficie operativa en este prototipo.",
 };
 
 /* ===========================================================================
@@ -745,3 +761,92 @@ type ProtoConversionResult =
   | "CONCURRENCY_CONFLICT"
   | "RECOVERABLE_ERROR"
   | "CRITICAL_ERROR";
+
+/* ===========================================================================
+ * ENMIENDA TX-UX-MTAC-AMD-001 — modelo de acceso multi-Tenant
+ * ===========================================================================
+ * Regla maestra (§4): una Identidad de Usuario puede pertenecer a varios
+ * Tenants; dentro de cada Tenant puede estar asignada a varios BizCaps; y
+ * dentro de cada BizCap puede tener VARIOS roles funcionales a la vez.
+ *
+ *   Identidad ──< Membresía de Tenant ──< Asignación de BizCap ──< roles[]
+ *
+ * El rol es una función DENTRO del BizCap, no un cargo de la persona. Por eso
+ * ni rol, ni ámbito, ni permiso cuelgan de `ProtoAuthUser`.
+ * ========================================================================= */
+
+/** Catálogo de BizCaps. Sólo LAB-001 tiene superficie operativa en UX-14. */
+type ProtoBizCapId = "LAB-001" | "LAB-002" | "LAB-003";
+
+interface ProtoBizCapDefinition {
+  bizCapId: ProtoBizCapId;
+  name: string;
+  /**
+   * `true` sólo para LAB-001. LAB-002 y LAB-003 son asignables (la enmienda
+   * §9 lo exige) pero siguen siendo *Planned* en la baseline congelada: no se
+   * inventa un workspace operativo para ellas.
+   */
+  hasOperationalSurface: boolean;
+  /** routeId de entrada cuando la tiene. */
+  entryRouteId: string | null;
+  note: string;
+}
+
+const PROTO_BIZCAPS: ProtoBizCapDefinition[] = [
+  {
+    bizCapId: "LAB-001",
+    name: "Lead Intake & Qualification",
+    hasOperationalSurface: true,
+    entryRouteId: "lab-001",
+    note: "BizCap controlada de UX-14: Leads, Work Queue, Reviews, Calificación, Asignación y Oportunidad.",
+  },
+  {
+    bizCapId: "LAB-002",
+    name: "Quote & Proposal Management",
+    hasOperationalSurface: false,
+    entryRouteId: null,
+    note: "Planned. Asignable a un usuario, sin superficie operativa construida en este prototipo.",
+  },
+  {
+    bizCapId: "LAB-003",
+    name: "Order Intake & Validation",
+    hasOperationalSurface: false,
+    entryRouteId: null,
+    note: "Planned. Asignable a un usuario, sin superficie operativa construida en este prototipo.",
+  },
+];
+
+function protoFindBizCap(bizCapId: string): ProtoBizCapDefinition | null {
+  return PROTO_BIZCAPS.find((b) => b.bizCapId === bizCapId) ?? null;
+}
+
+/* --- §12 Estados de interacción del contexto de Tenant --------------------- */
+
+type ProtoTenantStateCode =
+  | "TENANT_CONTEXT_SWITCHING"
+  | "TENANT_ACCESS_REVOKED"
+  | "TENANT_CONTEXT_STALE"
+  | "TENANT_BIZCAP_NOT_AVAILABLE"
+  | "ADMIN_CHANGE_REQUIRES_STEP_UP"
+  | "ACCESS_CHANGE_SUCCESS"
+  | "ACCESS_CHANGE_CONFLICT";
+
+const PROTO_TENANT_STATE_LABEL: Record<ProtoTenantStateCode, string> = {
+  TENANT_CONTEXT_SWITCHING: "Cambiando de organización",
+  TENANT_ACCESS_REVOKED: "Acceso revocado en esta organización",
+  TENANT_CONTEXT_STALE: "El contexto de organización está desactualizado",
+  TENANT_BIZCAP_NOT_AVAILABLE: "Esa BizCap no está disponible en esta organización",
+  ADMIN_CHANGE_REQUIRES_STEP_UP: "Este cambio de acceso exige verificación adicional",
+  ACCESS_CHANGE_SUCCESS: "Acceso actualizado",
+  ACCESS_CHANGE_CONFLICT: "El acceso cambió mientras editabas",
+};
+
+/** Estado de una membresía de Tenant. `revoked` falla en cerrado. */
+type ProtoMembershipStatus = "active" | "invited" | "suspended" | "revoked";
+
+const PROTO_MEMBERSHIP_STATUS_LABEL: Record<ProtoMembershipStatus, string> = {
+  active: "Activa",
+  invited: "Invitación pendiente",
+  suspended: "Suspendida",
+  revoked: "Revocada",
+};

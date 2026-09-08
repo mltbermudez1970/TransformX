@@ -22,30 +22,53 @@ const PROTO_ROUTES = [
     { routeId: "lab-001-opportunity", path: "workspace/opportunity/", label: "Oportunidad", parents: ["home", "bizcaps", "lab-001", "lab-001-leads"], requiresAuth: true, phase: "PM-UX14-06" },
     { routeId: "capio", path: "workspace/capio/", label: "Capio", parents: ["home"], requiresAuth: true, phase: "PM-UX14-03" },
     { routeId: "administration", path: "workspace/administration/", label: "Administration", parents: ["home"], requiresAuth: true, phase: "PM-UX14-06" },
+    // ADM-06…ADM-09 (TX-UX-MTAC-AMD-001 §8) son vistas de una misma ruta: el
+    // prototipo es multipágina y el estado del borrador vive en sessionStorage.
+    { routeId: "administration-access", path: "workspace/administration/access/", label: "Acceso de usuarios", parents: ["home", "administration"], requiresAuth: true, phase: "TX-UX-MTAC-AMD-001" },
     { routeId: "auth", path: "workspace/auth/", label: "Acceso", parents: [], requiresAuth: false, phase: "PM-UX14-03" },
     { routeId: "system", path: "workspace/system/", label: "Estado del sistema", parents: [], requiresAuth: false, phase: "PM-UX14-03" },
 ];
-const PROTO_NAV = [
-    { routeId: "home" },
-    { routeId: "my-work" },
-    {
-        routeId: "bizcaps",
+/** Subárbol operativo de cada BizCap con superficie construida. */
+const PROTO_BIZCAP_NAV = {
+    "LAB-001": {
+        routeId: "lab-001",
         children: [
-            {
-                routeId: "lab-001",
-                children: [
-                    { routeId: "lab-001-leads" },
-                    { routeId: "lab-001-queue" },
-                    { routeId: "lab-001-reviews" },
-                    { routeId: "lab-001-dashboard" },
-                    { routeId: "lab-001-config" },
-                ],
-            },
+            { routeId: "lab-001-leads" },
+            { routeId: "lab-001-queue" },
+            { routeId: "lab-001-reviews" },
+            { routeId: "lab-001-dashboard" },
+            { routeId: "lab-001-config" },
         ],
     },
-    { routeId: "capio" },
-    { routeId: "administration" },
-];
+};
+/**
+ * Navegación del Workspace generada desde el contexto de Tenant activo y las
+ * asignaciones del usuario (TX-UX-MTAC-AMD-001 §7).
+ *
+ * Un BizCap sin asignación **no aparece** como superficie operativa: no basta
+ * con ocultar enlaces, es que el árbol no lo contiene. Y la administración
+ * sólo se ofrece a quien tiene `tenant.administer` en ESTE Tenant, así que el
+ * mismo usuario ve menús distintos en organizaciones distintas.
+ */
+function protoBuildNav(userId, tenantId) {
+    const nav = [{ routeId: "home" }, { routeId: "my-work" }];
+    if (!tenantId)
+        return nav;
+    const asignaciones = protoBizCapAssignmentsOf(userId, tenantId);
+    const hijos = asignaciones
+        .map((a) => PROTO_BIZCAP_NAV[a.bizCapId])
+        .filter((n) => n !== undefined);
+    // El nodo BizCaps se ofrece siempre que haya alguna asignación: el catálogo
+    // enumera también las asignadas sin superficie operativa (LAB-002/LAB-003),
+    // que se explican allí en vez de fingir un workspace.
+    if (asignaciones.length)
+        nav.push({ routeId: "bizcaps", children: hijos });
+    nav.push({ routeId: "capio" });
+    if (protoTienePermisoEnTenant(userId, tenantId, "tenant.administer")) {
+        nav.push({ routeId: "administration", children: [{ routeId: "administration-access" }] });
+    }
+    return nav;
+}
 function protoFindRoute(routeId) {
     return PROTO_ROUTES.find((r) => r.routeId === routeId) ?? null;
 }

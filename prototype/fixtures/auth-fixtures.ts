@@ -6,9 +6,17 @@
  * desenlace a partir de `scriptedOutcome` del perfil sintético, no de lo que
  * el usuario teclee. Tampoco hay IdP, OAuth, proveedor MFA ni backend.
  *
- * MODELO DE IDENTIDAD (Resolution Package §8):
- * Rol ≠ Permiso ≠ Ámbito. Los tres se declaran por separado en cada actor.
- * El modelo de autorización productivo se define en Stage 13.
+ * MODELO DE IDENTIDAD (Resolution Package §8 + TX-UX-MTAC-AMD-001 §4):
+ * Rol ≠ Permiso ≠ Ámbito, y ninguno de los tres pertenece a la identidad.
+ * `ProtoAuthUser` es **identidad pura**: quién es la persona, cómo se
+ * autentica y bajo qué política. Rol, ámbito y permisos viven en
+ * `prototype/fixtures/tenants.ts`, colgando de la asignación de BizCap dentro
+ * de una membresía de Tenant, porque un rol es una función dentro de un
+ * BizCap y cambia de un Tenant a otro para la misma persona.
+ *
+ * Los helpers de autorización de este archivo delegan en el Tenant activo:
+ * son azúcar de compatibilidad para las superficies existentes, no una
+ * segunda fuente de verdad.
  */
 
 /** Desenlaces de identidad que el prototipo debe saber representar. */
@@ -43,13 +51,12 @@ interface ProtoAuthUser {
   email: string;
   displayName: string;
   initials: string;
-  /** Rol funcional aprobado (Resolution Package §7). */
-  role: ProtoRole;
-  /** Ámbitos, declarados aparte del rol. */
-  scopes: ProtoScope[];
-  /** Permisos, declarados aparte del rol y del ámbito. */
-  permissions: ProtoPermission[];
-  organizationId: string;
+  /*
+   * NO hay `role`, `scopes`, `permissions` ni `organizationId` aquí.
+   * Un rol es una función dentro de un BizCap de un Tenant concreto: el mismo
+   * humano tiene roles distintos en Tenants distintos. Ver
+   * `protoMembershipsOf()` / `protoEffectiveAccess()` en tenants.ts.
+   */
   policyId: string;
   mfaEnrolled: boolean;
   mfaMethod: ProtoMfaMethod;
@@ -87,16 +94,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "ana.ruiz@demo.test",
     displayName: "Ana Ruiz",
     initials: "AR",
-    role: "SALES_REPRESENTATIVE",
-    scopes: ["SELF"],
-    permissions: [
-      "lead.read", "lead.edit_information", "work.read",
-      "missing_information.request", "received_information.review",
-      "qualification.read", "qualification.reassess",
-      "opportunity_readiness.read", "opportunity.convert",
-      "communication.read", "communication.draft", "communication.send",
-    ],
-    organizationId: "org-demo-001",
     policyId: "pol-standard",
     mfaEnrolled: true,
     mfaMethod: "totp",
@@ -110,16 +107,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "bruno.salas@demo.test",
     displayName: "Bruno Salas",
     initials: "BS",
-    role: "SALES_OPERATIONS_ANALYST",
-    scopes: ["BIZCAP"],
-    permissions: [
-      "lead.read", "work.read", "work.manage",
-      "missing_information.request", "received_information.review",
-      "qualification.read", "review.read", "duplicate_review.resolve",
-      "assignment.read", "assignment.assign", "assignment.reassign",
-      "communication.read",
-    ],
-    organizationId: "org-demo-001",
     policyId: "pol-strict",
     mfaEnrolled: false,
     mfaMethod: "none",
@@ -133,17 +120,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "elena.mora@demo.test",
     displayName: "Elena Mora",
     initials: "EM",
-    role: "SALES_MANAGER",
-    scopes: ["TEAM", "BIZCAP"],
-    permissions: [
-      "lead.read", "work.read", "work.manage",
-      "qualification.read", "review.read", "review.resolve", "duplicate_review.resolve",
-      "assignment.read", "assignment.assign", "assignment.reassign", "assignment.override",
-      "opportunity_readiness.read", "opportunity.convert",
-      "lead.disqualify", "lead.close",
-      "communication.read", "communication.draft", "communication.send",
-    ],
-    organizationId: "org-demo-001",
     policyId: "pol-standard",
     mfaEnrolled: true,
     mfaMethod: "totp",
@@ -157,14 +133,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "hugo.reyes@demo.test",
     displayName: "Hugo Reyes",
     initials: "HR",
-    role: "HUMAN_REVIEWER",
-    scopes: ["BIZCAP"],
-    permissions: [
-      "lead.read", "work.read",
-      "qualification.read", "review.read", "review.resolve", "duplicate_review.resolve",
-      "communication.read",
-    ],
-    organizationId: "org-demo-001",
     policyId: "pol-standard",
     mfaEnrolled: true,
     mfaMethod: "totp",
@@ -178,10 +146,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "carla.bloqueada@demo.test",
     displayName: "Carla Bloqueada",
     initials: "CB",
-    role: "SALES_REPRESENTATIVE",
-    scopes: ["SELF"],
-    permissions: ["lead.read", "work.read"],
-    organizationId: "org-demo-001",
     policyId: "pol-standard",
     mfaEnrolled: true,
     mfaMethod: "totp",
@@ -195,10 +159,6 @@ const PROTO_AUTH_USERS: ProtoAuthUser[] = [
     email: "diego.invitado@demo.test",
     displayName: "Diego Invitado",
     initials: "DI",
-    role: "SALES_REPRESENTATIVE",
-    scopes: ["SELF"],
-    permissions: ["lead.read", "work.read"],
-    organizationId: "org-demo-001",
     policyId: "pol-standard",
     mfaEnrolled: false,
     mfaMethod: "none",
@@ -229,10 +189,29 @@ function protoPolicyOf(user: ProtoAuthUser): ProtoAuthPolicy | null {
  * fixture aparece deshabilitada, nunca para decidir si debe existir.
  */
 function protoActorTienePermiso(user: ProtoAuthUser, permiso: ProtoPermission): boolean {
-  return user.permissions.includes(permiso);
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return false;      // Sin Tenant activo no hay autorización.
+  return protoTienePermisoEnTenant(user.userId, tenantId, permiso);
 }
 
-/** Etiqueta de rol legible, sin inventar jerarquías. */
+/**
+ * Etiqueta de los roles del usuario **en el Tenant activo**, sin jerarquías.
+ * La misma persona devuelve otra etiqueta en otro Tenant: eso es lo correcto.
+ */
 function protoRoleLabelOf(user: ProtoAuthUser): string {
-  return PROTO_ROLE_LABEL[user.role];
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return "Sin organización activa";
+  const acceso = protoEffectiveAccess(user.userId, tenantId);
+  return acceso.roles.length ? protoRolesLabel(acceso.roles) : "Sin roles asignados";
+}
+
+/**
+ * Primer rol del usuario en el Tenant activo. **Sólo para mostrar el autor de
+ * un evento** (quién hizo qué): no es un "rol principal" ni se usa para
+ * autorizar nada. Si no hay roles devuelve null y quien llama lo omite.
+ */
+function protoPrimaryRoleOf(user: ProtoAuthUser): ProtoRole | undefined {
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return undefined;
+  return protoEffectiveAccess(user.userId, tenantId).roles[0];
 }

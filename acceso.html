@@ -88,19 +88,16 @@
         </header>
 
         <div class="prototype-notice" role="alert" data-animate>
-          TransformX aún no ofrece inicio de sesión real desde el sitio público. Este formulario es ilustrativo: no envía credenciales ni crea sesiones.
+          El inicio de sesión de TransformX es un prototipo de validación: no hay credenciales reales, ni proveedor de identidad, ni sesiones de producción. El flujo completo —incluidos segundo factor y selección de organización— sí es recorrible.
         </div>
 
-        <form class="access-form" data-animate aria-labelledby="acceso-title" onsubmit="event.preventDefault();">
-          <label for="acceso-email">Correo corporativo</label>
-          <input type="email" id="acceso-email" name="email" class="form-input" placeholder="nombre@tuempresa.com" autocomplete="username" disabled aria-describedby="acceso-help">
-
-          <label for="acceso-password">Contraseña</label>
-          <input type="password" id="acceso-password" name="password" class="form-input" placeholder="••••••••" autocomplete="current-password" disabled>
-
-          <button type="submit" class="btn btn--primary" disabled>Iniciar sesión</button>
+        <div class="access-form" data-animate>
+          <p>Continúa al flujo de acceso autenticado para recorrer AUTH-01 Iniciar sesión, la verificación en dos pasos y la resolución de organización.</p>
+          <p class="ws-actions">
+            <a class="btn btn--primary" href="workspace/auth/?screen=sign-in&amp;returnTo=workspace%2F">Iniciar sesión</a>
+          </p>
           <p id="acceso-help" class="section__disclaimer">¿Necesitas acceso anticipado? <a href="contacto.html">Contacta al equipo</a> o explora BizCaps con <a href="index.html#capio">Capio</a>.</p>
-        </form>
+        </div>
 
         <!-- Acceso al prototipo autenticado: oculto salvo en modo prototipo (?prototype=true). -->
         <p class="section__disclaimer" data-prototype-entry hidden>

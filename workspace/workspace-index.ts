@@ -35,7 +35,7 @@ function renderContextoSesion(): void {
     <p class="ws-page__lead">${PROTO_ORGANIZATION.name} · ${PROTO_ORGANIZATION.bizcapId} ${PROTO_ORGANIZATION.bizcapName}</p>
     <dl class="ws-context">
       <div><dt>Actor</dt><dd>${user.displayName} — ${protoRoleLabelOf(user)}</dd></div>
-      <div><dt>Ámbito y permisos</dt><dd>${user.scopes.join(", ")} · ${String(user.permissions.length)} permisos declarados</dd></div>
+      <div><dt>Acceso efectivo</dt><dd>${protoEffectiveAccess(user.userId, protoGetActiveTenantId() ?? "").scopes.join(", ")} · ${String(protoEffectiveAccess(user.userId, protoGetActiveTenantId() ?? "").permissions.length)} permisos derivados</dd></div>
       <div><dt>Política</dt><dd>${policy ? policy.label : user.policyId}</dd></div>
       <div><dt>Segundo factor</dt><dd>${session.mfaSatisfied ? "Satisfecho" : "Pendiente"}${session.trustedDevice ? " · dispositivo de confianza" : ""}</dd></div>
       <div><dt>Sesión simulada</dt><dd>~${String(minutos)} min restantes</dd></div>

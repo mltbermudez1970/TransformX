@@ -25,7 +25,9 @@ type ProtoAuthScreenId =
   | "mfa-challenge"
   | "mfa-recovery"
   | "trusted-device"
-  | "step-up";
+  | "step-up"
+  /** AUTH-13 — TX-UX-MTAC-AMD-001 §5. */
+  | "select-organization";
 
 interface ProtoAuthScreen {
   code: string;
@@ -47,6 +49,7 @@ function protoAuthScreenId(): ProtoAuthScreenId {
   const validos: ProtoAuthScreenId[] = [
     "sign-in", "forgot-password", "reset-password", "change-password",
     "account-locked", "sign-up", "invitation", "mfa-enrollment",
+    "select-organization",
     "mfa-challenge", "mfa-recovery", "trusted-device", "step-up",
   ];
   return validos.find((v) => v === s) ?? "sign-in";
@@ -127,10 +130,36 @@ function protoAuthHref(screen: ProtoAuthScreenId, extra?: Record<string, string>
   return protoRouteHref("auth", params);
 }
 
-/** Destino final tras autenticar: contexto original o Home del workspace. */
+/**
+ * Destino tras autenticar. La identidad ya está verificada; lo que falta es
+ * resolver el **contexto de organización** (TX-UX-MTAC-AMD-001 §3):
+ *
+ *   0 membresías activas → estado gobernado sin acceso (no un Workspace falso)
+ *   1 membresía activa   → se establece sola, sin preguntar
+ *  >1 membresías activas → AUTH-13 Seleccionar organización
+ *
+ * El `returnTo` sobrevive a los tres caminos: quien entró queriendo llegar a
+ * un sitio concreto sigue llegando después de resolver la organización.
+ */
 function protoAuthLanding(): string {
-  const destino = protoResolveLanding();
-  return protoResolveRoute(destino);
+  const user = protoGetSessionUser();
+  if (!user) return protoResolveRoute(protoResolveLanding());
+
+  const resolucion = protoResolveTenantMemberships(user.userId);
+
+  if (resolucion.kind === "none") {
+    return protoRouteHref("system", { state: "no-tenant-access" });
+  }
+
+  if (resolucion.kind === "auto") {
+    protoSetActiveTenant(resolucion.tenantId);
+    return protoResolveRoute(protoResolveLanding());
+  }
+
+  const extra: Record<string, string> = { screen: "select-organization" };
+  const ret = protoAuthParam("returnTo");
+  if (ret) extra["returnTo"] = ret;
+  return protoRouteHref("auth", extra);
 }
 
 function protoAuthCampo(
@@ -525,6 +554,95 @@ function protoRenderTrustedDevice(): string {
     </div>`;
 }
 
+/* ---------------------------------------------------------------------------
+ * AUTH-13 Seleccionar organización — TX-UX-MTAC-AMD-001 §5
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Se pide la ORGANIZACIÓN, nunca el rol. Los roles se muestran como
+ * información —para que la persona reconozca dónde está entrando— pero no son
+ * una elección: dentro de un BizCap el usuario ejerce todos los que tenga.
+ */
+function protoRenderSelectOrganization(): string {
+  const user = protoGetSessionUser();
+  if (!user) {
+    return `<p class="ws-empty" role="status">Inicia sesión para continuar.</p>`;
+  }
+
+  const activas = protoActiveMembershipsOf(user.userId);
+
+  if (!activas.length) {
+    return `
+      <div class="c-alert c-alert--warning" role="status">
+        <p class="c-alert-message"><strong>No tienes acceso a ninguna organización.</strong></p>
+      </div>
+      <p>Tu identidad es válida, pero todavía no perteneces a ninguna organización activa en TransformX.</p>
+      <p class="ws-muted ws-small">Pide a la administración de tu organización que te dé acceso. No se abre un Workspace vacío: no hay contexto en el que trabajar.</p>`;
+  }
+
+  const filas = activas
+    .map((m) => {
+      const t = protoFindTenant(m.tenantId);
+      if (!t) return "";
+      const acceso = protoEffectiveAccess(user.userId, m.tenantId);
+      const nBizCaps = acceso.bizCapIds.length;
+
+      const roles = acceso.rolesByBizCap
+        .map((r) => {
+          const chips = r.roles
+            .map((rol) => `<span class="ws-role-chip">${protoEscape(PROTO_ROLE_LABEL[rol])}</span>`)
+            .join("");
+          return `<li class="ws-access__item"><span class="ws-access__bizcap">${protoEscape(r.bizCapId)}</span><span class="ws-role-list">${chips}</span></li>`;
+        })
+        .join("");
+
+      return `
+        <li class="ws-tenant-card">
+          <div class="ws-tenant-card__head">
+            <span class="ws-tenant-card__mark" aria-hidden="true">${protoEscape(t.initials)}</span>
+            <div class="ws-tenant-card__id">
+              <h2 class="ws-tenant-card__name" id="tn-${protoEscape(t.tenantId)}">${protoEscape(t.name)}</h2>
+              <p class="ws-tenant-card__meta">${protoEscape(t.industry)} · ${String(nBizCaps)} BizCap${nBizCaps === 1 ? "" : "s"} disponible${nBizCaps === 1 ? "" : "s"}</p>
+            </div>
+          </div>
+          ${nBizCaps
+            ? `<ul class="ws-access">${roles}</ul>`
+            : `<p class="ws-muted ws-small">Sin BizCaps asignadas todavía en esta organización.</p>`}
+          <button type="button" class="c-btn c-btn--primary" data-tenant-enter="${protoEscape(m.tenantId)}"
+                  aria-describedby="tn-${protoEscape(t.tenantId)}">Entrar</button>
+        </li>`;
+    })
+    .join("");
+
+  return `
+    <p>Perteneces a más de una organización. Elige en cuál quieres trabajar.</p>
+    <ul class="ws-tenant-cards">${filas}</ul>
+    <p class="ws-muted ws-small">
+      No se te pide elegir un rol: dentro de cada BizCap ejerces todas las
+      funciones que tengas asignadas en esa organización.
+    </p>`;
+}
+
+function protoWireSelectOrganization(): void {
+  document.querySelectorAll<HTMLButtonElement>("[data-tenant-enter]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const tenantId = b.getAttribute("data-tenant-enter");
+      if (!tenantId) return;
+
+      if (!protoSetActiveTenant(tenantId)) {
+        protoAuthFeedback(
+          "Ese acceso ya no está disponible. Vuelve a iniciar sesión para actualizar tus organizaciones.",
+          "error"
+        );
+        return;
+      }
+      // El contexto arranca limpio: nada de una sesión previa cruza al Tenant.
+      protoClearTenantScopedState();
+      protoAuthIrA(protoResolveRoute(protoResolveLanding()));
+    });
+  });
+}
+
 function protoRenderStepUp(): string {
   const op = protoAuthParam("operation") ?? "assignment.override";
   return `
@@ -662,6 +780,11 @@ const PROTO_AUTH_SCREENS: Record<ProtoAuthScreenId, ProtoAuthScreen> = {
     code: "AUTH-11", titulo: "Dispositivo de confianza",
     intro: "Opción dirigida por política de la organización.",
     render: protoRenderTrustedDevice, wire: () => { /* superficie informativa */ },
+  },
+  "select-organization": {
+    code: "AUTH-13", titulo: "Selecciona tu organización",
+    intro: "Tu identidad ya está verificada. Falta elegir en qué organización vas a trabajar.",
+    render: protoRenderSelectOrganization, wire: protoWireSelectOrganization,
   },
   "step-up": {
     code: "AUTH-12", titulo: "Verificación adicional requerida",

@@ -15,6 +15,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-01",
         title: "Complete inquiry",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/my-work/",
         fixtureSet: "fx-complete-inquiry",
         expectedAvailableActions: ["VIEW_LEAD", "START_QUALIFICATION", "VIEW_COMMUNICATIONS"],
@@ -27,6 +28,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-02",
         title: "Missing information",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/missing-information/",
         fixtureSet: "fx-missing-information",
         expectedAvailableActions: ["VIEW_LEAD", "REQUEST_MISSING_INFORMATION", "VIEW_COMMUNICATIONS"],
@@ -39,6 +41,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-03",
         title: "Conflicting update",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/missing-information/",
         fixtureSet: "fx-conflicting-update",
         expectedAvailableActions: ["VIEW_LEAD", "REVIEW_RECEIVED_INFORMATION", "REQUEST_HUMAN_REVIEW"],
@@ -51,6 +54,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-04",
         title: "Probable duplicate",
         actor: "act-004",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/reviews/",
         fixtureSet: "fx-duplicate-review",
         expectedAvailableActions: ["VIEW_LEAD", "OPEN_DUPLICATE_REVIEW", "RESOLVE_DUPLICATE_REVIEW", "REQUEST_MORE_INFORMATION"],
@@ -63,6 +67,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-05",
         title: "Human review required",
         actor: "act-004",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/reviews/",
         fixtureSet: "fx-human-review",
         expectedAvailableActions: ["VIEW_LEAD", "VIEW_QUALIFICATION", "OPEN_HUMAN_REVIEW", "RESOLVE_HUMAN_REVIEW", "REQUEST_MORE_INFORMATION"],
@@ -75,6 +80,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-06",
         title: "Assignment exception",
         actor: "act-003",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/assignment/",
         fixtureSet: "fx-assignment-exception",
         expectedAvailableActions: ["VIEW_LEAD", "VIEW_ASSIGNMENT", "RESOLVE_ASSIGNMENT_EXCEPTION", "OVERRIDE_ASSIGNMENT_POLICY"],
@@ -87,6 +93,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-07",
         title: "Qualified not ready",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/opportunity/",
         fixtureSet: "fx-qualified-not-ready",
         expectedAvailableActions: ["VIEW_LEAD", "VIEW_QUALIFICATION", "VIEW_ASSIGNMENT", "VIEW_OPPORTUNITY_READINESS"],
@@ -99,6 +106,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-08",
         title: "Ready for conversion",
         actor: "act-003",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/opportunity/",
         fixtureSet: "fx-ready-for-conversion",
         expectedAvailableActions: ["VIEW_LEAD", "VIEW_QUALIFICATION", "VIEW_ASSIGNMENT", "VIEW_OPPORTUNITY_READINESS", "CONVERT_TO_OPPORTUNITY"],
@@ -111,6 +119,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-09",
         title: "Stale / concurrent change",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/leads/",
         fixtureSet: "fx-ready-for-conversion",
         expectedAvailableActions: ["VIEW_LEAD", "VIEW_QUALIFICATION", "VIEW_ASSIGNMENT", "VIEW_OPPORTUNITY_READINESS", "CONVERT_TO_OPPORTUNITY"],
@@ -123,6 +132,7 @@ const PROTO_SCENARIOS = [
         scenarioId: "S-10",
         title: "Auth / MFA recovery",
         actor: "act-001",
+        tenantId: "tn-novaplast",
         initialRoute: "workspace/system/",
         fixtureSet: "fx-empty",
         // Las acciones de negocio quedan suspendidas hasta restaurar la sesión.
@@ -133,6 +143,38 @@ const PROTO_SCENARIOS = [
         specSource: "UX-14 Resolution Package §6",
     },
 ];
+/* ---------------------------------------------------------------------------
+ * Journeys de validación de la enmienda TX-UX-MTAC-AMD-001 §11
+ * ------------------------------------------------------------------------- */
+PROTO_SCENARIOS.push({
+    scenarioId: "S-11",
+    title: "Multi-Tenant authentication & context switching",
+    actor: "act-001",
+    // Ana Ruiz pertenece a NovaPlast y a Empresa ABC: al autenticarse pasa por
+    // AUTH-13 y, ya dentro, puede conmutar. Se arranca en NovaPlast.
+    tenantId: "tn-novaplast",
+    initialRoute: "workspace/my-work/",
+    fixtureSet: "fx-complete-inquiry",
+    expectedAvailableActions: ["VIEW_LEAD", "START_QUALIFICATION", "VIEW_COMMUNICATIONS"],
+    expectedOutcome: "VJ-11: la misma identidad tiene tres roles en LAB-001 de NovaPlast y sólo Sales Representative en LAB-001 de Empresa ABC, además de LAB-003. Al conmutar cambian navegación, pendientes, permisos y el contexto de Capio, sin arrastrar nada de la organización anterior.",
+    mockOutcome: "success",
+    specStatus: "DEFINED",
+    specSource: "TX-UX-MTAC-AMD-001 §11 (VJ-11)",
+}, {
+    scenarioId: "S-12",
+    title: "Tenant user access administration",
+    actor: "act-003",
+    tenantId: "tn-novaplast",
+    initialRoute: "workspace/administration/access/",
+    fixtureSet: "fx-complete-inquiry",
+    // La administración de acceso no es una acción del ciclo de vida del Lead:
+    // por eso este escenario no declara availableActions de LAB-001.
+    expectedAvailableActions: [],
+    expectedOutcome: "VJ-12: Elena Mora administra sólo NovaPlast. Asigna varias BizCaps y varios roles dentro de una misma BizCap, revisa las consecuencias antes de confirmar, atraviesa la verificación adicional y ve el acceso efectivo resultante. Retirar la última administración queda bloqueado.",
+    mockOutcome: "success",
+    specStatus: "DEFINED",
+    specSource: "TX-UX-MTAC-AMD-001 §11 (VJ-12)",
+});
 function protoGetScenario(scenarioId) {
     return PROTO_SCENARIOS.find((scenario) => scenario.scenarioId === scenarioId) ?? null;
 }

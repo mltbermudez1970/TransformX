@@ -99,7 +99,7 @@ function protoRenderAccountMenu(user) {
         <div class="c-menu__group" role="group" aria-labelledby="ws-account-cat-identidad">
           <h3 class="c-menu__category" id="ws-account-cat-identidad">Identidad</h3>
           <p class="ws-account__meta"><strong>${protoEscape(user.displayName)}</strong><br>${protoEscape(user.email)}</p>
-          <p class="ws-account__meta">${protoEscape(protoRoleLabelOf(user))} · ${protoEscape(user.scopes.join(", "))}</p>
+          ${protoRenderEffectiveAccessSummary(user)}
           <p class="ws-account__meta">Política: ${protoEscape(policy ? policy.label : user.policyId)}</p>
           <p class="ws-account__meta">Sesión simulada: ~${String(minutos)} min restantes${session?.trustedDevice ? " · dispositivo de confianza" : ""}</p>
         </div>
@@ -142,6 +142,7 @@ function protoRenderShell() {
           <span class="ws-brand__mark" aria-hidden="true">TX</span>
           <span class="ws-brand__name">TRANSFORMX</span>
         </a>
+        ${mostrarNav ? protoRenderTenantBadge() : ""}
       </div>
       <div class="ws-header__right">
         ${mostrarNav
@@ -160,19 +161,25 @@ function protoRenderShell() {
     if (mostrarNav)
         protoRenderSidebar(actual);
     protoWireShell();
-    if (mostrarNav)
+    if (mostrarNav) {
         protoWireScenarioSelector();
+        protoWireTenantSwitcher();
+    }
 }
 function protoRenderSidebar(actual) {
     const host = document.querySelector("[data-workspace-nav]");
     if (!host)
         return;
+    // El árbol se genera desde el Tenant activo: un BizCap no asignado no está
+    // en la navegación, no es que esté oculto (TX-UX-MTAC-AMD-001 §7).
+    const user = protoGetSessionUser();
+    const nav = user ? protoBuildNav(user.userId, protoGetActiveTenantId()) : [];
     host.innerHTML = `
     <nav class="ws-nav" id="ws-nav" aria-label="Navegación del workspace">
       <ul class="ws-nav__list ws-nav__list--nivel0">
-        ${PROTO_NAV.map((n) => protoRenderNavNode(n, actual, 0)).join("")}
+        ${nav.map((n) => protoRenderNavNode(n, actual, 0)).join("")}
       </ul>
-      <p class="ws-nav__note">Las superficies marcadas con P04–P06 se construyen en prompts posteriores.</p>
+      <p class="ws-nav__note">Sólo aparecen las BizCaps asignadas en la organización activa.</p>
     </nav>`;
 }
 function protoWireShell() {
@@ -310,8 +317,25 @@ function protoGuardRoute() {
     location.replace(protoRouteHref("auth", { screen, returnTo: destino }));
     return false;
 }
+/**
+ * Segunda guarda: identidad válida pero contexto de Tenant ausente, revocado,
+ * obsoleto, o ruta que pertenece a un BizCap no asignado en este Tenant.
+ * Corre después de `protoGuardRoute()` porque sin identidad no hay contexto.
+ */
+function protoGuardTenant() {
+    const route = protoCurrentRoute();
+    if (!route || !route.requiresAuth)
+        return true;
+    const destino = protoTenantGuardRedirect();
+    if (!destino)
+        return true;
+    location.replace(destino);
+    return false;
+}
 document.addEventListener("DOMContentLoaded", () => {
     if (!protoGuardRoute())
+        return;
+    if (!protoGuardTenant())
         return;
     protoRenderShell();
 });

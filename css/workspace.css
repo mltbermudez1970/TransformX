@@ -1542,3 +1542,232 @@
 .ws-scenario-dialog { --c-dialog-max-width: min(1100px, 94vw); }
 .ws-scenario-table { max-height: 60vh; overflow: auto; margin-bottom: var(--space-4); }
 .ws-scenario-table td, .ws-scenario-table th { white-space: normal; vertical-align: top; }
+
+/* ===========================================================================
+ * Multi-Tenant — TX-UX-MTAC-AMD-001 §13
+ * Ningún estado se comunica sólo por color: membresía, rol y tipo de cambio
+ * llevan siempre texto propio.
+ * ========================================================================= */
+
+/* --- Insignia de organización e interruptor ------------------------------- */
+.ws-tenant {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-on-dark-08);
+  color: var(--text-on-dark);
+  font-size: var(--text-sm);
+}
+
+.ws-tenant--button {
+  min-height: var(--size-touch-target);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.ws-tenant--button:hover { border-color: var(--surface-on-dark-08); }
+
+.ws-tenant__mark {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-icon-md);
+  height: var(--size-icon-md);
+  border-radius: var(--radius-sm);
+  background: var(--transformation-cyan);
+  color: var(--deep-navy);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.ws-tenant__text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.ws-tenant__label { font-size: var(--text-xs); opacity: 0.75; }
+.ws-tenant__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: var(--font-weight-semibold); }
+.ws-tenant__caret { flex-shrink: 0; }
+
+.ws-tenant-switcher { position: relative; min-width: 0; }
+
+.ws-tenant__panel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + var(--space-2));
+  z-index: var(--z-overlay);
+  width: min(360px, 88vw);
+  text-align: left;
+}
+
+.ws-tenant__warn {
+  margin: 0 0 var(--space-3);
+  padding-inline: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.ws-tenant-option__name { display: block; font-weight: var(--font-weight-semibold); }
+.ws-tenant-option__meta { display: block; color: var(--text-secondary); font-size: var(--text-xs); }
+.ws-tenant-option__current { display: block; color: var(--accent-text); font-size: var(--text-xs); }
+
+/* En móvil la insignia cede el nombre largo antes que la marca. */
+@media (max-width: 639px) {
+  .ws-tenant__label { display: none; }
+  .ws-tenant__name { max-width: 8rem; }
+}
+
+/* --- Transición de contexto (TENANT_CONTEXT_SWITCHING) -------------------- */
+.ws-tenant-switching {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--overlay-navy);
+}
+
+.ws-tenant-switching__box {
+  max-width: 26rem;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-xl);
+}
+
+.ws-tenant-switching__title { margin: 0 0 var(--space-2); font-family: var(--font-heading); font-weight: var(--font-weight-bold); color: var(--text-primary); }
+.ws-tenant-switching__note { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); }
+
+/* --- Tarjetas de organización (AUTH-13) ---------------------------------- */
+.ws-tenant-cards { display: grid; gap: var(--space-4); margin: var(--space-6) 0; }
+
+@media (min-width: 768px) {
+  .ws-tenant-cards { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+}
+
+.ws-tenant-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+}
+
+.ws-tenant-card__head { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+
+.ws-tenant-card__mark {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-touch-target);
+  height: var(--size-touch-target);
+  border-radius: var(--radius-sm);
+  background: var(--gradient-primary);
+  color: var(--white);
+  font-weight: var(--font-weight-bold);
+}
+
+.ws-tenant-card__id { min-width: 0; }
+.ws-tenant-card__name { margin: 0; font-size: var(--text-lg); }
+.ws-tenant-card__meta { margin: 0; color: var(--text-secondary); font-size: var(--text-sm); }
+
+/* --- Roles y acceso efectivo --------------------------------------------- */
+.ws-role-list { display: inline-flex; flex-wrap: wrap; gap: var(--space-1); }
+
+.ws-role-chip {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+
+.ws-access { list-style: none; display: grid; gap: var(--space-2); margin: var(--space-3) 0; padding: 0; }
+
+.ws-access__item { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); min-width: 0; }
+
+.ws-access__bizcap { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--text-secondary); }
+
+/* --- Asignación (ADM-08) -------------------------------------------------- */
+.ws-assign {
+  /* `fieldset` arrastra un min-width intrínseco que desborda a 320px. */
+  min-width: 0;
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ws-assign legend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-weight: var(--font-weight-semibold); }
+.ws-assign__toggle { margin-bottom: var(--space-2); }
+.ws-assign__roles { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
+.ws-assign__hint { margin: 0; color: var(--text-secondary); font-size: var(--text-xs); }
+
+.ws-chip--planned {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-secondary);
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-regular);
+}
+
+.ws-chip--active, .ws-chip--invited, .ws-chip--suspended, .ws-chip--revoked {
+  display: inline-block;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+}
+
+.ws-chip--active { border-color: var(--success); color: var(--success-text); }
+.ws-chip--revoked { border-color: var(--error); color: var(--error-text); }
+.ws-chip--suspended { border-color: var(--warning); color: var(--warning-text); }
+
+/* --- Revisión de cambios (ADM-09) ---------------------------------------- */
+.ws-changes { list-style: none; display: grid; gap: var(--space-3); margin: var(--space-4) 0; padding: 0; }
+
+.ws-change {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--border);
+  background: var(--surface-primary);
+  border-radius: var(--radius-sm);
+}
+
+.ws-change--add { border-left-color: var(--success); }
+.ws-change--remove { border-left-color: var(--error); }
+
+/* El tipo de cambio se enuncia en texto: el color es refuerzo, no el dato. */
+.ws-change__kind { font-size: var(--text-xs); font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--text-secondary); }
+.ws-change__what { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text-primary); overflow-wrap: anywhere; }
+.ws-change__consequence { color: var(--text-secondary); font-size: var(--text-sm); }
+
+/* --- Tarjetas de catálogo ------------------------------------------------- */
+.ws-cards { list-style: none; display: grid; gap: var(--space-4); margin: var(--space-6) 0; padding: 0; }
+
+@media (min-width: 768px) {
+  .ws-cards { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+}
+
+.ws-card {
+  min-width: 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+}
+
+.ws-card__title { margin: 0 0 var(--space-2); font-size: var(--text-lg); }
+.ws-card__roles { color: var(--text-secondary); font-size: var(--text-sm); }

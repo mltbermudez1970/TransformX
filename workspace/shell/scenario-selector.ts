@@ -42,6 +42,11 @@ function protoActivateScenario(scenarioId: string): void {
   if (user) {
     // El escenario declara el actor: la sesión simulada lo adopta.
     protoStartSession(user, true, false);
+    // …y también su organización. Un escenario entra directo a la superficie
+    // que quiere validar: no debe pasar por AUTH-13 cada vez. Si el escenario
+    // no declara Tenant se resuelve la primera membresía activa del actor.
+    const tenantId = s.tenantId ?? protoActiveMembershipsOf(user.userId)[0]?.tenantId;
+    if (tenantId) protoSetActiveTenant(tenantId);
   }
 
   location.assign(protoResolveRoute(s.initialRoute));

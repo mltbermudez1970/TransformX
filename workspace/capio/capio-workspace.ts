@@ -96,12 +96,71 @@ function protoCapioWsResponder(pregunta: string): string {
   return match ? match.respuesta : PROTO_CAPIO_WS_FALLBACK;
 }
 
+/**
+ * Aislamiento por organización — TX-UX-MTAC-AMD-001 §10.
+ *
+ * El hilo de Capio es contexto PRIVADO del Tenant en el que se produjo. Se
+ * guarda etiquetado con su `tenantId` y sólo se rehidrata si coincide con el
+ * Tenant activo; al conmutar, `protoClearTenantScopedState()` borra la clave
+ * completa. Nunca se muestra ni se referencia contenido de la organización
+ * anterior. Cambiar de organización tampoco aumenta la autoridad de Capio:
+ * sigue siendo asesor y sigue declinando ejecutar.
+ */
+const PROTO_CAPIO_WS_LOG_KEY = "transformx-capio-workspace-log";
+
+interface ProtoCapioWsHilo {
+  tenantId: string;
+  mensajes: { texto: string; autor: "capio" | "tú" }[];
+}
+
+function protoCapioWsGuardar(texto: string, autor: "capio" | "tú"): void {
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return;
+  try {
+    const raw = sessionStorage.getItem(PROTO_CAPIO_WS_LOG_KEY);
+    const hilo: ProtoCapioWsHilo =
+      raw ? (JSON.parse(raw) as ProtoCapioWsHilo) : { tenantId, mensajes: [] };
+    // Un hilo de otra organización no se continúa: se descarta y se empieza.
+    if (hilo.tenantId !== tenantId) { hilo.tenantId = tenantId; hilo.mensajes = []; }
+    hilo.mensajes.push({ texto, autor });
+    sessionStorage.setItem(PROTO_CAPIO_WS_LOG_KEY, JSON.stringify(hilo));
+  } catch {
+    /* sessionStorage no disponible */
+  }
+}
+
+function protoCapioWsRehidratar(): boolean {
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return false;
+  try {
+    const raw = sessionStorage.getItem(PROTO_CAPIO_WS_LOG_KEY);
+    if (!raw) return false;
+    const hilo = JSON.parse(raw) as ProtoCapioWsHilo;
+    if (hilo.tenantId !== tenantId) {
+      // Contexto de otra organización: se invalida sin mostrarlo.
+      sessionStorage.removeItem(PROTO_CAPIO_WS_LOG_KEY);
+      return false;
+    }
+    hilo.mensajes.forEach((m) => protoCapioWsAgregar(m.texto, m.autor));
+    return hilo.mensajes.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 function protoInitCapioWorkspace(): void {
   const form = document.querySelector<HTMLFormElement>("[data-capio-ws-form]");
   const input = document.querySelector<HTMLInputElement>("#capio-ws-input");
   if (!form || !input) return;
 
-  protoCapioWsAgregar(PROTO_CAPIO_WS_BIENVENIDA, "capio");
+  const tenant = protoGetActiveTenant();
+  if (!protoCapioWsRehidratar()) {
+    const bienvenida = tenant
+      ? `${PROTO_CAPIO_WS_BIENVENIDA} Estás en ${tenant.name}: sólo veo el contexto de esta organización.`
+      : PROTO_CAPIO_WS_BIENVENIDA;
+    protoCapioWsAgregar(bienvenida, "capio");
+    protoCapioWsGuardar(bienvenida, "capio");
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -110,8 +169,14 @@ function protoInitCapioWorkspace(): void {
 
     const esSecreto = protoContieneSecreto(pregunta);
     // Si parece un secreto no se refleja en el hilo: no se registra en ningún lado.
-    protoCapioWsAgregar(esSecreto ? "[entrada descartada por seguridad]" : pregunta, "tú");
-    protoCapioWsAgregar(protoCapioWsResponder(pregunta), "capio");
+    const visible = esSecreto ? "[entrada descartada por seguridad]" : pregunta;
+    protoCapioWsAgregar(visible, "tú");
+    if (!esSecreto) protoCapioWsGuardar(visible, "tú");
+
+    const respuesta = protoCapioWsResponder(pregunta);
+    protoCapioWsAgregar(respuesta, "capio");
+    protoCapioWsGuardar(respuesta, "capio");
+
     input.value = "";
     input.focus();
   });

@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../../css/workspace.css">
   <script src="../../js/theme.js" defer></script>
   <script src="../../js/prototype/fixtures/domain.js" defer></script>
+  <script src="../../js/prototype/fixtures/tenants.js" defer></script>
   <script src="../../js/prototype/fixtures/fixtures.js" defer></script>
   <script src="../../js/prototype/fixtures/auth-fixtures.js" defer></script>
   <script src="../../js/prototype/fixtures/work-items.js" defer></script>
@@ -31,31 +32,22 @@
   <script src="../../js/prototype/state/prototype-state.js" defer></script>
   <script src="../../js/prototype/state/session.js" defer></script>
   <script src="../../js/prototype/state/view-state.js" defer></script>
+  <script src="../../js/prototype/fixtures/access-admin.js" defer></script>
+  <script src="../../js/prototype/state/tenant-context.js" defer></script>
   <script src="../../js/workspace/shell/routes.js" defer></script>
   <script src="../../js/workspace/shell/scenario-selector.js" defer></script>
+  <script src="../../js/workspace/shell/tenant-switcher.js" defer></script>
   <script src="../../js/workspace/shell/shell.js" defer></script>
   <script src="../../js/workspace/shell/connectivity.js" defer></script>
   <script src="../../js/workspace/work/work-item-view.js" defer></script>
   <script src="../../js/workspace/work/commands.js" defer></script>
+  <script src="../../js/workspace/bizcaps/bizcaps.js" defer></script>
 </head>
 <body data-route="bizcaps" class="ws-body">
   <div data-workspace-shell></div>
   <div class="ws-layout">
     <aside class="ws-sidebar" data-workspace-nav></aside>
-    <main id="main-content" tabindex="-1" class="ws-main">
-      <h1 class="ws-page__title">BizCaps adoptadas</h1>
-      <p class="ws-page__lead">Instancias gobernadas de la organización. El catálogo comercial de BizCaps disponibles vive en el sitio público.</p>
-      <div class="workspace-table-wrapper">
-        <table class="workspace-table">
-          <caption class="sr-only">BizCaps adoptadas por la organización</caption>
-          <thead><tr><th scope="col">Código</th><th scope="col">BizCap</th><th scope="col">Estado de instancia</th><th scope="col">Abrir</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">LAB-001</th><td>Lead Intake &amp; Qualification</td><td>Instancia activa (sintética)</td><td><a href="lab-001/">Overview</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="section__disclaimer">LAB-002 y LAB-003 no están adoptadas por esta organización sintética. Las BizCaps Planned no son adoptables.</p>
-    </main>
+    <main id="main-content" tabindex="-1" class="ws-main" data-bizcaps-surface></main>
   </div>
 </body>
 </html>

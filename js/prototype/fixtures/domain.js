@@ -161,6 +161,7 @@ const PROTO_ROLE_LABEL = {
     BIZCAP_ADMINISTRATOR: "BizCap Administrator",
     TENANT_ADMINISTRATOR: "Tenant Administrator",
     CUSTOMER_PROSPECT: "Customer / Prospect",
+    ORDER_REVIEWER: "Order Reviewer",
 };
 /**
  * Rol ≠ Permiso ≠ Ámbito. Los tres se declaran por separado en cada actor
@@ -175,6 +176,7 @@ const PROTO_ROLE_NOTE = {
     BIZCAP_ADMINISTRATOR: "Configura la BizCap. Sin autoridad comercial implícita.",
     TENANT_ADMINISTRATOR: "Administra usuarios, roles e integraciones. Sin autoridad sobre decisiones de lead.",
     CUSTOMER_PROSPECT: "Sólo envía consultas o aporta la aclaración solicitada.",
+    ORDER_REVIEWER: "Revisa y valida pedidos entrantes en LAB-003. Sin superficie operativa en este prototipo.",
 };
 /** NOT_SET nunca debe tratarse como LOW. */
 const PROTO_PRIORITY_LABEL = {
@@ -349,4 +351,45 @@ const PROTO_OVERALL_READINESS_LABEL = {
     READY: "Listo para convertir",
     NOT_READY: "No listo",
     PENDING: "Evaluación pendiente",
+};
+const PROTO_BIZCAPS = [
+    {
+        bizCapId: "LAB-001",
+        name: "Lead Intake & Qualification",
+        hasOperationalSurface: true,
+        entryRouteId: "lab-001",
+        note: "BizCap controlada de UX-14: Leads, Work Queue, Reviews, Calificación, Asignación y Oportunidad.",
+    },
+    {
+        bizCapId: "LAB-002",
+        name: "Quote & Proposal Management",
+        hasOperationalSurface: false,
+        entryRouteId: null,
+        note: "Planned. Asignable a un usuario, sin superficie operativa construida en este prototipo.",
+    },
+    {
+        bizCapId: "LAB-003",
+        name: "Order Intake & Validation",
+        hasOperationalSurface: false,
+        entryRouteId: null,
+        note: "Planned. Asignable a un usuario, sin superficie operativa construida en este prototipo.",
+    },
+];
+function protoFindBizCap(bizCapId) {
+    return PROTO_BIZCAPS.find((b) => b.bizCapId === bizCapId) ?? null;
+}
+const PROTO_TENANT_STATE_LABEL = {
+    TENANT_CONTEXT_SWITCHING: "Cambiando de organización",
+    TENANT_ACCESS_REVOKED: "Acceso revocado en esta organización",
+    TENANT_CONTEXT_STALE: "El contexto de organización está desactualizado",
+    TENANT_BIZCAP_NOT_AVAILABLE: "Esa BizCap no está disponible en esta organización",
+    ADMIN_CHANGE_REQUIRES_STEP_UP: "Este cambio de acceso exige verificación adicional",
+    ACCESS_CHANGE_SUCCESS: "Acceso actualizado",
+    ACCESS_CHANGE_CONFLICT: "El acceso cambió mientras editabas",
+};
+const PROTO_MEMBERSHIP_STATUS_LABEL = {
+    active: "Activa",
+    invited: "Invitación pendiente",
+    suspended: "Suspendida",
+    revoked: "Revocada",
 };

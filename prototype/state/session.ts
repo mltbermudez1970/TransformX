@@ -11,6 +11,12 @@
 
 interface ProtoSession {
   userId: string;
+  /**
+   * Tenant activo — TX-UX-MTAC-AMD-001 §5/§6. `null` mientras la identidad ya
+   * está autenticada pero el contexto de organización aún no se ha resuelto
+   * (AUTH-13) o cuando el usuario no tiene ninguna membresía activa.
+   */
+  tenantId: string | null;
   /** Segundo factor satisfecho en esta sesión. */
   mfaSatisfied: boolean;
   /** AUTH-11: el dispositivo quedó marcado como de confianza por política. */
@@ -54,6 +60,7 @@ function protoReadSession(): ProtoSession | null {
     if (typeof parsed.userId !== "string" || typeof parsed.expiresAt !== "number") return null;
     return {
       userId: parsed.userId,
+      tenantId: typeof parsed.tenantId === "string" ? parsed.tenantId : null,
       mfaSatisfied: parsed.mfaSatisfied === true,
       trustedDevice: parsed.trustedDevice === true,
       expiresAt: parsed.expiresAt,
@@ -113,6 +120,9 @@ function protoStartSession(user: ProtoAuthUser, mfaSatisfied: boolean, trustedDe
   const minutos = policy ? policy.sessionMinutes : 30;
   const session: ProtoSession = {
     userId: user.userId,
+    // El Tenant NO se resuelve al autenticar: es un paso propio posterior
+    // (resolución automática o AUTH-13), y hasta entonces no hay autorización.
+    tenantId: null,
     mfaSatisfied,
     trustedDevice,
     expiresAt: Date.now() + minutos * 60_000,
@@ -121,6 +131,67 @@ function protoStartSession(user: ProtoAuthUser, mfaSatisfied: boolean, trustedDe
   };
   protoWriteSession(session);
   return session;
+}
+
+/* ---------------------------------------------------------------------------
+ * Contexto de Tenant — TX-UX-MTAC-AMD-001 §5 y §6
+ * ------------------------------------------------------------------------- */
+
+/** Tenant activo de la sesión, o null si aún no se ha resuelto. */
+function protoGetActiveTenantId(): string | null {
+  return protoGetSession()?.tenantId ?? null;
+}
+
+function protoGetActiveTenant(): ProtoTenant | null {
+  const id = protoGetActiveTenantId();
+  return id ? protoFindTenant(id) : null;
+}
+
+/**
+ * Fija el Tenant activo. Sólo acepta una membresía **activa**: una revocada o
+ * suspendida no puede convertirse en contexto de trabajo (falla en cerrado).
+ */
+function protoSetActiveTenant(tenantId: string): boolean {
+  const s = protoGetSession();
+  if (!s) return false;
+  const m = protoFindMembership(s.userId, tenantId);
+  if (!m || m.status !== "active") return false;
+  s.tenantId = tenantId;
+  protoWriteSession(s);
+  return true;
+}
+
+/**
+ * Resolución del contexto de organización tras autenticar (§3 del diagrama):
+ *   0 membresías activas → "none"  (estado gobernado, no Workspace falso)
+ *   1 membresía activa   → "auto"  (se establece sin preguntar)
+ *  >1 membresías activas → "select" (AUTH-13)
+ */
+type ProtoTenantResolution =
+  | { kind: "none" }
+  | { kind: "auto"; tenantId: string }
+  | { kind: "select"; tenantIds: string[] };
+
+function protoResolveTenantMemberships(userId: string): ProtoTenantResolution {
+  const activas = protoActiveMembershipsOf(userId);
+  if (activas.length === 0) return { kind: "none" };
+  const unica = activas[0];
+  if (activas.length === 1 && unica) return { kind: "auto", tenantId: unica.tenantId };
+  return { kind: "select", tenantIds: activas.map((m) => m.tenantId) };
+}
+
+/**
+ * ¿El contexto guardado sigue siendo válido? Detecta TENANT_ACCESS_REVOKED y
+ * TENANT_CONTEXT_STALE: la membresía pudo revocarse después de establecerse.
+ */
+function protoTenantContextState(): ProtoTenantStateCode | "OK" | "UNRESOLVED" {
+  const s = protoGetSession();
+  if (!s) return "UNRESOLVED";
+  if (!s.tenantId) return "UNRESOLVED";
+  const m = protoFindMembership(s.userId, s.tenantId);
+  if (!m) return "TENANT_CONTEXT_STALE";
+  if (m.status !== "active") return "TENANT_ACCESS_REVOKED";
+  return "OK";
 }
 
 function protoMarkMfaSatisfied(trustedDevice: boolean): void {
