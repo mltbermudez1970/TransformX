@@ -162,13 +162,24 @@ function protoAuthLanding(): string {
   return protoRouteHref("auth", extra);
 }
 
+/**
+ * Campo de formulario de identidad.
+ *
+ * Los campos de contraseña declaran `autocomplete="off"` a propósito. Esta
+ * pantalla se alcanza desde el CTA de todas las páginas públicas, pero NO es
+ * un inicio de sesión real: dejar `current-password` haría que el gestor de
+ * contraseñas del visitante ofreciera rellenar —y guardar— credenciales
+ * reales contra un formulario que no verifica nada. El resto de campos
+ * conserva su `autocomplete` semántico.
+ */
 function protoAuthCampo(
   id: string, label: string, type: string, autocomplete: string, ayuda?: string
 ): string {
+  const ac = type === "password" ? "off" : autocomplete;
   return `
     <div class="auth-field">
       <label class="form-label" for="${id}">${label}</label>
-      <input class="form-input" type="${type}" id="${id}" name="${id}" autocomplete="${autocomplete}"
+      <input class="form-input" type="${type}" id="${id}" name="${id}" autocomplete="${ac}"
              ${ayuda ? `aria-describedby="${id}-help"` : ""} required>
       ${ayuda ? `<p class="form-hint" id="${id}-help">${ayuda}</p>` : ""}
     </div>`;
