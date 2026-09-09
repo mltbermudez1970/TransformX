@@ -77,6 +77,7 @@ function appendCapioMessage(container, text, type) {
     container.scrollTop = container.scrollHeight;
     return message;
 }
+/** Devuelve el enlace creado, igual que `appendCapioMessage` devuelve el nodo. */
 function appendCapioAction(container, label, href) {
     const wrap = document.createElement("div");
     wrap.className = "capio-chat__message capio-chat__message--bot capio-chat__message--action";
@@ -87,6 +88,7 @@ function appendCapioAction(container, label, href) {
     wrap.appendChild(link);
     container.appendChild(wrap);
     container.scrollTop = container.scrollHeight;
+    return link;
 }
 function initCapio() {
     const chat = document.querySelector(".capio-chat");
@@ -101,6 +103,10 @@ function initCapio() {
     const inputEl = input;
     const sendButton = sendBtn;
     appendCapioMessage(messagesEl, CAPIO_WELCOME, "bot");
+    /* Estado de la conversación: cuántas preguntas lleva y si la última salió de
+       un prompt sugerido. Una sola pregunta es curiosidad; tres es interés. */
+    let preguntasEnLaSesion = 0;
+    let promptSugeridoUsado = false;
     function reply(text) {
         const match = matchRecommendation(text);
         /*
@@ -109,18 +115,30 @@ function initCapio() {
          * concreto: eso no sale del navegador. Sólo interesa a qué capacidad mapeó
          * la consulta y cuántas se quedaron sin respuesta útil.
          */
+        preguntasEnLaSesion += 1;
         trackEvent("capio_question_answered", {
             outcome: match === "private" ? "private_context_declined" : match ? "bizcap_recommended" : "no_match",
             bizcap_id: match && match !== "private" ? match.bizcapId : null,
             question_length: text.trim().length,
+            question_number: preguntasEnLaSesion,
+            // Escribir en vez de usar un prompt significa que su problema no estaba
+            // en nuestra lista: es señal de que el copy no habla del dolor real.
+            source: promptSugeridoUsado ? "suggested_prompt" : "typed",
         });
+        promptSugeridoUsado = false;
         if (match === "private") {
             appendCapioMessage(messagesEl, CAPIO_PRIVATE_CONTEXT, "bot");
             return;
         }
         if (match) {
             appendCapioMessage(messagesEl, formatRecommendation(match), "bot");
-            appendCapioAction(messagesEl, "Explorar esta BizCap", match.detailUrl);
+            const accion = appendCapioAction(messagesEl, "Explorar esta BizCap", match.detailUrl);
+            accion.addEventListener("click", () => {
+                trackEvent("capio_recommendation_followed", {
+                    bizcap_id: match.bizcapId,
+                    question_number: preguntasEnLaSesion,
+                });
+            });
             return;
         }
         appendCapioMessage(messagesEl, CAPIO_FALLBACK, "bot");
@@ -145,11 +163,21 @@ function initCapio() {
             send();
         }
     });
-    document.querySelectorAll("[data-capio-prompt]").forEach((button) => {
+    document.querySelectorAll("[data-capio-prompt]").forEach((button, indice) => {
         button.addEventListener("click", () => {
             const prompt = button.dataset.capioPrompt;
             if (!prompt)
                 return;
+            /*
+             * El texto del prompt sugerido es NUESTRO, no del visitante: se puede
+             * enviar literal y es justo lo que interesa saber (¿se reconocen en los
+             * problemas que planteamos?). Lo que la persona teclea a mano nunca sale.
+             */
+            promptSugeridoUsado = true;
+            trackEvent("capio_prompt_used", {
+                prompt_text: prompt,
+                prompt_index: indice + 1,
+            });
             inputEl.value = prompt;
             send();
         });

@@ -27,6 +27,7 @@ Validation Prototype** dentro del repositorio TransformX.
 | [UX14-PROT-002-FINAL-QA-REPORT.md](UX14-PROT-002-FINAL-QA-REPORT.md) | PM-UX14-07 — QA final del workspace: escenarios S-01…S-10, teclado, regiones live, frontera |
 | [UX14-PROTOTYPE-TRACEABILITY-MATRIX.md](UX14-PROTOTYPE-TRACEABILITY-MATRIX.md) | PM-UX14-07 — Persona → Job → Journey → Task Flow → Pantalla → Contrato → Requisito → Ruta/escenario |
 | [UX14-PROTOTYPE-OPEN-RISKS.md](UX14-PROTOTYPE-OPEN-RISKS.md) | PM-UX14-07 — severidades, hallazgos cerrados, riesgos abiertos y decisiones pendientes |
+| [UX14-GUIA-DE-MEDICION-EN-SESIONES.md](UX14-GUIA-DE-MEDICION-EN-SESIONES.md) | Analítica en las sesiones: qué debe hacer el moderador, qué se le dice al participante y qué NO mide |
 
 ## Fuentes de verdad UX
 

@@ -29,6 +29,22 @@ function protoSystemParam(nombre: string): string | null {
   return new URLSearchParams(location.search).get(nombre);
 }
 
+/**
+ * Bloqueo de gobernanza: la interfaz le dice al usuario "no puedes".
+ *
+ * Es el evento más importante de UX-14: mide cuántas veces la gobernanza
+ * confunde en vez de guiar. No cuenta errores técnicos, cuenta momentos en los
+ * que una persona choca contra una frontera y hay que ver si la entiende.
+ */
+function protoTrackBloqueo(motivo: string, detalle?: Record<string, string | null>): void {
+  trackEvent("governed_block_encountered", {
+    reason: motivo,
+    route: document.body.getAttribute("data-route"),
+    scenario_id: (() => { try { return protoGetActiveScenarioId(); } catch { return null; } })(),
+    ...(detalle ?? {}),
+  });
+}
+
 function protoSystemStateId(): ProtoSystemStateId {
   const s = protoSystemParam("state");
   const validos: ProtoSystemStateId[] = [
@@ -143,6 +159,10 @@ function protoInitSystem(): void {
   const id = protoSystemStateId();
   const estado = PROTO_SYSTEM_STATES[id];
   document.title = `${estado.code} ${estado.titulo} — Workspace (prototipo)`;
+
+  // Llegar a una superficie de sistema es, casi siempre, haber chocado con una
+  // frontera. Se registra el código para poder contarlo por tipo.
+  protoTrackBloqueo(id, { sys_code: estado.code });
 
   host.innerHTML = `
     <div class="sys-card" role="${estado.live}">

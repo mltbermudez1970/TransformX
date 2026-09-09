@@ -142,3 +142,15 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - **La navegación se genera** con `protoBuildNav(userId, tenantId)`: un BizCap sin asignación no está en el árbol, no es que esté oculto. Editar `PROTO_BIZCAP_NAV` en `routes.ts`, no la página.
 - LAB-002 y LAB-003 son **asignables pero sin superficie operativa**: aparecen en el catálogo con su estado declarado, nunca abren un workspace falso.
 - Toda página de `workspace/` carga, en este orden: `tenants.js` (tras `domain.js`), `access-admin.js` y `tenant-context.js` (tras `session.js`), y `tenant-switcher.js` (antes de `shell.js`).
+
+## Analítica (Mixpanel)
+
+- `ts/mixpanel-loader.ts` es **código del proveedor, no modificar** (`@ts-nocheck`). Hace falta: la librería del CDN no se auto-registra, espera el stub con la cola `_i`. Sin él, el script carga con 200 y `mixpanel` queda `undefined`.
+- **Los dos scripts van primero en el `<head>`, justo tras `theme.js`.** Los listeners de `DOMContentLoaded` corren en orden de registro: si `analytics.js` se carga al final, cualquier evento disparado durante el render inicial de una superficie (p. ej. `governed_block_encountered`) se pierde porque Mixpanel aún no se ha inicializado.
+- **Nunca enviar contenido tecleado por el usuario.** El texto de Capio y los campos de contacto no salen del navegador: se envía qué pasó y con qué resultado. Los **prompts sugeridos sí** viajan literales — son texto nuestro, no del visitante.
+- `autocapture: false` y sin grabación de sesión, a propósito: hay campos de texto libre en el sitio.
+- Para medir un CTA nuevo **no hace falta tocar TypeScript**: basta `data-track="nombre_evento"` en el HTML; los `data-track-*` restantes viajan como propiedades.
+- `is_prototype` / `surface` separan el prototipo del sitio público; `participant_id` / `session_id` / `is_moderated_session` etiquetan las sesiones de validación. La etiqueta se persiste en `sessionStorage` porque `protoResolveRoute()` reescribe la query en cada salto y los parámetros de URL no sobreviven.
+- El pageview se emite **a mano tras `register()`**, no con `track_pageview: true`: el automático se dispara dentro de `init()` y llegaría sin super propiedades.
+- La conversión **no** pasa por `protoRunCommand`: tiene su propia revalidación y por eso se instrumenta aparte en `opportunity.ts`.
+- Mixpanel agrupa eventos por lotes y los persiste: eso es lo que permite que un evento disparado justo antes de `location.assign()` sobreviva a la navegación. No desactivar el batching en producción.

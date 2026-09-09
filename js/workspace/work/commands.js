@@ -103,7 +103,21 @@ async function protoRunCommand(o) {
     o.boton.classList.add("c-btn--loading");
     o.boton.setAttribute("aria-busy", "true");
     const desenlace = protoForcedOutcome() ?? o.outcome ?? "success";
+    const inicio = Date.now();
     const res = await protoMockRequest({ operationId: o.action, outcome: desenlace, latencyMs: 700 });
+    /*
+     * Todos los comandos materiales pasan por aquí, así que instrumentar este
+     * punto cubre conversión, resolución de revisiones, asignación y cambios de
+     * acceso a la vez, sin repetir llamadas por superficie. Se registra el
+     * desenlace que devolvió el mock, no uno deducido en la UI.
+     */
+    trackEvent("material_command_resolved", {
+        action: o.action,
+        outcome: res.kind,
+        is_success: res.kind === "success",
+        latency_ms: Date.now() - inicio,
+        surface_route: document.body.getAttribute("data-route"),
+    });
     o.boton.disabled = false;
     o.boton.classList.remove("c-btn--loading");
     o.boton.setAttribute("aria-busy", "false");

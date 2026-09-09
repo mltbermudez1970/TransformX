@@ -199,6 +199,11 @@ function protoWireTenantSwitcher(): void {
       const tenantId = b.getAttribute("data-tenant-go");
       if (!tenantId) return;
       const t = protoFindTenant(tenantId);
+      trackEvent("tenant_switched", {
+        from_tenant: protoGetActiveTenantId(),
+        to_tenant: tenantId,
+        from_route: protoCurrentRouteId(),
+      });
       protoMostrarCambioDeTenant(t ? t.name : "otra organización");
 
       // Latencia simulada para que el estado de transición sea observable.

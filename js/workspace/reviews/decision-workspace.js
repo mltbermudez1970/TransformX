@@ -220,12 +220,28 @@ function protoWireDecisionWorkspace(m) {
         dialog.close();
         submit.focus();
     });
-    dialog.addEventListener("close", () => submit.focus());
+    /*
+     * Abandono ante la consecuencia: abrió el diálogo de confirmación y lo cerró
+     * sin confirmar. Es duda ante lo que la operación implica, y en una sesión de
+     * validación eso vale más que el éxito.
+     */
+    let confirmado = false;
+    dialog.addEventListener("close", () => {
+        if (!confirmado) {
+            trackEvent("confirmation_abandoned", {
+                surface: "REV-02",
+                resolution: elegida()?.code ?? null,
+            });
+        }
+        confirmado = false;
+        submit.focus();
+    });
     dialog.querySelector("[data-dw-confirm]")?.addEventListener("click", async (e) => {
         const r = elegida();
         if (!r)
             return;
         const btn = e.currentTarget;
+        confirmado = true;
         const aplicado = await protoRunCommand({
             key: `${m.commandKey}:${r.code}`,
             action: m.commandAction,

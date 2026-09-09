@@ -35,6 +35,13 @@ function protoActivateScenario(scenarioId: string): void {
   const s = protoGetScenario(scenarioId);
   if (!s) return;
 
+  trackEvent("scenario_activated", {
+    scenario_id: scenarioId,
+    scenario_title: s.title,
+    actor: s.actor,
+    tenant_id: s.tenantId ?? null,
+  });
+
   protoSetActiveScenario(scenarioId);
   protoResetScenarioState();
 

@@ -154,6 +154,20 @@ function protoWireConversion(lead) {
         protoClearFeedback(feedback);
         conflictHost.innerHTML = "";
         const out = await protoRevalidateAndConvert(lead);
+        /*
+         * La conversión NO pasa por `protoRunCommand`: tiene su propia
+         * revalidación autoritativa, así que necesita su propia medición. Es el
+         * comando material más importante del recorrido P0 y su desenlace (éxito,
+         * conflicto de negocio, concurrencia) es justo lo que interesa contrastar
+         * con lo que el participante creía que iba a pasar.
+         */
+        trackEvent("material_command_resolved", {
+            action: "CONVERT_TO_OPPORTUNITY",
+            outcome: out.result,
+            is_success: out.result === "SUCCESS" || out.result === "IDEMPOTENT_SUCCESS",
+            conflict_code: out.conflictCode ?? null,
+            surface_route: "lab-001-opportunity",
+        });
         btn.classList.remove("c-btn--loading");
         btn.setAttribute("aria-busy", "false");
         switch (out.result) {

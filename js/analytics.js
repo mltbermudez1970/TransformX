@@ -59,6 +59,59 @@ function trackEvent(nombre, propiedades) {
         /* la analítica no interrumpe la navegación */
     }
 }
+/* --- Etiquetado de sesiones moderadas -------------------------------------
+ *
+ * En una sesión de validación UX interesa poder decir "el participante 3 chocó
+ * tres veces con lo mismo", no sólo "hubo N choques". Sin esto, ocho personas
+ * producen ocho conjuntos de eventos indistinguibles.
+ *
+ * NO identifica a nadie: `P03` es una etiqueta que asigna el moderador, no un
+ * dato personal. No se llama a `mixpanel.identify()` ni se crean perfiles.
+ *
+ * El moderador abre el prototipo con:
+ *   /workspace/?participant=P03&session=vj11-2026-09-10
+ *
+ * y a partir de ahí la etiqueta sobrevive a toda la sesión. Persistirla es
+ * obligatorio, no una comodidad: el prototipo es multipágina y
+ * `protoResolveRoute()` reconstruye la query en cada salto, así que los
+ * parámetros desaparecerían de la URL en la primera navegación.
+ */
+const PROTO_SESION_KEY = "transformx-analytics-sesion";
+function leerEtiquetaGuardada() {
+    try {
+        const raw = sessionStorage.getItem(PROTO_SESION_KEY);
+        if (!raw)
+            return null;
+        const p = JSON.parse(raw);
+        if (typeof p.participant_id !== "string" || typeof p.session_id !== "string")
+            return null;
+        return { participant_id: p.participant_id, session_id: p.session_id };
+    }
+    catch {
+        return null;
+    }
+}
+/** Etiqueta de la sesión moderada: de la URL si viene, si no la ya guardada. */
+function etiquetaDeSesion() {
+    const params = new URLSearchParams(location.search);
+    const participante = params.get("participant");
+    const sesion = params.get("session");
+    if (participante && sesion) {
+        const etiqueta = {
+            // Se normaliza y se acota: la etiqueta la teclea una persona a mano.
+            participant_id: participante.trim().slice(0, 24),
+            session_id: sesion.trim().slice(0, 48),
+        };
+        try {
+            sessionStorage.setItem(PROTO_SESION_KEY, JSON.stringify(etiqueta));
+        }
+        catch {
+            /* sessionStorage no disponible */
+        }
+        return etiqueta;
+    }
+    return leerEtiquetaGuardada();
+}
 /* --- Instrumentación declarativa ------------------------------------------
  * Un elemento se instrumenta añadiéndole `data-track="nombre_del_evento"` en el
  * HTML; los `data-track-*` restantes viajan como propiedades. Así no hay que
@@ -101,6 +154,89 @@ function initTrackedElements() {
         trackEvent(nombre, propiedadesDeElemento(el));
     });
 }
+/* --- Profundidad de lectura ------------------------------------------------
+ *
+ * Se mide con dos eventos, no con scroll continuo. El scroll por píxel genera
+ * un volumen enorme y no responde nada que estos dos no respondan mejor:
+ *
+ *  · `section_viewed` — qué secciones llegó a ver de verdad. Dice si abandonan
+ *    en "Problema de negocio" o si llegan hasta "Modelo comercial", que es lo
+ *    que permite decidir el ORDEN de la página.
+ *  · `page_exit` — un único evento al salir, con la profundidad máxima y el
+ *    tiempo. Resume la visita sin inundar el proyecto.
+ */
+let profundidadMaxima = 0;
+let seccionesVistas = 0;
+const inicioDeVisita = Date.now();
+function porcentajeDeScroll() {
+    const alto = document.documentElement.scrollHeight - window.innerHeight;
+    if (alto <= 0)
+        return 100; // página que cabe entera
+    return Math.min(100, Math.round((window.scrollY / alto) * 100));
+}
+function initProfundidadDeLectura() {
+    window.addEventListener("scroll", () => {
+        const p = porcentajeDeScroll();
+        if (p > profundidadMaxima)
+            profundidadMaxima = p;
+    }, { passive: true });
+    // Una sección cuenta como vista cuando entra de verdad en pantalla, no
+    // cuando el scroll la sobrepasa de golpe.
+    const secciones = document.querySelectorAll("section[id], section[aria-labelledby]");
+    if (secciones.length && "IntersectionObserver" in window) {
+        const yaVistas = new Set();
+        const observador = new IntersectionObserver((entradas) => {
+            entradas.forEach((e) => {
+                if (!e.isIntersecting)
+                    return;
+                const el = e.target;
+                const nombre = el.id || el.getAttribute("aria-labelledby") || "";
+                if (!nombre || yaVistas.has(nombre))
+                    return;
+                yaVistas.add(nombre);
+                seccionesVistas = yaVistas.size;
+                trackEvent("section_viewed", {
+                    section_id: nombre,
+                    section_order: yaVistas.size,
+                    page: location.pathname,
+                });
+                observador.unobserve(el); // una vez por sección, no más
+            });
+        }, { threshold: 0.5 });
+        secciones.forEach((s) => observador.observe(s));
+    }
+    /*
+     * `visibilitychange` en vez de `beforeunload`: es el único que dispara de
+     * forma fiable en móvil, donde el navegador puede descartar la pestaña sin
+     * avisar. Se emite una sola vez.
+     */
+    let salidaEmitida = false;
+    const emitirSalida = () => {
+        if (salidaEmitida || document.visibilityState !== "hidden")
+            return;
+        salidaEmitida = true;
+        trackEvent("page_exit", {
+            max_scroll_percent: profundidadMaxima,
+            seconds_on_page: Math.round((Date.now() - inicioDeVisita) / 1000),
+            sections_seen: seccionesVistas,
+            page: location.pathname,
+        });
+    };
+    document.addEventListener("visibilitychange", emitirSalida);
+    /*
+     * FAQ de precios: qué pregunta abre alguien es su objeción comercial real,
+     * y es información que hoy sólo tendrías preguntándole.
+     */
+    document.querySelectorAll("details").forEach((d) => {
+        d.addEventListener("toggle", () => {
+            if (!d.open)
+                return;
+            const pregunta = d.querySelector("summary")?.textContent?.trim().slice(0, 120) ?? "";
+            if (pregunta)
+                trackEvent("faq_opened", { question: pregunta, page: location.pathname });
+        });
+    });
+}
 /* --- Arranque -------------------------------------------------------------- */
 function initAnalytics() {
     const api = mp();
@@ -133,10 +269,16 @@ function initAnalytics() {
         // Propiedades que acompañan a TODOS los eventos de esta sesión. `is_prototype`
         // existe para poder separar en Mixpanel la actividad de validación del
         // prototipo de la de visitantes reales del sitio comercial.
+        const etiqueta = etiquetaDeSesion();
         api.register({
             is_prototype: esSuperficieDePrototipo(),
             surface: esSuperficieDePrototipo() ? "workspace" : "public",
             site_version: "ux-14",
+            // Sin etiqueta, la navegación es tráfico suelto: hay que poder separarlo
+            // de las sesiones moderadas al analizar.
+            is_moderated_session: etiqueta !== null,
+            participant_id: etiqueta ? etiqueta.participant_id : null,
+            session_id: etiqueta ? etiqueta.session_id : null,
         });
         // Ahora sí: el pageview sale con las super propiedades ya registradas.
         api.track_pageview();
@@ -145,5 +287,6 @@ function initAnalytics() {
         return;
     }
     initTrackedElements();
+    initProfundidadDeLectura();
 }
 document.addEventListener("DOMContentLoaded", initAnalytics);
