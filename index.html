@@ -41,6 +41,8 @@
   <script src="js/animaciones.js" defer></script>
   <script src="js/carousel.js" defer></script>
   <script src="js/capio.js" defer></script>
+  <script src="js/mixpanel-loader.js" defer></script>
+  <script src="js/analytics.js" defer></script>
 </head>
 <body>
 
@@ -68,11 +70,11 @@
           <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn">
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn" data-track="sign_in_started">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
           <span class="nav__action-label">Iniciar sesión</span>
         </a>
-        <a href="#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
+        <a href="#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio data-track="capio_opened">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <span class="nav__action-label">Hablar con Capio</span>
         </a>
@@ -103,8 +105,8 @@
         </ul>
       </nav>
       <div class="mobile-menu__actions">
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost">Iniciar sesión</a>
-        <a href="#capio" class="btn btn--primary" data-scroll-capio>Hablar con Capio</a>
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost" data-track="sign_in_started">Iniciar sesión</a>
+        <a href="#capio" class="btn btn--primary" data-scroll-capio data-track="capio_opened">Hablar con Capio</a>
       </div>
     </div>
   </dialog>
@@ -120,8 +122,8 @@
             <h1 id="hero-title" class="hero__title">Transformamos tu negocio en <em>resultados reales</em></h1>
             <p class="hero__subtitle">TransformX identifica, adopta y mejora las capacidades empresariales que generan impacto — guiado por IA, diseñado para personas.</p>
             <div class="btn-group hero__cta">
-              <a href="#capio" class="btn btn--primary btn--lg" data-scroll-capio>Hablar con Capio</a>
-              <a href="bizcaps.html" class="btn btn--secondary btn--lg">Explorar BizCaps</a>
+              <a href="#capio" class="btn btn--primary btn--lg" data-scroll-capio data-track="capio_opened">Hablar con Capio</a>
+              <a href="bizcaps.html" class="btn btn--secondary btn--lg" data-track="bizcap_catalog_opened">Explorar BizCaps</a>
             </div>
             <div class="trust-badges">
               <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Implementación rápida</span>
@@ -252,7 +254,7 @@
             <h2 id="bizcaps-title" class="section__title">Biblioteca de BizCaps</h2>
             <p class="section__subtitle">Capacidades empresariales controladas: disponibles para adopción o en roadmap.</p>
           </div>
-          <a href="bizcaps.html" class="btn btn--secondary">Ver catálogo →</a>
+          <a href="bizcaps.html" class="btn btn--secondary" data-track="bizcap_catalog_opened">Ver catálogo →</a>
         </header>
         <div class="bizcaps__grid">
           <article class="card card--interactive bizcap-card" data-animate>
@@ -434,9 +436,9 @@
           <h2 id="cta-title">¿Listo para descubrir tu próxima BizCap?</h2>
           <p>Capio te orienta en pre-adopción. Para conversaciones comerciales, contacta al equipo.</p>
           <div class="btn-group">
-            <a href="#capio" class="btn btn--primary btn--lg" data-scroll-capio>Hablar con Capio</a>
-            <a href="bizcaps.html" class="btn btn--secondary btn--lg">Explorar BizCaps</a>
-            <a href="contacto.html" class="btn btn--ghost btn--lg">Solicitar demo / Hablar con ventas</a>
+            <a href="#capio" class="btn btn--primary btn--lg" data-scroll-capio data-track="capio_opened">Hablar con Capio</a>
+            <a href="bizcaps.html" class="btn btn--secondary btn--lg" data-track="bizcap_catalog_opened">Explorar BizCaps</a>
+            <a href="contacto.html" class="btn btn--ghost btn--lg" data-track="contact_intent_clicked">Solicitar demo / Hablar con ventas</a>
           </div>
         </div>
       </div>

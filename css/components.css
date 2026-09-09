@@ -609,3 +609,18 @@
   height: var(--size-icon-sm);
   color: var(--accent-text);
 }
+
+/* Lista de contenido para páginas legales (privacidad, términos).
+   `base.css` pone `list-style: none` a todas las listas, así que aquí hay que
+   reponerlo de forma explícita: sin viñetas, una enumeración legal se lee como
+   un párrafo troceado. */
+.legal__list {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-5);
+  list-style: disc;
+  color: var(--text-secondary);
+}
+
+.legal__list li + li {
+  margin-top: var(--space-2);
+}

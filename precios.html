@@ -40,6 +40,8 @@
   <script src="js/validators.js" defer></script>
   <script src="js/animaciones.js" defer></script>
   <script src="js/contacto.js" defer></script>
+  <script src="js/mixpanel-loader.js" defer></script>
+  <script src="js/analytics.js" defer></script>
 </head>
 <body>
 
@@ -67,11 +69,11 @@
           <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn">
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn" data-track="sign_in_started">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
           <span class="nav__action-label">Iniciar sesión</span>
         </a>
-        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio>
+        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-scroll-capio data-track="capio_opened">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <span class="nav__action-label">Hablar con Capio</span>
         </a>
@@ -102,8 +104,8 @@
         </ul>
       </nav>
       <div class="mobile-menu__actions">
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost">Iniciar sesión</a>
-        <a href="index.html#capio" class="btn btn--primary" data-scroll-capio>Hablar con Capio</a>
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost" data-track="sign_in_started">Iniciar sesión</a>
+        <a href="index.html#capio" class="btn btn--primary" data-scroll-capio data-track="capio_opened">Hablar con Capio</a>
       </div>
     </div>
   </dialog>
@@ -156,7 +158,7 @@
             <h3 class="pricing-card__name">Starter</h3>
             <p class="pricing-card__description">Exploración inicial de plataforma y primera adopción de BizCap con gobernanza básica.</p>
             <p class="pricing-card__price"><span class="pricing-card__price-amount">Indicativo</span></p>
-            <a href="bizcaps.html" class="btn btn--secondary pricing-card__cta">Explorar BizCaps</a>
+            <a href="bizcaps.html" class="btn btn--secondary pricing-card__cta" data-track="bizcap_catalog_opened">Explorar BizCaps</a>
             <ul class="feature-list pricing-card__features">
               <li class="feature-list__item">Acceso base a plataforma</li>
               <li class="feature-list__item">Concepto de Cap Credits incluidos (por definir)</li>
@@ -169,7 +171,7 @@
             <h3 class="pricing-card__name">Business</h3>
             <p class="pricing-card__description">Múltiples BizCaps, mayor gobernanza y soporte ampliado para equipos en crecimiento.</p>
             <p class="pricing-card__price"><span class="pricing-card__price-amount">Indicativo</span></p>
-            <a href="index.html#capio" class="btn btn--primary pricing-card__cta">Hablar con Capio</a>
+            <a href="index.html#capio" class="btn btn--primary pricing-card__cta" data-track="capio_opened">Hablar con Capio</a>
             <ul class="feature-list pricing-card__features">
               <li class="feature-list__item">Mayor nivel de acceso y gobernanza</li>
               <li class="feature-list__item">Más Cap Credits incluidos (concepto — por definir)</li>
@@ -181,7 +183,7 @@
             <h3 class="pricing-card__name">Enterprise</h3>
             <p class="pricing-card__description">Gobernanza avanzada, integraciones complejas y acompañamiento comercial dedicado.</p>
             <p class="pricing-card__price"><span class="pricing-card__price-amount">A medida</span></p>
-            <a href="contacto.html" class="btn btn--secondary pricing-card__cta">Contactar ventas</a>
+            <a href="contacto.html" class="btn btn--secondary pricing-card__cta" data-track="contact_intent_clicked">Contactar ventas</a>
             <ul class="feature-list pricing-card__features">
               <li class="feature-list__item">Gobernanza y auditoría avanzada</li>
               <li class="feature-list__item">Cap Credits y límites negociados</li>
@@ -251,9 +253,9 @@
           <h2 id="cta-precios-title">¿Qué BizCap encaja con tu problema?</h2>
           <p>Explora el catálogo, habla con Capio o contacta ventas — sin trial productivo en esta etapa.</p>
           <div class="btn-group">
-            <a href="bizcaps.html" class="btn btn--primary btn--lg">Explorar BizCaps</a>
-            <a href="index.html#capio" class="btn btn--secondary btn--lg">Hablar con Capio</a>
-            <a href="contacto.html" class="btn btn--ghost btn--lg">Contactar ventas</a>
+            <a href="bizcaps.html" class="btn btn--primary btn--lg" data-track="bizcap_catalog_opened">Explorar BizCaps</a>
+            <a href="index.html#capio" class="btn btn--secondary btn--lg" data-track="capio_opened">Hablar con Capio</a>
+            <a href="contacto.html" class="btn btn--ghost btn--lg" data-track="contact_intent_clicked">Contactar ventas</a>
           </div>
         </div>
       </div>

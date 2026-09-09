@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/theme.js" defer></script>
   <script src="js/animaciones.js" defer></script>
+  <script src="js/mixpanel-loader.js" defer></script>
+  <script src="js/analytics.js" defer></script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
@@ -39,11 +41,11 @@
           <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn">
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost btn--sm nav__action-btn" data-track="sign_in_started">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
           <span class="nav__action-label">Iniciar sesión</span>
         </a>
-        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn">
+        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-track="capio_opened">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <span class="nav__action-label">Hablar con Capio</span>
         </a>
@@ -73,8 +75,8 @@
         </ul>
       </nav>
       <div class="mobile-menu__actions">
-        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost">Iniciar sesión</a>
-        <a href="index.html#capio" class="btn btn--primary">Hablar con Capio</a>
+        <a href="workspace/auth/?screen=sign-in" class="btn btn--ghost" data-track="sign_in_started">Iniciar sesión</a>
+        <a href="index.html#capio" class="btn btn--primary" data-track="capio_opened">Hablar con Capio</a>
       </div>
     </div>
   </dialog>
@@ -97,6 +99,18 @@
 
           <h2>Datos que podrían tratarse</h2>
           <p>En formularios de contacto o demo simulados, el usuario puede ingresar nombre, correo y mensaje. En esta etapa no hay backend productivo que almacene esos datos.</p>
+
+          <h2>Analítica de uso</h2>
+          <p>Este sitio usa <strong>Mixpanel</strong> (Mixpanel, Inc.) para entender cómo se navega durante esta etapa de validación: qué páginas se visitan, qué botones se pulsan y en qué punto del recorrido se abandona. Mixpanel actúa como encargado del tratamiento y almacena esa información en sus servidores.</p>
+          <p>Se registra <strong>qué ocurrió</strong>, no lo que el usuario escribe. En concreto, <strong>no</strong> se envía a Mixpanel:</p>
+          <ul class="legal__list">
+            <li>el texto de las consultas hechas a Capio, aunque incluyan datos de la empresa;</li>
+            <li>el nombre, el correo ni el mensaje del formulario de contacto;</li>
+            <li>ningún dato de los prototipos autenticados, que en cualquier caso son sintéticos.</li>
+          </ul>
+          <p>Del formulario de contacto sólo se registra que hubo un envío y, si falló la validación, qué campos la incumplieron —nunca su contenido—. De Capio sólo se registra a qué capacidad de negocio se orientó la consulta y su longitud.</p>
+          <p>No se graba la sesión ni la pantalla del usuario, y no se usa captura automática del contenido de la página: cada dato enviado corresponde a un evento definido de forma explícita.</p>
+          <p>Para funcionar, Mixpanel guarda un identificador anónimo de dispositivo en el almacenamiento local del navegador. No se cruza con ninguna cuenta, porque en esta etapa no existen cuentas reales. Puede eliminarse borrando los datos del sitio desde el navegador. Si el navegador comunica la preferencia «No rastrear», no se envía ningún evento.</p>
 
           <h2>Finalidad</h2>
           <p>Validar interés comercial y mejorar la experiencia del sitio público. Cuando exista backend real, esta política será actualizada con bases legales, retención y derechos del titular.</p>

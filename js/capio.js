@@ -103,6 +103,17 @@ function initCapio() {
     appendCapioMessage(messagesEl, CAPIO_WELCOME, "bot");
     function reply(text) {
         const match = matchRecommendation(text);
+        /*
+         * Se mide el DESENLACE del discovery, nunca la pregunta. El texto que
+         * alguien escribe aquí puede traer su empresa, sus volúmenes o su problema
+         * concreto: eso no sale del navegador. Sólo interesa a qué capacidad mapeó
+         * la consulta y cuántas se quedaron sin respuesta útil.
+         */
+        trackEvent("capio_question_answered", {
+            outcome: match === "private" ? "private_context_declined" : match ? "bizcap_recommended" : "no_match",
+            bizcap_id: match && match !== "private" ? match.bizcapId : null,
+            question_length: text.trim().length,
+        });
         if (match === "private") {
             appendCapioMessage(messagesEl, CAPIO_PRIVATE_CONTEXT, "bot");
             return;

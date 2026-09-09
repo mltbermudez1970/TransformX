@@ -61,6 +61,12 @@ function inicializarFormulario() {
             const errores = validarFormulario(datos);
             if (Object.keys(errores).length > 0) {
                 mostrarErroresFormulario(form, errores);
+                // Qué campos fallaron, nunca su contenido: sirve para detectar
+                // fricción en el formulario sin recoger datos de la persona.
+                trackEvent("contact_form_rejected", {
+                    invalid_fields: Object.keys(errores).sort().join(","),
+                    invalid_field_count: Object.keys(errores).length,
+                });
                 return;
             }
             const btn = form.querySelector('[type="submit"]');
@@ -69,6 +75,10 @@ function inicializarFormulario() {
                 btn.disabled = true;
                 btn.textContent = "Enviando…";
             }
+            // El envío es simulado (no hay backend): se mide la intención de
+            // contacto, que es lo que la validación necesita saber. Ni nombre, ni
+            // correo, ni mensaje salen del navegador.
+            trackEvent("contact_form_submitted", { is_simulated: true });
             setTimeout(() => {
                 mostrarExitoFormulario(form);
                 form.reset();

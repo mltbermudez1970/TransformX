@@ -18,6 +18,8 @@
   <script src="js/theme.js" defer></script>
   <script src="js/animaciones.js" defer></script>
   <script src="js/prototype/state/prototype-mode.js" defer></script>
+  <script src="js/mixpanel-loader.js" defer></script>
+  <script src="js/analytics.js" defer></script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
@@ -43,7 +45,7 @@
           <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
-        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn">
+        <a href="index.html#capio" class="btn btn--primary btn--sm nav__action-btn" data-track="capio_opened">
           <svg class="nav__action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           <span class="nav__action-label">Hablar con Capio</span>
         </a>
@@ -73,7 +75,7 @@
         </ul>
       </nav>
       <div class="mobile-menu__actions">
-        <a href="index.html#capio" class="btn btn--primary">Hablar con Capio</a>
+        <a href="index.html#capio" class="btn btn--primary" data-track="capio_opened">Hablar con Capio</a>
       </div>
     </div>
   </dialog>
@@ -94,7 +96,7 @@
         <div class="access-form" data-animate>
           <p>Continúa al flujo de acceso autenticado para recorrer AUTH-01 Iniciar sesión, la verificación en dos pasos y la resolución de organización.</p>
           <p class="ws-actions">
-            <a class="btn btn--primary" href="workspace/auth/?screen=sign-in&amp;returnTo=workspace%2F">Iniciar sesión</a>
+            <a class="btn btn--primary" href="workspace/auth/?screen=sign-in&amp;returnTo=workspace%2F" data-track="sign_in_started">Iniciar sesión</a>
           </p>
           <p id="acceso-help" class="section__disclaimer">¿Necesitas acceso anticipado? <a href="contacto.html">Contacta al equipo</a> o explora BizCaps con <a href="index.html#capio">Capio</a>.</p>
         </div>
