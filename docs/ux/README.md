@@ -28,6 +28,7 @@ Validation Prototype** dentro del repositorio TransformX.
 | [UX14-PROTOTYPE-TRACEABILITY-MATRIX.md](UX14-PROTOTYPE-TRACEABILITY-MATRIX.md) | PM-UX14-07 — Persona → Job → Journey → Task Flow → Pantalla → Contrato → Requisito → Ruta/escenario |
 | [UX14-PROTOTYPE-OPEN-RISKS.md](UX14-PROTOTYPE-OPEN-RISKS.md) | PM-UX14-07 — severidades, hallazgos cerrados, riesgos abiertos y decisiones pendientes |
 | [UX14-GUIA-DE-MEDICION-EN-SESIONES.md](UX14-GUIA-DE-MEDICION-EN-SESIONES.md) | Analítica en las sesiones: qué debe hacer el moderador, qué se le dice al participante y qué NO mide |
+| [UX14-CATALOGO-DE-EVENTOS-MIXPANEL.md](UX14-CATALOGO-DE-EVENTOS-MIXPANEL.md) | Catálogo de eventos y propiedades: objetivo de cada uno y qué se puede analizar |
 
 ## Fuentes de verdad UX
 
