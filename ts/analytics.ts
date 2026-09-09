@@ -29,6 +29,7 @@ type MixpanelProps = Record<string, string | number | boolean | null>;
 interface MixpanelApi {
   init(token: string, config?: Record<string, unknown>): void;
   track(event: string, properties?: MixpanelProps): void;
+  track_pageview(properties?: MixpanelProps): void;
   register(properties: MixpanelProps): void;
   reset(): void;
   opt_in_tracking(): void;
@@ -125,7 +126,15 @@ function initAnalytics(): void {
   try {
     api.init(MIXPANEL_TOKEN, {
       debug: enDesarrollo(),
-      track_pageview: true,
+      /*
+       * El pageview automático se dispara DENTRO de `init()`, es decir antes
+       * de que `register()` haya podido declarar las super propiedades: llegaba
+       * a Mixpanel sin `is_prototype` ni `surface`. Como es el evento más
+       * numeroso, eso dejaba sin filtrar la mayor parte del tráfico y mezclaba
+       * las visitas del prototipo con las de personas reales. Se desactiva
+       * aquí y se emite a mano más abajo, ya con el contexto puesto.
+       */
+      track_pageview: false,
       persistence: "localStorage",
       /*
        * Autocapture DESACTIVADO a propósito. Viene activo por defecto en el
@@ -147,6 +156,9 @@ function initAnalytics(): void {
       surface: esSuperficieDePrototipo() ? "workspace" : "public",
       site_version: "ux-14",
     });
+
+    // Ahora sí: el pageview sale con las super propiedades ya registradas.
+    api.track_pageview();
   } catch {
     return;
   }
