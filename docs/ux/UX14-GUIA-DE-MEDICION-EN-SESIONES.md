@@ -34,7 +34,8 @@ Cinco minutos antes, con el equipo que se va a usar:
 | 2 | **Comprobar que «No rastrear» (DNT) está desactivado** | El SDK respeta DNT por diseño. Con DNT activo no se envía ni un evento, y tampoco avisa |
 | 3 | **Usar una ventana nueva, no una pestaña reutilizada** | La etiqueta del participante vive en `sessionStorage`. Reutilizar una pestaña de otro participante mezcla las dos sesiones |
 | 4 | **No usar modo incógnito compartido entre participantes** | Cada participante debe partir de un estado limpio. Ventana normal nueva, o incógnito nuevo por persona |
-| 5 | **Verificar que llegan datos** con la comprobación del §5 | Diez segundos y evita descubrir al final que la sesión no se registró |
+| 5 | **Aceptar el banner de consentimiento** al abrir el prototipo | **Sin esto no se registra absolutamente nada.** La analítica arranca desactivada y sólo se activa al pulsar «Aceptar». El banner aparece una vez por navegador |
+| 6 | **Verificar que llegan datos** con la comprobación del §5 | Diez segundos y evita descubrir al final que la sesión no se registró |
 
 > Si alguna comprobación falla, **la sesión sigue siendo válida** como
 > investigación cualitativa: sólo se pierde el registro automático. No se
@@ -98,9 +99,14 @@ rastrear» en el navegador antes de empezar. La sesión funciona igual.
 Con el prototipo abierto, en la consola del navegador:
 
 ```js
-mixpanel.get_config("token")     // → "d0ffdebfef6b9d8dde7704fc4f5dd4bb"
-mixpanel.has_opted_out_tracking() // → false   (si da true, DNT está activo)
+mixpanel.get_config("token")      // → "d0ffdebfef6b9d8dde7704fc4f5dd4bb"
+mixpanel.has_opted_out_tracking() // → false
 ```
+
+Si `has_opted_out_tracking()` devuelve `true`, hay tres causas posibles, en
+este orden de probabilidad: **no se aceptó el banner**, se pulsó «Rechazar» en
+este navegador, o «No rastrear» está activo. Las dos primeras se corrigen
+borrando los datos del sitio y volviendo a abrir.
 
 Y en Mixpanel, la vista **Events** (el feed en vivo, no los informes, que se
 pueblan más lento): debería aparecer un `$mp_web_page_view` con

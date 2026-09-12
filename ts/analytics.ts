@@ -65,6 +65,54 @@ function mp(): MixpanelApi | null {
   return typeof mixpanel !== "undefined" && mixpanel ? mixpanel : null;
 }
 
+/* ===========================================================================
+ * Consentimiento
+ * ===========================================================================
+ * La analítica arranca DESACTIVADA (`opt_out_tracking_by_default`). Nada se
+ * envía hasta que la persona acepta: mientras no decida, `mixpanel.track()` se
+ * descarta en el cliente y ninguna petición sale del navegador.
+ *
+ * La decisión vive en `localStorage`, no en `sessionStorage`: preguntar otra
+ * vez en cada pestaña sería hostil y, sobre todo, no sería respetar la
+ * respuesta que ya dio.
+ *
+ * Este mismo estado gobernará Google Analytics cuando se incorpore: una sola
+ * decisión para todas las herramientas, no un banner por proveedor.
+ */
+
+type DecisionDeConsentimiento = "granted" | "denied";
+
+const CONSENT_KEY = "transformx-consent";
+
+function leerConsentimiento(): DecisionDeConsentimiento | null {
+  try {
+    const v = localStorage.getItem(CONSENT_KEY);
+    return v === "granted" || v === "denied" ? v : null;
+  } catch {
+    return null;                 // navegador sin almacenamiento: se pregunta
+  }
+}
+
+function guardarConsentimiento(v: DecisionDeConsentimiento): void {
+  try {
+    localStorage.setItem(CONSENT_KEY, v);
+  } catch {
+    /* si no se puede guardar, la decisión aplica sólo a esta carga */
+  }
+}
+
+/** Aplica la decisión al SDK. Es lo único que abre o cierra el grifo. */
+function aplicarConsentimiento(v: DecisionDeConsentimiento): void {
+  const api = mp();
+  if (!api) return;
+  try {
+    if (v === "granted") api.opt_in_tracking();
+    else api.opt_out_tracking();
+  } catch {
+    /* la analítica no interrumpe la navegación */
+  }
+}
+
 /**
  * Envía un evento. Silencioso si la librería no cargó (bloqueador de anuncios,
  * red caída): la analítica nunca debe romper la página.
@@ -258,6 +306,70 @@ function initProfundidadDeLectura(): void {
   });
 }
 
+/* --- Banner de consentimiento ---------------------------------------------
+ *
+ * NO es un diálogo modal y no atrapa el foco: rechazar debe costar lo mismo
+ * que aceptar, y nadie debería quedar bloqueado ante un muro para leer una
+ * política de privacidad. Se inserta como primer hijo de `<body>` para que
+ * quien navegue con teclado lo alcance en los primeros tabuladores.
+ *
+ * Usa la familia de componentes que corresponde a cada superficie: `.btn*` en
+ * el sitio público y `.c-btn` bajo `workspace/`. El banner es lo único
+ * transversal a las dos, así que elige en tiempo de ejecución en vez de
+ * introducir una tercera familia.
+ */
+function protoRutaDePrivacidad(): string {
+  // El prototipo cuelga de /workspace/…, con profundidad variable.
+  if (!esSuperficieDePrototipo()) return "privacidad.html";
+  const i = location.pathname.indexOf("/workspace/");
+  return location.pathname.slice(0, i + 1) + "privacidad.html";
+}
+
+function mostrarBannerDeConsentimiento(): void {
+  if (document.querySelector("[data-consent-banner]")) return;
+
+  const esWs = esSuperficieDePrototipo();
+  const claseBtn = esWs ? "c-btn" : "btn";
+  const claseAceptar = esWs ? "c-btn c-btn--primary" : "btn btn--primary";
+  const claseRechazar = esWs ? "c-btn c-btn--secondary" : "btn btn--secondary";
+
+  const banner = document.createElement("aside");
+  banner.className = "consent-banner";
+  banner.setAttribute("data-consent-banner", "");
+  banner.setAttribute("aria-label", "Consentimiento de analítica");
+  banner.innerHTML = `
+    <div class="consent-banner__inner">
+      <p class="consent-banner__text">
+        Usamos analítica para entender cómo se navega este prototipo de
+        validación. <strong>No registramos lo que escribes</strong> ni grabamos
+        la pantalla. Nada se envía hasta que aceptes.
+        <a href="${protoRutaDePrivacidad()}" class="consent-banner__link">Ver la política de privacidad</a>
+      </p>
+      <div class="consent-banner__actions">
+        <button type="button" class="${claseRechazar}" data-consent="denied">Rechazar</button>
+        <button type="button" class="${claseAceptar}" data-consent="granted">Aceptar</button>
+      </div>
+    </div>`;
+
+  document.body.insertBefore(banner, document.body.firstChild);
+  void claseBtn;
+
+  banner.querySelectorAll<HTMLButtonElement>("[data-consent]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const v = b.getAttribute("data-consent") === "granted" ? "granted" : "denied";
+      guardarConsentimiento(v);
+      aplicarConsentimiento(v);
+      banner.remove();
+      // Al aceptar se emite el pageview que se había descartado: si no, la
+      // primera página de cada visita quedaría sin registrar siempre.
+      if (v === "granted") {
+        const api = mp();
+        try { api?.track_pageview(); } catch { /* silencioso */ }
+      }
+    });
+  });
+}
+
 /* --- Arranque -------------------------------------------------------------- */
 
 function initAnalytics(): void {
@@ -277,6 +389,13 @@ function initAnalytics(): void {
        */
       track_pageview: false,
       persistence: "localStorage",
+      /*
+       * Arranca DESACTIVADO. Ninguna petición sale del navegador hasta que la
+       * persona acepta en el banner; mientras tanto `track()` se descarta en
+       * el cliente. Es lo que convierte el banner en una decisión real y no en
+       * un aviso decorativo que se muestra mientras ya se está midiendo.
+       */
+      opt_out_tracking_by_default: true,
       /*
        * Autocapture DESACTIVADO a propósito. Viene activo por defecto en el
        * SDK y registra clics con el texto del elemento pulsado. En este sitio
@@ -305,8 +424,19 @@ function initAnalytics(): void {
       session_id: etiqueta ? etiqueta.session_id : null,
     });
 
-    // Ahora sí: el pageview sale con las super propiedades ya registradas.
-    api.track_pageview();
+    /*
+     * Consentimiento antes que nada: si ya aceptó en una visita anterior se
+     * abre el grifo aquí, ANTES del pageview, para que esa primera página
+     * quede registrada. Si no ha decidido todavía, se le pregunta y el
+     * pageview se emite al aceptar.
+     */
+    const decision = leerConsentimiento();
+    if (decision) {
+      aplicarConsentimiento(decision);
+      if (decision === "granted") api.track_pageview();
+    } else {
+      mostrarBannerDeConsentimiento();
+    }
   } catch {
     return;
   }
