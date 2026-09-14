@@ -275,10 +275,38 @@ organización no está claro.
 > estándar mientras no se creen también como dimensiones. No hace falta
 > crearlas: ése es el trabajo de Mixpanel, y GA4 está para otra pregunta.
 
-**Residuo conocido:** el proyecto contiene eventos de las verificaciones
-técnicas (`verificacion_de_entrega`, `prueba_de_superficie`,
-`comprobacion_de_etiqueta`, `comprobacion_tras_navegar`) y navegación desde
-`localhost`. No existen en el código del sitio y no volverán a generarse.
+### Residuo conocido — hay que excluirlo
+
+El proyecto contiene eventos que **no** provienen de personas. Se listan
+completos porque una parte no es excluible con `is_synthetic`.
+
+**1. Ensayo sintético (limpio, excluible con un filtro).** Recorridos
+automatizados de los 12 escenarios y las páginas públicas, con
+`is_synthetic = true` e `is_moderated_session = false`:
+
+- `participant_id`: `SYN-01` … `SYN-14`, `SYN-WEB`
+- `session_id`: `sintetico-2026-09-13`, `sintetico-2026-09-13-b`
+
+**2. Verificaciones técnicas anteriores a `is_synthetic` (atención).** Se
+generaron antes de que existiera la propiedad, así que llevan
+**`is_moderated_session = true`** y entran en el filtro de sesiones moderadas:
+
+| `participant_id` | `session_id` | Origen |
+|---|---|---|
+| `P99` | `verif-2026-09-13` | Verificación de la integración GA4 |
+| `P03` | `vj11-2026-09-10` | Volcado de propiedades de Mixpanel |
+| `SYN-00`, `SYN-X`, `SYN-DBG`…`SYN-DBG3` | `prueba-corta`, `sondeo`…`sondeo4` | Sondeos de depuración |
+
+> **`P03` / `vj11-2026-09-10` es el ejemplo que aparece en la documentación**, y
+> se usó por descuido en una verificación. Si alguna tanda real fuera a usar ese
+> `session_id`, cámbialo. Filtro seguro para el análisis real:
+> `is_moderated_session = true` **y** `session_id ≠ "vj11-2026-09-10"` **y**
+> `participant_id ≠ "P99"`.
+
+**3. Nombres de evento que no existen en el código** y no volverán a generarse:
+`verificacion_de_entrega`, `prueba_de_superficie`, `comprobacion_de_etiqueta`,
+`comprobacion_tras_navegar`, `verificacion_ga4_mixpanel`, `prueba_de_etiqueta`,
+`no_deberia_salir`. Más la navegación desde `localhost` (`current_domain`).
 
 ---
 

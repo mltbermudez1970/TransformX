@@ -179,11 +179,23 @@ Filtros que vas a necesitar en Mixpanel:
 | Sólo visitantes reales del sitio comercial | `is_prototype = false` |
 | Excluir pruebas de desarrollo | `current_domain ≠ "localhost"` |
 
-**Cuidado con un residuo conocido:** en el proyecto hay eventos de las
-verificaciones técnicas previas (`verificacion_de_entrega`,
-`prueba_de_superficie`, `comprobacion_de_etiqueta`, `comprobacion_tras_navegar`
-y algunos desde `localhost`). No existen en el código del sitio y no volverán a
-aparecer; exclúyelos por nombre o por `current_domain`.
+**Cuidado con un residuo conocido.** El proyecto ya contiene eventos que no son
+de personas: un ensayo sintético completo y varias verificaciones técnicas.
+
+El ensayo sintético sale solo del análisis, porque lleva `is_synthetic = true` e
+`is_moderated_session = false`. **Pero dos verificaciones son anteriores a esa
+propiedad** y llevan `is_moderated_session = true`:
+
+- `participant_id = "P99"`, `session_id = "verif-2026-09-13"`
+- `participant_id = "P03"`, `session_id = "vj11-2026-09-10"` — que es **el
+  ejemplo de esta guía**, usado por descuido en una verificación
+
+> **No uses `vj11-2026-09-10` como `session_id` de una tanda real.** Elige la
+> fecha real de la sesión, que es lo que dice la convención de todos modos.
+
+El detalle completo del residuo, con la lista de nombres de evento que no
+existen en el código, está en
+[UX14-CATALOGO-DE-EVENTOS.md](UX14-CATALOGO-DE-EVENTOS.md#residuo-conocido--hay-que-excluirlo).
 
 ---
 
