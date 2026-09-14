@@ -37,7 +37,8 @@ parámetros de `config` y además se adjuntan a cada evento.
 | `is_prototype` | `true` / `false` | **El filtro más importante.** Separa la actividad del prototipo de la de visitantes reales del sitio comercial. Sin él, los datos de validación contaminan el embudo comercial |
 | `surface` | `public` / `workspace` | Lo mismo en forma legible, para agrupar en informes |
 | `site_version` | `ux-14` | Permite comparar contra futuras iteraciones del prototipo |
-| `is_moderated_session` | `true` / `false` | Distingue una sesión de validación conducida por un moderador de la navegación suelta |
+| `is_moderated_session` | `true` / `false` | Distingue una sesión de validación conducida por un moderador de la navegación suelta. **Es `false` en los recorridos automatizados**, aunque lleven etiqueta: no hay persona detrás |
+| `is_synthetic` | `true` / `false` | Recorrido automatizado (ensayo, humo, carga). Se activa con `&synthetic=true` en la URL de entrada. **Excluye siempre `is_synthetic = true` de cualquier conclusión de UX** |
 | `participant_id` | `P01`, `P02`… o `null` | Etiqueta anónima del participante. **No es un dato personal**: la correspondencia con la persona vive fuera de Mixpanel |
 | `session_id` | `vj11-2026-09-10` o `null` | Tanda de sesiones: journey + fecha. Permite comparar participantes entre sí |
 
@@ -262,6 +263,7 @@ organización no está claro.
 |----------|--------------------|---------------|
 | Sólo visitantes reales del sitio comercial | `is_prototype = false` | dimensión `is_prototype` = `false` |
 | Sólo sesiones de validación | `is_moderated_session = true` | — (no registrada como dimensión) |
+| Excluir recorridos automatizados | `is_synthetic ≠ true` | — |
 | Un participante | `participant_id = "P03"` | — |
 | Una tanda | `session_id = "vj11-2026-09-10"` | — |
 | Excluir pruebas de desarrollo | `current_domain ≠ "localhost"` | filtro de datos por `hostname` |

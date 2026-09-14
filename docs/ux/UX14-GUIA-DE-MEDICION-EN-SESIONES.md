@@ -172,7 +172,8 @@ Filtros que vas a necesitar en Mixpanel:
 
 | Para ver | Filtro |
 |----------|--------|
-| Sólo sesiones moderadas | `is_moderated_session = true` |
+| Sólo sesiones moderadas | `is_moderated_session = true` (ya excluye los recorridos automatizados) |
+| Excluir ensayos y pruebas técnicas | `is_synthetic ≠ true` |
 | Un participante concreto | `participant_id = "P03"` |
 | Una tanda | `session_id = "vj11-2026-09-10"` |
 | Sólo visitantes reales del sitio comercial | `is_prototype = false` |

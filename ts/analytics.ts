@@ -261,6 +261,16 @@ const PROTO_SESION_KEY = "transformx-analytics-sesion";
 interface EtiquetaDeSesion {
   participant_id: string;
   session_id: string;
+  /**
+   * Recorrido automatizado (ensayo, humo, carga), no una persona.
+   *
+   * Existe porque sin él el tráfico de prueba entra en
+   * `is_moderated_session = true`, que es exactamente el filtro con el que se
+   * analizan las sesiones de validación. Separarlo por una convención de
+   * nombres —"los que empiezan por SYN"— depende de que alguien se acuerde;
+   * esto no.
+   */
+  es_sintetico: boolean;
 }
 
 function leerEtiquetaGuardada(): EtiquetaDeSesion | null {
@@ -269,7 +279,11 @@ function leerEtiquetaGuardada(): EtiquetaDeSesion | null {
     if (!raw) return null;
     const p = JSON.parse(raw) as Partial<EtiquetaDeSesion>;
     if (typeof p.participant_id !== "string" || typeof p.session_id !== "string") return null;
-    return { participant_id: p.participant_id, session_id: p.session_id };
+    return {
+      participant_id: p.participant_id,
+      session_id: p.session_id,
+      es_sintetico: p.es_sintetico === true,
+    };
   } catch {
     return null;
   }
@@ -286,6 +300,7 @@ function etiquetaDeSesion(): EtiquetaDeSesion | null {
       // Se normaliza y se acota: la etiqueta la teclea una persona a mano.
       participant_id: participante.trim().slice(0, 24),
       session_id: sesion.trim().slice(0, 48),
+      es_sintetico: params.get("synthetic") === "true",
     };
     try {
       sessionStorage.setItem(PROTO_SESION_KEY, JSON.stringify(etiqueta));
@@ -494,9 +509,14 @@ function contextoDeSesion(): MixpanelProps {
     is_prototype: esSuperficieDePrototipo(),
     surface: esSuperficieDePrototipo() ? "workspace" : "public",
     site_version: "ux-14",
-    // Sin etiqueta, la navegación es tráfico suelto: hay que poder separarlo
-    // de las sesiones moderadas al analizar.
-    is_moderated_session: etiqueta !== null,
+    /*
+     * Sin etiqueta, la navegación es tráfico suelto: hay que poder separarlo
+     * de las sesiones moderadas al analizar. Un recorrido automatizado lleva
+     * etiqueta pero NO es una sesión moderada: no hay persona detrás, y
+     * contarlo como tal falsearía justo el conjunto que se va a analizar.
+     */
+    is_moderated_session: etiqueta !== null && !etiqueta.es_sintetico,
+    is_synthetic: etiqueta !== null && etiqueta.es_sintetico,
     participant_id: etiqueta ? etiqueta.participant_id : null,
     session_id: etiqueta ? etiqueta.session_id : null,
   };

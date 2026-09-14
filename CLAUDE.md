@@ -158,6 +158,7 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - `autocapture: false` y sin grabación de sesión, a propósito: hay campos de texto libre en el sitio.
 - Para medir un CTA nuevo **no hace falta tocar TypeScript**: basta `data-track="nombre_evento"` en el HTML; los `data-track-*` restantes viajan como propiedades.
 - `is_prototype` / `surface` separan el prototipo del sitio público; `participant_id` / `session_id` / `is_moderated_session` etiquetan las sesiones de validación. La etiqueta se persiste en `sessionStorage` porque `protoResolveRoute()` reescribe la query en cada salto y los parámetros de URL no sobreviven.
+- **Todo recorrido automatizado se abre con `&synthetic=true`** (ensayos, humo, carga). Eso pone `is_synthetic: true` y, sobre todo, **`is_moderated_session: false`**: sin ello el tráfico de prueba entra en el filtro con el que se analizan las sesiones reales. No separarlo por convención de nombres — depende de que alguien se acuerde.
 - El pageview se emite **a mano tras `register()`**, no con `track_pageview: true`: el automático se dispara dentro de `init()` y llegaría sin super propiedades.
 - La conversión **no** pasa por `protoRunCommand`: tiene su propia revalidación y por eso se instrumenta aparte en `opportunity.ts`.
 - Mixpanel agrupa eventos por lotes y los persiste: eso es lo que permite que un evento disparado justo antes de `location.assign()` sobreviva a la navegación. No desactivar el batching en producción.
