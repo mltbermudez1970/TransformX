@@ -24,7 +24,9 @@
 /* ---------------------------------------------------------------------------
  * MEASUREMENT ID — lo único que hay que cambiar aquí
  * ---------------------------------------------------------------------------
- * Formato obligatorio: `G-` + 10 caracteres alfanuméricos (p. ej. `G-4KJ8ZP1Q2R`).
+ * Formato obligatorio: `G-` + 10 caracteres alfanuméricos. No se pone aquí un
+ * ejemplo con pinta de ID real: se acaba copiando por error, y un ID ajeno
+ * manda los datos a la propiedad de otro sin dar ningún aviso.
  *
  * Se encuentra en GA4: Administrar → columna *Propiedad* → **Flujos de datos**
  * → clic en el flujo web → *Detalles del flujo*, arriba a la derecha.
