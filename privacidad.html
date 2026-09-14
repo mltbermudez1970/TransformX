@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/theme.js" defer></script>
   <script src="js/mixpanel-loader.js" defer></script>
+  <script src="js/ga4-loader.js" defer></script>
   <script src="js/analytics.js" defer></script>
   <script src="js/animaciones.js" defer></script>
 </head>
@@ -101,8 +102,13 @@
           <p>En formularios de contacto o demo simulados, el usuario puede ingresar nombre, correo y mensaje. En esta etapa no hay backend productivo que almacene esos datos.</p>
 
           <h2>Analítica de uso</h2>
-          <p>Este sitio usa <strong>Mixpanel</strong> (Mixpanel, Inc.) para entender cómo se navega durante esta etapa de validación: qué páginas se visitan, qué botones se pulsan y en qué punto del recorrido se abandona. Mixpanel actúa como encargado del tratamiento y almacena esa información en sus servidores.</p>
-          <p>Se registra <strong>qué ocurrió</strong>, no lo que el usuario escribe. En concreto, <strong>no</strong> se envía a Mixpanel:</p>
+          <p>Este sitio usa dos herramientas de analítica para entender cómo se navega durante esta etapa de validación: qué páginas se visitan, qué botones se pulsan y en qué punto del recorrido se abandona. Ambas actúan como encargadas del tratamiento y almacenan esa información en sus servidores, situados fuera del Espacio Económico Europeo.</p>
+          <ul class="legal__list">
+            <li><strong>Mixpanel</strong> (Mixpanel, Inc., Estados Unidos) — análisis del recorrido de producto, evento a evento.</li>
+            <li><strong>Google Analytics 4</strong> (Google Ireland Limited, Irlanda) — medición de audiencia y origen del tráfico.</li>
+          </ul>
+          <p>Las dos reciben <strong>exactamente los mismos eventos</strong>: la instrumentación es única y no hay datos que vayan a una y no a la otra.</p>
+          <p>Se registra <strong>qué ocurrió</strong>, no lo que el usuario escribe. En concreto, <strong>no</strong> se envía a ninguna de las dos:</p>
           <ul class="legal__list">
             <li>el texto de las consultas hechas a Capio, aunque incluyan datos de la empresa;</li>
             <li>el nombre, el correo ni el mensaje del formulario de contacto;</li>
@@ -111,9 +117,11 @@
           <p>Del formulario de contacto sólo se registra que hubo un envío y, si falló la validación, qué campos la incumplieron —nunca su contenido—. De Capio sólo se registra a qué capacidad de negocio se orientó la consulta y su longitud.</p>
           <p>No se graba la sesión ni la pantalla del usuario, y no se usa captura automática del contenido de la página: cada dato enviado corresponde a un evento definido de forma explícita.</p>
           <h3>Consentimiento</h3>
-          <p><strong>No se envía ningún dato hasta que aceptas.</strong> Al entrar por primera vez verás un aviso con dos opciones —Aceptar y Rechazar— con el mismo peso visual. Mientras no elijas, la analítica permanece desactivada y ninguna petición sale de tu navegador. Tu decisión se recuerda en este navegador y puedes revocarla borrando los datos del sitio.</p>
+          <p><strong>No se envía ningún dato hasta que aceptas.</strong> Al entrar por primera vez verás un aviso con dos opciones —Aceptar y Rechazar— con el mismo peso visual. Una sola decisión gobierna las dos herramientas: no hay un aviso por proveedor.</p>
+          <p>Mientras no elijas, ninguna petición de analítica sale de tu navegador. En el caso de Google Analytics esto va más allá de lo habitual: <strong>su script ni siquiera se descarga</strong> hasta que aceptas, de modo que Google no recibe tu dirección IP ni ninguna otra señal. Si aceptas, se activa con Consent Mode v2; los permisos de publicidad y personalización quedan denegados de forma permanente, porque este sitio no hace remarketing.</p>
+          <p>Tu decisión se recuerda en este navegador y puedes revocarla borrando los datos del sitio.</p>
 
-          <p>Para funcionar, Mixpanel guarda un identificador anónimo de dispositivo en el almacenamiento local del navegador. No se cruza con ninguna cuenta, porque en esta etapa no existen cuentas reales. Puede eliminarse borrando los datos del sitio desde el navegador. Si el navegador comunica la preferencia «No rastrear», no se envía ningún evento.</p>
+          <p>Para funcionar, ambas herramientas guardan un identificador anónimo de dispositivo en el navegador —Mixpanel en el almacenamiento local, Google Analytics en una cookie propia—. No se cruzan con ninguna cuenta, porque en esta etapa no existen cuentas reales. Pueden eliminarse borrando los datos del sitio desde el navegador. Si el navegador comunica la preferencia «No rastrear», Mixpanel no envía ningún evento.</p>
 
           <h2>Finalidad</h2>
           <p>Validar interés comercial y mejorar la experiencia del sitio público. Cuando exista backend real, esta política será actualizada con bases legales, retención y derechos del titular.</p>

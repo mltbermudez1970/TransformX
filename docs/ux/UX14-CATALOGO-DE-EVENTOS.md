@@ -1,19 +1,36 @@
-# Catálogo de eventos de Mixpanel — TransformX
+# Catálogo de eventos — TransformX
 
 Qué está instrumentado, para qué sirve cada evento y qué se puede analizar.
 Extraído del código, no de un diseño previo: si algo no aparece aquí, no se está
 midiendo.
 
-**Proyecto:** token `d0ffdebfef6b9d8dde7704fc4f5dd4bb` (clave pública de
-cliente, no es un secreto).
+**Destinos:** los eventos de este catálogo llegan **íntegros a los dos**
+proveedores. `trackEvent()` es el único punto de salida del sitio y alimenta a
+ambos en la misma llamada, así que no pueden divergir.
+
+| | Identificador | Qué responde |
+|---|---|---|
+| **Mixpanel** | token `d0ffdebfef6b9d8dde7704fc4f5dd4bb` | Recorrido de producto: qué hizo esta persona, en qué orden, dónde chocó |
+| **Google Analytics 4** | Measurement ID `G-G5S34PK365` (propiedad `552760833`) | Audiencia y adquisición: de dónde viene el tráfico del sitio comercial |
+
+Ambos identificadores son claves **públicas** de cliente: viajan en el JS del
+navegador, sólo permiten escribir, y no son secretos.
+
 **Cobertura:** 10 páginas públicas + 18 superficies de `workspace/`.
 `playground.html` queda fuera a propósito — es laboratorio interno.
 
 ---
 
-## 1. Super propiedades — acompañan a **todos** los eventos
+## 1. Contexto de sesión — acompaña a **todos** los eventos
 
-Son lo que permite segmentar sin tocar cada evento uno por uno.
+Es lo que permite segmentar sin tocar cada evento uno por uno. En Mixpanel son
+*super propiedades* (`register`); en GA4, que no tiene equivalente, viajan como
+parámetros de `config` y además se adjuntan a cada evento.
+
+> **`is_prototype` y `surface` son dimensiones personalizadas de ámbito
+> *evento*** en la propiedad de GA4. Sin ese registro previo en la interfaz de
+> GA4, el parámetro llega pero no se puede usar en informes — y **no es
+> retroactivo**: sólo aplica a lo recibido desde su creación.
 
 | Propiedad | Valores | Para qué sirve |
 |-----------|---------|----------------|
@@ -25,7 +42,21 @@ Son lo que permite segmentar sin tocar cada evento uno por uno.
 | `session_id` | `vj11-2026-09-10` o `null` | Tanda de sesiones: journey + fecha. Permite comparar participantes entre sí |
 
 Mixpanel añade además las suyas: `$current_url`, `$browser`, `$os`,
-`$screen_width`, `current_domain`, `$device_id`, etc.
+`$screen_width`, `current_domain`, `$device_id`, etc. GA4 añade las suyas:
+`page_location`, `page_title`, `page_referrer`, origen de tráfico, dispositivo y
+geografía aproximada.
+
+### Diferencias de formato entre los dos proveedores
+
+No son decisiones de diseño, son límites de GA4, y conviene conocerlos porque
+**GA4 descarta en silencio** lo que no encaja:
+
+| | Mixpanel | GA4 |
+|---|---|---|
+| Booleanos | `true` / `false` | texto `"true"` / `"false"` — GA4 no tiene tipo booleano |
+| Propiedades vacías | `null` se envía (es un dato: "sin etiqueta") | se omite — `null` no es un valor válido |
+| Texto largo | completo | truncado a 100 caracteres |
+| Límite por evento | sin límite práctico | 25 parámetros |
 
 ---
 
@@ -227,13 +258,20 @@ organización no está claro.
 
 ## 5. Análisis: filtros que vas a necesitar
 
-| Para ver | Filtro |
-|----------|--------|
-| Sólo visitantes reales del sitio comercial | `is_prototype = false` |
-| Sólo sesiones de validación | `is_moderated_session = true` |
-| Un participante | `participant_id = "P03"` |
-| Una tanda | `session_id = "vj11-2026-09-10"` |
-| Excluir pruebas de desarrollo | `current_domain ≠ "localhost"` |
+| Para ver | Filtro en Mixpanel | Filtro en GA4 |
+|----------|--------------------|---------------|
+| Sólo visitantes reales del sitio comercial | `is_prototype = false` | dimensión `is_prototype` = `false` |
+| Sólo sesiones de validación | `is_moderated_session = true` | — (no registrada como dimensión) |
+| Un participante | `participant_id = "P03"` | — |
+| Una tanda | `session_id = "vj11-2026-09-10"` | — |
+| Excluir pruebas de desarrollo | `current_domain ≠ "localhost"` | filtro de datos por `hostname` |
+
+> **Para el análisis de las sesiones de validación, usa Mixpanel.** GA4 sólo
+> tiene registradas `is_prototype` y `surface` como dimensiones personalizadas;
+> `participant_id`, `session_id` y `is_moderated_session` se envían igualmente y
+> se ven en DebugView y en BigQuery, pero no son filtrables en los informes
+> estándar mientras no se creen también como dimensiones. No hace falta
+> crearlas: ése es el trabajo de Mixpanel, y GA4 está para otra pregunta.
 
 **Residuo conocido:** el proyecto contiene eventos de las verificaciones
 técnicas (`verificacion_de_entrega`, `prueba_de_superficie`,
@@ -256,8 +294,20 @@ Para que nadie construya una conclusión sobre algo que no se está midiendo:
 | Identificadores de lead, oportunidad o revisión | Son sintéticos y no aportan nada fuera del prototipo |
 | Ingresos, cohortes, A/B testing, feature flags | No aplican en esta etapa |
 
-Además, el SDK **respeta «No rastrear»**: con DNT activo en el navegador no se
-envía ningún evento. Verificado.
+### Consentimiento y «No rastrear»
+
+Nada de esto se envía hasta que la persona acepta en el banner. Una sola
+decisión gobierna a los dos proveedores, pero cada uno la cumple a su manera:
+
+| | Antes de aceptar | «No rastrear» (DNT) |
+|---|---|---|
+| **Mixpanel** | SDK cargado pero en *opt-out*: `track()` se descarta en el cliente | Lo respeta: no envía ningún evento |
+| **GA4** | **`gtag.js` ni siquiera se descarga** | No lo respeta — Google no implementa DNT |
+
+La descarga diferida de `gtag.js` no es lo que hace la mayoría de los sitios.
+Se hizo así porque Consent Mode en `denied` **no impide el envío**: GA4 sigue
+mandando pings sin identificadores, y la política de privacidad de este sitio
+promete que no sale ninguna petición hasta aceptar. Verificado en navegador.
 
 ---
 
@@ -266,10 +316,18 @@ envía ningún evento. Verificado.
 | Archivo | Responsabilidad |
 |---------|-----------------|
 | `ts/mixpanel-loader.ts` | Snippet oficial del proveedor. **No modificar** |
-| `ts/analytics.ts` | Inicialización, super propiedades, etiquetado de sesión, `data-track`, profundidad de lectura |
+| `ts/ga4-loader.ts` | Measurement ID, Consent Mode v2 y descarga diferida de `gtag.js` |
+| `ts/analytics.ts` | Inicialización de ambos, contexto de sesión, consentimiento, `data-track`, profundidad de lectura |
 | `ts/capio.ts`, `ts/contacto.ts` | Eventos del sitio público con lógica |
 | `workspace/**` | Eventos del prototipo |
 | `docs/ux/UX14-GUIA-DE-MEDICION-EN-SESIONES.md` | Cómo conducir una sesión para que los datos sirvan |
+
+### Cambiar el Measurement ID de GA4
+
+Está en una sola línea, `ts/ga4-loader.ts`. Tiene que empezar por `G-`: si se
+pega el ID de propiedad (`552760833`) o el de flujo, `gtag.js` responde 404 y no
+se envía nada **sin ningún error visible**. Por eso el código valida el formato
+y, en `localhost`, avisa por consola en vez de fallar en silencio.
 
 Para medir un CTA nuevo **no hace falta tocar TypeScript**:
 

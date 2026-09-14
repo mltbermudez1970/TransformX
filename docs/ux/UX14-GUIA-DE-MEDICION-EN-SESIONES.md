@@ -1,7 +1,13 @@
 # Guía de medición para las sesiones de validación UX-14
 
 Qué tienen que hacer el moderador y el participante para que las sesiones
-generen datos utilizables en Mixpanel — y qué NO hay que esperar de esos datos.
+generen datos utilizables — y qué NO hay que esperar de esos datos.
+
+> **Para analizar las sesiones, usa Mixpanel.** El sitio envía lo mismo a
+> Mixpanel y a Google Analytics 4, pero sólo Mixpanel permite filtrar por
+> `participant_id` y reconstruir el recorrido de una persona. GA4 está para otra
+> pregunta —de dónde viene el tráfico del sitio comercial— y no hay que tocarlo
+> para conducir una sesión.
 
 **Aplica a:** `TX-UX-014-PROT-001` (sitio público) y `TX-UX-014-PROT-002`
 (prototipo autenticado).
@@ -30,8 +36,8 @@ Cinco minutos antes, con el equipo que se va a usar:
 
 | # | Comprobación | Por qué |
 |---|--------------|---------|
-| 1 | **Desactivar el bloqueador de anuncios** en el navegador de la sesión | Casi todos bloquean Mixpanel. La sesión funcionará con normalidad y **no se registrará nada**: es el fallo más común y el más silencioso |
-| 2 | **Comprobar que «No rastrear» (DNT) está desactivado** | El SDK respeta DNT por diseño. Con DNT activo no se envía ni un evento, y tampoco avisa |
+| 1 | **Desactivar el bloqueador de anuncios** en el navegador de la sesión | Casi todos bloquean Mixpanel y Google Analytics. La sesión funcionará con normalidad y **no se registrará nada**: es el fallo más común y el más silencioso |
+| 2 | **Comprobar que «No rastrear» (DNT) está desactivado** | Mixpanel respeta DNT por diseño. Con DNT activo no se envía ni un evento, y tampoco avisa |
 | 3 | **Usar una ventana nueva, no una pestaña reutilizada** | La etiqueta del participante vive en `sessionStorage`. Reutilizar una pestaña de otro participante mezcla las dos sesiones |
 | 4 | **No usar modo incógnito compartido entre participantes** | Cada participante debe partir de un estado limpio. Ventana normal nueva, o incógnito nuevo por persona |
 | 5 | **Aceptar el banner de consentimiento** al abrir el prototipo | **Sin esto no se registra absolutamente nada.** La analítica arranca desactivada y sólo se activa al pulsar «Aceptar». El banner aparece una vez por navegador |
@@ -101,12 +107,17 @@ Con el prototipo abierto, en la consola del navegador:
 ```js
 mixpanel.get_config("token")      // → "d0ffdebfef6b9d8dde7704fc4f5dd4bb"
 mixpanel.has_opted_out_tracking() // → false
+typeof google_tag_manager          // → "object"  (GA4 activo)
 ```
 
 Si `has_opted_out_tracking()` devuelve `true`, hay tres causas posibles, en
 este orden de probabilidad: **no se aceptó el banner**, se pulsó «Rechazar» en
 este navegador, o «No rastrear» está activo. Las dos primeras se corrigen
 borrando los datos del sitio y volviendo a abrir.
+
+Si `google_tag_manager` sale `undefined` pero Mixpanel sí funciona, es que no se
+aceptó el banner: **`gtag.js` no se descarga hasta que se acepta**, a propósito.
+Para la sesión no es grave — el análisis se hace en Mixpanel.
 
 Y en Mixpanel, la vista **Events** (el feed en vivo, no los informes, que se
 pueblan más lento): debería aparecer un `$mp_web_page_view` con

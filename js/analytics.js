@@ -1,13 +1,19 @@
 "use strict";
 /**
- * Analítica de producto — Mixpanel (SDK de navegador).
+ * Analítica de producto — Mixpanel + Google Analytics 4.
  *
- * Cómo se carga: la librería entra por un `<script defer>` normal desde el CDN
- * de Mixpanel, **antes** de este archivo. Los scripts `defer` se ejecutan en el
- * orden del documento, así que cuando esto corre `window.mixpanel` ya existe.
- * Por eso no hace falta el snippet minificado con cola de llamadas: ese stub
- * sólo sirve para encolar llamadas que ocurren antes de que cargue la librería,
- * y aquí no puede haber ninguna.
+ * Los dos proveedores conviven a propósito y responden preguntas distintas:
+ * Mixpanel contesta "qué recorrió esta persona y dónde chocó" (análisis de
+ * producto, por evento y por participante); GA4 contesta "de dónde vino el
+ * tráfico y cómo se comporta el sitio comercial" (adquisición, audiencias), y
+ * además es lo que suelen pedir terceros. La instrumentación es la misma para
+ * ambos: **un solo `trackEvent()` los alimenta a los dos**, de modo que no
+ * pueden divergir.
+ *
+ * Cómo se cargan: `js/mixpanel-loader.js` y `js/ga4-loader.js` entran por
+ * `<script defer>` **antes** que este archivo. Los scripts `defer` se ejecutan
+ * en el orden del documento, así que cuando esto corre ambos SDK ya están
+ * preparados y con el consentimiento cerrado de fábrica.
  *
  * QUÉ NO SE ENVÍA NUNCA
  * Este sitio es una landing de validación y el prototipo trabaja con datos
@@ -44,6 +50,52 @@ function enDesarrollo() {
 function mp() {
     return typeof mixpanel !== "undefined" && mixpanel ? mixpanel : null;
 }
+function ga4() {
+    const w = window;
+    return typeof w.gtag === "function" ? w.gtag : null;
+}
+/**
+ * Contexto de sesión ya normalizado para GA4. Se adjunta a cada evento que
+ * emitimos, además de ir en `config`. Redundante a propósito: sin
+ * `is_prototype` en el evento, la actividad del prototipo se mezcla con la de
+ * visitantes reales y ya no hay forma de separarlas a posteriori.
+ */
+let contextoGa4 = {};
+/**
+ * Grifo de GA4. Mixpanel lleva el suyo dentro del SDK (`opt_out_tracking`);
+ * GA4 no tiene equivalente —Consent Mode regula el almacenamiento, no el
+ * envío— así que el corte lo hacemos aquí. Sin esto, los eventos previos al
+ * consentimiento se quedarían en `dataLayer` y saldrían todos de golpe si la
+ * persona aceptara más tarde en la misma página.
+ */
+let ga4Permitido = false;
+/**
+ * Adapta las propiedades a los límites de GA4. No es cosmético: GA4 **descarta
+ * en silencio** lo que no cumple, así que sin esto un evento parecería enviado
+ * y llegaría incompleto.
+ *
+ *  · `null` no es un valor válido de parámetro — se omite (en Mixpanel sí se
+ *    manda, porque allí "sin etiqueta" es un dato que se filtra).
+ *  · los valores de texto se truncan a 100 caracteres, el máximo de GA4.
+ *  · los booleanos viajan como texto: GA4 no tiene tipo booleano y una
+ *    dimensión personalizada muestra `true` / `false` como cadenas.
+ */
+function propiedadesParaGa4(props) {
+    const salida = {};
+    if (!props)
+        return salida;
+    Object.entries(props).forEach(([clave, valor]) => {
+        if (valor === null || valor === undefined)
+            return;
+        if (typeof valor === "number")
+            salida[clave] = valor;
+        else if (typeof valor === "boolean")
+            salida[clave] = valor ? "true" : "false";
+        else
+            salida[clave] = String(valor).slice(0, 100);
+    });
+    return salida;
+}
 const CONSENT_KEY = "transformx-consent";
 function leerConsentimiento() {
     try {
@@ -62,34 +114,83 @@ function guardarConsentimiento(v) {
         /* si no se puede guardar, la decisión aplica sólo a esta carga */
     }
 }
-/** Aplica la decisión al SDK. Es lo único que abre o cierra el grifo. */
+/**
+ * Aplica la decisión a **los dos** proveedores. Es lo único que abre o cierra
+ * el grifo, y por eso está en un solo sitio: un banner con dos interruptores
+ * detrás acaba tarde o temprano con uno de los dos desincronizado.
+ */
 function aplicarConsentimiento(v) {
+    const concedido = v === "granted";
     const api = mp();
-    if (!api)
+    if (api) {
+        try {
+            if (concedido)
+                api.opt_in_tracking();
+            else
+                api.opt_out_tracking();
+        }
+        catch {
+            /* la analítica no interrumpe la navegación */
+        }
+    }
+    ga4Permitido = concedido;
+    const g = ga4();
+    if (g) {
+        try {
+            // Consent Mode v2: `default` ya quedó en `denied` en el loader; esto sólo
+            // lo levanta. Los de publicidad siguen denegados siempre — este sitio no
+            // hace remarketing y el banner no pide permiso para eso.
+            g("consent", "update", {
+                analytics_storage: concedido ? "granted" : "denied",
+            });
+            // La descarga de gtag.js ocurre aquí y no antes: ver ts/ga4-loader.ts.
+            if (concedido)
+                activarGa4();
+        }
+        catch {
+            /* la analítica no interrumpe la navegación */
+        }
+    }
+}
+/** Pide al loader que descargue y configure gtag.js. Idempotente. */
+function activarGa4() {
+    const w = window;
+    if (typeof w.__ga4Activar !== "function")
         return;
     try {
-        if (v === "granted")
-            api.opt_in_tracking();
-        else
-            api.opt_out_tracking();
+        w.__ga4Activar(contextoGa4);
     }
     catch {
         /* la analítica no interrumpe la navegación */
     }
 }
 /**
- * Envía un evento. Silencioso si la librería no cargó (bloqueador de anuncios,
- * red caída): la analítica nunca debe romper la página.
+ * Envía un evento a Mixpanel y a GA4. Silencioso si un SDK no cargó
+ * (bloqueador de anuncios, red caída, GA4 sin configurar): la analítica nunca
+ * debe romper la página, y que falte un proveedor no debe impedir al otro
+ * registrar.
+ *
+ * Este es el **único** punto por el que salen eventos del sitio. Instrumentar
+ * en un solo sitio es lo que garantiza que los dos proyectos vean lo mismo.
  */
 function trackEvent(nombre, propiedades) {
     const api = mp();
-    if (!api)
-        return;
-    try {
-        api.track(nombre, propiedades);
+    if (api) {
+        try {
+            api.track(nombre, propiedades);
+        }
+        catch {
+            /* la analítica no interrumpe la navegación */
+        }
     }
-    catch {
-        /* la analítica no interrumpe la navegación */
+    const g = ga4();
+    if (g && ga4Permitido) {
+        try {
+            g("event", nombre, { ...contextoGa4, ...propiedadesParaGa4(propiedades) });
+        }
+        catch {
+            /* la analítica no interrumpe la navegación */
+        }
     }
 }
 /* --- Etiquetado de sesiones moderadas -------------------------------------
@@ -323,18 +424,98 @@ function mostrarBannerDeConsentimiento() {
             banner.remove();
             // Al aceptar se emite el pageview que se había descartado: si no, la
             // primera página de cada visita quedaría sin registrar siempre.
-            if (v === "granted") {
-                const api = mp();
-                try {
-                    api?.track_pageview();
-                }
-                catch { /* silencioso */ }
-            }
+            if (v === "granted")
+                emitirPageview();
         });
     });
 }
 /* --- Arranque -------------------------------------------------------------- */
+/**
+ * Contexto que acompaña a **todos** los eventos. En Mixpanel son super
+ * propiedades (`register`); en GA4 no existe tal cosa, así que se fijan con
+ * `gtag("set", …)` y viajan como parámetros de cada evento — que es
+ * exactamente para lo que se crearon `is_prototype` y `surface` como
+ * dimensiones personalizadas de ámbito *evento* en la propiedad.
+ */
+function contextoDeSesion() {
+    const etiqueta = etiquetaDeSesion();
+    return {
+        is_prototype: esSuperficieDePrototipo(),
+        surface: esSuperficieDePrototipo() ? "workspace" : "public",
+        site_version: "ux-14",
+        // Sin etiqueta, la navegación es tráfico suelto: hay que poder separarlo
+        // de las sesiones moderadas al analizar.
+        is_moderated_session: etiqueta !== null,
+        participant_id: etiqueta ? etiqueta.participant_id : null,
+        session_id: etiqueta ? etiqueta.session_id : null,
+    };
+}
+/**
+ * Pageview manual en los dos proveedores. En ambos el automático se dispara
+ * demasiado pronto —dentro de `init()` en Mixpanel, dentro de `config` en
+ * GA4—, antes de que el contexto esté declarado, y el pageview es el evento
+ * más numeroso del proyecto: perderlo como señal filtrable es perder la mayor
+ * parte del tráfico.
+ */
+function emitirPageview() {
+    const api = mp();
+    if (api) {
+        try {
+            api.track_pageview();
+        }
+        catch { /* silencioso */ }
+    }
+    const g = ga4();
+    if (g && ga4Permitido) {
+        try {
+            g("event", "page_view", {
+                ...contextoGa4,
+                page_location: location.origin + location.pathname,
+                page_title: document.title,
+            });
+        }
+        catch { /* silencioso */ }
+    }
+}
 function initAnalytics() {
+    // GA4 y Mixpanel son independientes: un bloqueador puede tumbar uno y dejar
+    // el otro en pie, y en ese caso hay que seguir midiendo con el que quede.
+    if (!mp() && !ga4())
+        return;
+    initMixpanel();
+    prepararContextoGa4();
+    /*
+     * Consentimiento antes que nada: si ya aceptó en una visita anterior se abre
+     * el grifo aquí, ANTES del pageview, para que esa primera página quede
+     * registrada. Si no ha decidido todavía, se le pregunta y el pageview se
+     * emite al aceptar.
+     */
+    const decision = leerConsentimiento();
+    if (decision) {
+        aplicarConsentimiento(decision);
+        if (decision === "granted")
+            emitirPageview();
+    }
+    else {
+        mostrarBannerDeConsentimiento();
+    }
+    initTrackedElements();
+    initProfundidadDeLectura();
+}
+/**
+ * Deja el contexto listo para GA4, sin enviarlo todavía.
+ *
+ * Se entrega después por `config` (ver `ts/ga4-loader.ts`) para que alcance
+ * también a los eventos que GA4 genera por su cuenta, y **además** se adjunta
+ * a cada evento nuestro: lo primero depende del comportamiento de gtag.js, lo
+ * segundo no depende de nada.
+ */
+function prepararContextoGa4() {
+    if (!ga4())
+        return;
+    contextoGa4 = propiedadesParaGa4(contextoDeSesion());
+}
+function initMixpanel() {
     const api = mp();
     if (!api)
         return;
@@ -369,40 +550,10 @@ function initAnalytics() {
              */
             autocapture: false,
         });
-        // Propiedades que acompañan a TODOS los eventos de esta sesión. `is_prototype`
-        // existe para poder separar en Mixpanel la actividad de validación del
-        // prototipo de la de visitantes reales del sitio comercial.
-        const etiqueta = etiquetaDeSesion();
-        api.register({
-            is_prototype: esSuperficieDePrototipo(),
-            surface: esSuperficieDePrototipo() ? "workspace" : "public",
-            site_version: "ux-14",
-            // Sin etiqueta, la navegación es tráfico suelto: hay que poder separarlo
-            // de las sesiones moderadas al analizar.
-            is_moderated_session: etiqueta !== null,
-            participant_id: etiqueta ? etiqueta.participant_id : null,
-            session_id: etiqueta ? etiqueta.session_id : null,
-        });
-        /*
-         * Consentimiento antes que nada: si ya aceptó en una visita anterior se
-         * abre el grifo aquí, ANTES del pageview, para que esa primera página
-         * quede registrada. Si no ha decidido todavía, se le pregunta y el
-         * pageview se emite al aceptar.
-         */
-        const decision = leerConsentimiento();
-        if (decision) {
-            aplicarConsentimiento(decision);
-            if (decision === "granted")
-                api.track_pageview();
-        }
-        else {
-            mostrarBannerDeConsentimiento();
-        }
+        api.register(contextoDeSesion());
     }
     catch {
-        return;
+        /* la analítica no interrumpe la navegación */
     }
-    initTrackedElements();
-    initProfundidadDeLectura();
 }
 document.addEventListener("DOMContentLoaded", initAnalytics);
