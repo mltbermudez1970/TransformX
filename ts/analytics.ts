@@ -38,7 +38,8 @@ interface MixpanelApi {
   track_pageview(properties?: MixpanelProps): void;
   register(properties: MixpanelProps): void;
   reset(): void;
-  opt_in_tracking(): void;
+  /** `track` sustituye la función con la que el SDK emite `$opt_in`. */
+  opt_in_tracking(options?: { track?: () => void }): void;
   opt_out_tracking(): void;
   has_opted_in_tracking(): boolean;
 }
@@ -175,15 +176,20 @@ function aplicarConsentimiento(v: DecisionDeConsentimiento): void {
   if (api) {
     try {
       /*
-       * Sólo se llama si el estado CAMBIA. `opt_in_tracking()` emite un evento
-       * `$opt_in` cada vez, y como el consentimiento se reaplica en cada carga
-       * de página, eso generaba un `$opt_in` por página: en una medición de
-       * prueba fueron 55 para 59 vistas, un tercio del volumen sin significado
-       * alguno. Mixpanel ya persiste la decisión, así que reafirmarla no
-       * aporta nada.
+       * `opt_in_tracking()` emite un evento `$opt_in` en cada llamada, y el
+       * consentimiento se reaplica en cada carga de página: salía un `$opt_in`
+       * por página —55 para 59 vistas en una medición de prueba—, un tercio
+       * del volumen del proyecto sin significado alguno.
+       *
+       * No basta con mirar `has_opted_in_tracking()` antes de llamar: en el
+       * instante del arranque todavía devuelve `false` aunque la decisión esté
+       * guardada, así que la guarda llega tarde. Verificado en navegador. Se
+       * suprime el evento en la propia llamada, sustituyendo la función con la
+       * que el SDK lo emite. El estado de consentimiento se persiste igual:
+       * eso es independiente del evento.
        */
       if (concedido) {
-        if (!api.has_opted_in_tracking()) api.opt_in_tracking();
+        if (!api.has_opted_in_tracking()) api.opt_in_tracking({ track: () => undefined });
       } else {
         api.opt_out_tracking();
       }
