@@ -124,10 +124,21 @@ function aplicarConsentimiento(v) {
     const api = mp();
     if (api) {
         try {
-            if (concedido)
-                api.opt_in_tracking();
-            else
+            /*
+             * Sólo se llama si el estado CAMBIA. `opt_in_tracking()` emite un evento
+             * `$opt_in` cada vez, y como el consentimiento se reaplica en cada carga
+             * de página, eso generaba un `$opt_in` por página: en una medición de
+             * prueba fueron 55 para 59 vistas, un tercio del volumen sin significado
+             * alguno. Mixpanel ya persiste la decisión, así que reafirmarla no
+             * aporta nada.
+             */
+            if (concedido) {
+                if (!api.has_opted_in_tracking())
+                    api.opt_in_tracking();
+            }
+            else {
                 api.opt_out_tracking();
+            }
         }
         catch {
             /* la analítica no interrumpe la navegación */
