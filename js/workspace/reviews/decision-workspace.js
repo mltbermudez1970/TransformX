@@ -228,8 +228,18 @@ function protoWireDecisionWorkspace(m) {
     let confirmado = false;
     dialog.addEventListener("close", () => {
         if (!confirmado) {
+            /*
+             * `surface` NO puede usarse como nombre de propiedad de evento: es una
+             * de las propiedades de contexto que acompañan a todo, y una propiedad
+             * de evento la sobrescribe —tanto en Mixpanel como en GA4—. Este evento
+             * llegaba con `surface: "REV-02"` en vez de `"workspace"`, así que
+             * filtrar por `surface = "workspace"` lo dejaba fuera en silencio.
+             * `surface_route` es el nombre que ya usan `commands.ts` y
+             * `opportunity.ts`, y con el mismo origen: el `routeId` de la página.
+             */
             trackEvent("confirmation_abandoned", {
-                surface: "REV-02",
+                surface_route: protoCurrentRouteId(),
+                surface_code: "REV-02",
                 resolution: elegida()?.code ?? null,
             });
         }

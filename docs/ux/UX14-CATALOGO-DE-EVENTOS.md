@@ -42,6 +42,12 @@ parámetros de `config` y además se adjuntan a cada evento.
 | `participant_id` | `P01`, `P02`… o `null` | Etiqueta anónima del participante. **No es un dato personal**: la correspondencia con la persona vive fuera de Mixpanel |
 | `session_id` | `vj11-2026-09-10` o `null` | Tanda de sesiones: journey + fecha. Permite comparar participantes entre sí |
 
+> **Ningún evento puede usar estos nombres para una propiedad suya.** Una
+> propiedad de evento **sobrescribe** la del contexto, en Mixpanel y en GA4.
+> `confirmation_abandoned` mandaba `surface: "REV-02"` y por eso desaparecía al
+> filtrar `surface = "workspace"` — corregido a `surface_route` y
+> `surface_code`.
+
 Mixpanel añade además las suyas: `$current_url`, `$browser`, `$os`,
 `$screen_width`, `current_domain`, `$device_id`, etc. GA4 añade las suyas:
 `page_location`, `page_title`, `page_referrer`, origen de tráfico, dispositivo y
@@ -227,7 +233,8 @@ confirmar.
 
 | Propiedad | |
 |-----------|--|
-| `surface` | `REV-02` |
+| `surface_route` | `lab-001-reviews` — el `routeId` de la página, comparable con el de `material_command_resolved` |
+| `surface_code` | `REV-02` — el código de la superficie en la especificación |
 | `resolution` | la resolución que tenía seleccionada, o `null` |
 
 **Qué responde:** duda ante la consecuencia declarada. En validación esto vale
