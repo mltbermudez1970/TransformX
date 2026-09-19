@@ -6,3 +6,5 @@ build
 .DS_Store
 .vscode
 .idea
+# Informes del verificador de Contentsquare (npx @contentsquare/wizard verify)
+.cs-wizard/

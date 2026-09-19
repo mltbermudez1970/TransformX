@@ -143,7 +143,7 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - LAB-002 y LAB-003 son **asignables pero sin superficie operativa**: aparecen en el catálogo con su estado declarado, nunca abren un workspace falso.
 - Toda página de `workspace/` carga, en este orden: `tenants.js` (tras `domain.js`), `access-admin.js` y `tenant-context.js` (tras `session.js`), y `tenant-switcher.js` (antes de `shell.js`).
 
-## Analítica (Mixpanel + Google Analytics 4)
+## Analítica (Mixpanel + Google Analytics 4 + Contentsquare)
 
 - **Dos proveedores, una sola instrumentación.** `trackEvent()` en `ts/analytics.ts` es el **único** punto de salida y alimenta a los dos en la misma llamada: no se instrumenta "para GA4" ni "para Mixpanel", porque entonces divergen. Mixpanel responde al recorrido de producto; GA4, a audiencia y adquisición.
 - `ts/mixpanel-loader.ts` es **código del proveedor, no modificar** (`@ts-nocheck`). Hace falta: la librería del CDN no se auto-registra, espera el stub con la cola `_i`. Sin él, el script carga con 200 y `mixpanel` queda `undefined`.
@@ -164,3 +164,13 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - La conversión **no** pasa por `protoRunCommand`: tiene su propia revalidación y por eso se instrumenta aparte en `opportunity.ts`.
 - Mixpanel agrupa eventos por lotes y los persiste: eso es lo que permite que un evento disparado justo antes de `location.assign()` sobreviva a la navegación. No desactivar el batching en producción.
 - **Consentimiento**: una sola decisión gobierna a los dos proveedores — `opt_out_tracking_by_default: true` en Mixpanel, descarga diferida + Consent Mode en GA4. Nada sale del navegador hasta que la persona acepta en el banner (`ts/analytics.ts`, `.consent-banner` en `components.css`). La decisión vive en `localStorage` bajo `transformx-consent`. El banner **no es modal y no atrapa el foco**: rechazar debe costar lo mismo que aceptar. Usa `.btn*` en público y `.c-btn` en `workspace/` — elige en tiempo de ejecución para no crear una tercera familia. **Nunca añadir un segundo banner por proveedor**: dos estados acaban desincronizados. Consecuencia operativa: en las sesiones de validación **el moderador debe aceptar el banner** o no se registra nada.
+
+### Contentsquare
+
+- **Tag ID `1f0c09d88166a`** (hashed project ID) en `ts/contentsquare-loader.ts`. Es hexadecimal en minúsculas de ~13 caracteres. Igual que el Measurement ID de GA4: si se pega el ID numérico de proyecto o el de un flujo, la URL del tag responde 404 y **no se mide nada sin ningún error visible**. De ahí la validación de formato y el aviso por consola en `localhost`. **Nunca derivar, hashear ni inventar el ID.**
+- **No se usa el `<script src>` directo que documenta Contentsquare para sitios estáticos.** Ese patrón carga el tag al abrir la página, y aquí `privacidad.html` promete por escrito que ninguna petición sale antes de aceptar. El loader sólo expone `window.__csActivar` y no descarga nada; quien abre el grifo es `aplicarConsentimiento()` en `ts/analytics.ts`.
+- **Asimetría real frente a los otros dos:** Contentsquare no tiene equivalente a `opt_out_tracking()`. Una vez que el tag carga, mide. Por eso el grifo **es** la descarga, y revocar el consentimiento no lo apaga en caliente: surte efecto en la siguiente carga de página.
+- Contentsquare **no recibe los eventos de `trackEvent()`**: observa por su cuenta la interacción con la página. Es el único de los tres con captura automática, y `privacidad.html` lo declara explícitamente.
+- **Verificación — la trampa que cuesta una sesión entera:** `npx --yes @contentsquare/wizard@2 verify --url <url> --tag-id 1f0c09d88166a --json` abre un navegador que conduce una persona. Dos cosas no obvias: (1) hay que **aceptar el banner de consentimiento del sitio** o el informe dará `tagScriptLoaded: false`, que parece una instalación rota y es el consentimiento funcionando; (2) **el perfil del navegador del wizard persiste entre ejecuciones**, así que tras la primera decisión el banner ya no reaparece — si quedó en `denied`, todas las corridas siguientes fallan sin explicación. Para forzarlo: `localStorage.setItem("transformx-consent","granted")` en la consola de ese navegador.
+- `.cs-wizard/` está en `.gitignore` (informes del verificador).
+- No tocar CSP: el proyecto no define ninguna y el verificador no reportó violaciones. No añadir cabeceras CSP preventivamente.

@@ -70,6 +70,15 @@ let contextoGa4 = {};
  */
 let ga4Permitido = false;
 /**
+ * Activador de Contentsquare. Como GA4, no descarga nada hasta que se le llama:
+ * el tag queda preparado en `ts/contentsquare-loader.ts` y sólo entra en juego
+ * desde `aplicarConsentimiento()`.
+ */
+function csActivar() {
+    const w = window;
+    return typeof w.__csActivar === "function" ? w.__csActivar : null;
+}
+/**
  * Adapta las propiedades a los límites de GA4. No es cosmético: GA4 **descarta
  * en silencio** lo que no cumple, así que sin esto un evento parecería enviado
  * y llegaría incompleto.
@@ -162,6 +171,22 @@ function aplicarConsentimiento(v) {
             // La descarga de gtag.js ocurre aquí y no antes: ver ts/ga4-loader.ts.
             if (concedido)
                 activarGa4();
+        }
+        catch {
+            /* la analítica no interrumpe la navegación */
+        }
+    }
+    /*
+     * Contentsquare. No tiene equivalente a `opt_out_tracking()`: una vez que el
+     * tag carga, mide. Por eso aquí el grifo ES la descarga, y sólo se abre con
+     * el consentimiento concedido. Revocar no puede apagarlo en caliente: surte
+     * efecto en la siguiente carga de página, donde ya no se descarga.
+     */
+    if (concedido) {
+        try {
+            const activar = csActivar();
+            if (activar)
+                activar();
         }
         catch {
             /* la analítica no interrumpe la navegación */
