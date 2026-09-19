@@ -678,3 +678,39 @@
   gap: var(--space-3);
   flex-shrink: 0;
 }
+
+/* Control para cambiar la decisión de consentimiento (privacidad.html).
+   No es un segundo banner: es la misma decisión, editable desde la política.
+   Retirar debe costar lo mismo que aceptar, así que los dos botones tienen el
+   mismo peso visual que en el aviso inicial. */
+.consent-control {
+  margin: var(--space-5) 0;
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-primary);
+}
+
+.consent-control__state {
+  margin: 0 0 var(--space-4);
+  color: var(--text-secondary);
+}
+
+.consent-control__label { margin-right: var(--space-2); }
+.consent-control__value { color: var(--text-primary); }
+
+.consent-control__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.consent-control__note {
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+/* Vacío no debe dejar caja: la nota es una región live que existe desde el
+   primer render para que el aviso se anuncie de forma fiable. */
+.consent-control__note:empty { margin: 0; }

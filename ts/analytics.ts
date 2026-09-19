@@ -536,6 +536,97 @@ function mostrarBannerDeConsentimiento(): void {
   });
 }
 
+
+/* --- Cambiar la decisión después de haberla tomado ------------------------
+ *
+ * Retirar el consentimiento tiene que costar lo mismo que darlo. Hasta ahora la
+ * única vía era borrar los datos del sitio desde el navegador, que ni es
+ * evidente ni está al alcance de cualquiera.
+ *
+ * El control se renderiza donde la página declare `[data-consent-control]`
+ * —hoy `privacidad.html`—, y reutiliza `aplicarConsentimiento()`: sigue
+ * habiendo **una sola** decisión y un solo punto que abre o cierra el grifo.
+ * No es un segundo banner.
+ */
+function initControlDeConsentimiento(): void {
+  const host = document.querySelector<HTMLElement>("[data-consent-control]");
+  if (!host) return;
+
+  const esWs = esSuperficieDePrototipo();
+  const clasePrimaria = esWs ? "c-btn c-btn--primary" : "btn btn--primary";
+  const claseSecundaria = esWs ? "c-btn c-btn--secondary" : "btn btn--secondary";
+
+  const pintar = (): void => {
+    const decision = leerConsentimiento();
+    const etiqueta =
+      decision === "granted" ? "Aceptada"
+      : decision === "denied" ? "Rechazada"
+      : "Sin decidir";
+
+    /*
+     * Se ofrece siempre la acción contraria a la decisión vigente. Si todavía
+     * no hay decisión, se ofrecen las dos: quien llega aquí antes de tocar el
+     * aviso debe poder resolverlo sin esperar a que reaparezca.
+     */
+    const acciones =
+      decision === "granted"
+        ? `<button type="button" class="${claseSecundaria}" data-consent-set="denied">Retirar el consentimiento</button>`
+        : decision === "denied"
+        ? `<button type="button" class="${clasePrimaria}" data-consent-set="granted">Aceptar la analítica</button>`
+        : `<button type="button" class="${claseSecundaria}" data-consent-set="denied">Rechazar</button>
+           <button type="button" class="${clasePrimaria}" data-consent-set="granted">Aceptar</button>`;
+
+    host.innerHTML = `
+      <div class="consent-control" role="group" aria-labelledby="consent-control-title">
+        <p class="consent-control__state">
+          <span id="consent-control-title" class="consent-control__label">Tu decisión actual:</span>
+          <strong class="consent-control__value">${etiqueta}</strong>
+        </p>
+        <div class="consent-control__actions">${acciones}</div>
+        <p class="consent-control__note" data-consent-feedback role="status" aria-live="polite"></p>
+      </div>`;
+
+    host.querySelectorAll<HTMLButtonElement>("[data-consent-set]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const v: DecisionDeConsentimiento =
+          b.getAttribute("data-consent-set") === "granted" ? "granted" : "denied";
+        const anterior = leerConsentimiento();
+
+        guardarConsentimiento(v);
+        aplicarConsentimiento(v);
+
+        /*
+         * Retirar el consentimiento exige recargar, y no por comodidad:
+         * Contentsquare no tiene equivalente a `opt_out_tracking()`. Una vez
+         * que su tag cargó, sigue midiendo hasta que la página se descarta.
+         * Decir "retirado" sin recargar sería mentir a medias.
+         */
+        if (v === "denied" && anterior === "granted") {
+          const aviso = host.querySelector<HTMLElement>("[data-consent-feedback]");
+          if (aviso) {
+            aviso.textContent =
+              "Consentimiento retirado. Recargando la página para detener la medición que ya estaba en curso…";
+          }
+          window.setTimeout(() => location.reload(), 1200);
+          return;
+        }
+
+        if (v === "granted") emitirPageview();
+        pintar();
+        const aviso = document.querySelector<HTMLElement>("[data-consent-feedback]");
+        if (aviso) {
+          aviso.textContent =
+            v === "granted"
+              ? "Consentimiento aceptado. La analítica ya está activa en este navegador."
+              : "Consentimiento rechazado. No se enviará ningún dato.";
+        }
+      });
+    });
+  };
+
+  pintar();
+}
+
 /* --- Arranque -------------------------------------------------------------- */
 
 /**
@@ -610,6 +701,7 @@ function initAnalytics(): void {
     mostrarBannerDeConsentimiento();
   }
 
+  initControlDeConsentimiento();
   initTrackedElements();
   initProfundidadDeLectura();
 }
