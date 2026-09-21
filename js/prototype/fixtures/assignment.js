@@ -116,7 +116,15 @@ const PROTO_ASSIGNMENT_EXCEPTIONS = [
         version: 4,
     },
 ];
+/**
+ * Frontera de Tenant — TX-UX-MTAC-AMD-001 §4/§6. La excepción de asignación
+ * no tiene `tenantId` propio: pertenece al Tenant de su Lead. `leadId` llega
+ * de navegación (URL), así que es un punto de acceso directo que debe fallar
+ * en cerrado, igual que `protoFindLeadForActiveTenant()`.
+ */
 function protoFindAssignmentException(leadId) {
+    if (!protoLeadEnTenantActivo(leadId))
+        return null;
     return PROTO_ASSIGNMENT_EXCEPTIONS.find((a) => a.leadId === leadId) ?? null;
 }
 function protoFindCandidate(exc, candidateId) {
@@ -199,6 +207,8 @@ const PROTO_ASSIGNMENT_HISTORY = [
 ];
 /** Historial del lead, más recientes primero (convención declarada en la UI). */
 function protoGetAssignmentHistory(leadId) {
+    if (!protoLeadEnTenantActivo(leadId))
+        return [];
     return PROTO_ASSIGNMENT_HISTORY.filter((h) => h.leadId === leadId).sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
 }
 /**

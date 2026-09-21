@@ -31,6 +31,8 @@ interface ProtoWorkItemSla {
 
 interface ProtoWorkItem {
   workItemId: string;
+  /** Propietario Tenant autoritativo — TX-UX-MTAC-AMD-001 §4/§6, ver fixtures.ts. */
+  tenantId: string;
   type: ProtoWorkItemType;
   status: ProtoWorkItemStatus;
   /** Qué hay que hacer. */
@@ -61,6 +63,7 @@ interface ProtoWorkItem {
 const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   {
     workItemId: "WI-0042",
+    tenantId: "tn-novaplast",
     type: "MISSING_INFORMATION_REQUEST",
     status: "OPEN",
     title: "Solicitar información faltante",
@@ -83,6 +86,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   },
   {
     workItemId: "WI-0043",
+    tenantId: "tn-novaplast",
     type: "RECEIVED_INFORMATION_REVIEW",
     status: "OPEN",
     title: "Revisar información recibida",
@@ -105,6 +109,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   },
   {
     workItemId: "WI-0045",
+    tenantId: "tn-novaplast",
     type: "QUALIFICATION_REVIEW",
     status: "IN_PROGRESS",
     title: "Revisar criterio en revisión",
@@ -126,6 +131,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   },
   {
     workItemId: "WI-0046",
+    tenantId: "tn-novaplast",
     type: "ASSIGNMENT_EXCEPTION",
     status: "WAITING",
     title: "Excepción de asignación",
@@ -147,6 +153,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   },
   {
     workItemId: "WI-0047",
+    tenantId: "tn-novaplast",
     type: "OPPORTUNITY_READINESS_REVIEW",
     status: "OPEN",
     title: "Revisar readiness de oportunidad",
@@ -170,6 +177,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
   {
     // RESUELTO: demuestra que Open Work lo excluye y que vive en History/Evidence.
     workItemId: "WI-0040",
+    tenantId: "tn-novaplast",
     type: "MISSING_INFORMATION_REQUEST",
     status: "RESOLVED",
     title: "Solicitar información faltante",
@@ -189,6 +197,33 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
     version: 5,
     updatedAt: "2026-09-01T16:40:00-05:00",
   },
+  /**
+   * Dataset mínimo de Empresa ABC — TX-UX-MTAC-AMD-001 §11 (VJ-11). Única
+   * obligación de tn-abc, para poder demostrar que My Work y Work Queue
+   * cambian con el Tenant activo.
+   */
+  {
+    workItemId: "WI-90001",
+    tenantId: "tn-abc",
+    type: "MISSING_INFORMATION_REQUEST",
+    status: "OPEN",
+    title: "Solicitar información faltante",
+    obligation: "Solicitar cantidad y unidad al cliente para continuar la calificación.",
+    subject: { entityType: "LEAD", leadId: "LEAD-90001", leadReference: "LD-2026-90001", companyName: "ABC Distribuidora Regional" },
+    assignee: { userId: "USR-001", displayName: "Ana Ruiz", role: "SALES_REPRESENTATIVE" },
+    commercialOwner: { userId: "USR-001", displayName: "Ana Ruiz" },
+    priority: "MEDIUM",
+    createdAt: "2026-09-05T10:05:00-05:00",
+    dueAt: "2026-09-05T18:00:00-05:00",
+    isOverdue: false,
+    reasonCode: "QUALIFICATION_MINIMUM_INFORMATION_MISSING",
+    reasonSummary: "Faltan cantidad y unidad.",
+    availableActions: ["VIEW_LEAD", "REQUEST_MISSING_INFORMATION"],
+    targetRoute: "workspace/missing-information/?leadId=LEAD-90001&workItemId=WI-90001",
+    sla: { status: "ON_TRACK", remainingMinutes: 470 },
+    version: 1,
+    updatedAt: "2026-09-05T10:05:00-05:00",
+  },
 ];
 
 /**
@@ -198,6 +233,7 @@ const PROTO_WORK_ITEMS: ProtoWorkItem[] = [
 const PROTO_INCOMING_WORK_ITEMS: ProtoWorkItem[] = [
   {
     workItemId: "WI-0050",
+    tenantId: "tn-novaplast",
     type: "MISSING_INFORMATION_REQUEST",
     status: "OPEN",
     title: "Solicitar información faltante",
@@ -223,33 +259,47 @@ const PROTO_INCOMING_WORK_ITEMS: ProtoWorkItem[] = [
  * Accesores. El orden lo declara el fixture, no el frontend.
  * ------------------------------------------------------------------------- */
 
+/**
+ * Frontera de Tenant — TX-UX-MTAC-AMD-001 §4/§6. Todo accesor de WorkItem
+ * exigido por una superficie operativa (My Work, Work Queue, Open/Closed
+ * Work, deep link a un WorkItem por id) pasa por el Tenant activo. Un
+ * WorkItem de otra organización no existe para efectos de estas consultas,
+ * igual que `protoFindLeadForActiveTenant()` en fixtures.ts.
+ */
 function protoFindWorkItem(workItemId: string): ProtoWorkItem | null {
-  return PROTO_WORK_ITEMS.find((w) => w.workItemId === workItemId) ?? null;
+  const tenantId = protoGetActiveTenantId();
+  if (!tenantId) return null;
+  const item = PROTO_WORK_ITEMS.find((w) => w.workItemId === workItemId) ?? null;
+  return item && item.tenantId === tenantId ? item : null;
 }
 
 /** APP-02 My Work: obligaciones activas asignadas al actor, cross-BizCap. */
 function protoGetMyWork(userId: string): ProtoWorkItem[] {
+  const tenantId = protoGetActiveTenantId();
   return PROTO_WORK_ITEMS.filter(
-    (w) => w.assignee?.userId === userId && PROTO_WORK_ITEM_ACTIVE.includes(w.status)
+    (w) => w.tenantId === tenantId && w.assignee?.userId === userId && PROTO_WORK_ITEM_ACTIVE.includes(w.status)
   );
 }
 
 /** WORK-01 Work Queue: triage del equipo/BizCap, incluidos los sin asignar. */
 function protoGetWorkQueue(): ProtoWorkItem[] {
-  return PROTO_WORK_ITEMS.filter((w) => PROTO_WORK_ITEM_ACTIVE.includes(w.status));
+  const tenantId = protoGetActiveTenantId();
+  return PROTO_WORK_ITEMS.filter((w) => w.tenantId === tenantId && PROTO_WORK_ITEM_ACTIVE.includes(w.status));
 }
 
 /** Open Work de un lead: sólo obligaciones activas (§7.1). */
 function protoGetOpenWork(leadId: string): ProtoWorkItem[] {
+  const tenantId = protoGetActiveTenantId();
   return PROTO_WORK_ITEMS.filter(
-    (w) => w.subject.leadId === leadId && PROTO_WORK_ITEM_ACTIVE.includes(w.status)
+    (w) => w.tenantId === tenantId && w.subject.leadId === leadId && PROTO_WORK_ITEM_ACTIVE.includes(w.status)
   );
 }
 
 /** Trabajo cerrado del lead: pertenece a History/Evidence, no a Open Work. */
 function protoGetClosedWork(leadId: string): ProtoWorkItem[] {
+  const tenantId = protoGetActiveTenantId();
   return PROTO_WORK_ITEMS.filter(
-    (w) => w.subject.leadId === leadId && !PROTO_WORK_ITEM_ACTIVE.includes(w.status)
+    (w) => w.tenantId === tenantId && w.subject.leadId === leadId && !PROTO_WORK_ITEM_ACTIVE.includes(w.status)
   );
 }
 

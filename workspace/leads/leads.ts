@@ -152,7 +152,7 @@ function protoRenderCampoCanonico(label: string, campo: ProtoCanonicalField<unkn
 }
 
 function protoRenderLeadDetail(host: HTMLElement, leadId: string, user: ProtoAuthUser): void {
-  const lead = protoFindLead(leadId);
+  const lead = protoFindLeadForActiveTenant(leadId);
   if (!lead) {
     location.replace(protoRouteHref("system", { state: "not-found" }));
     return;

@@ -143,8 +143,8 @@ async function protoRunCommand(o) {
             // Resultado de negocio, NO error técnico.
             protoRenderFeedback(o.feedback, {
                 severidad: "warning",
-                mensaje: "La acción no es válida para el estado actual del registro.",
-                detalle: "No es una falla del sistema: el estado cambió o la política no la permite. Recarga para ver la versión vigente.",
+                mensaje: o.conflictMessage?.mensaje ?? "La acción no es válida para el estado actual del registro.",
+                detalle: o.conflictMessage?.detalle ?? "No es una falla del sistema: el estado cambió o la política no la permite. Recarga para ver la versión vigente.",
             });
             return false;
         case "stale":

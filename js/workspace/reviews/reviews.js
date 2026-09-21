@@ -8,8 +8,9 @@
  * Sin `?reviewId` se muestra la bandeja de revisiones abiertas.
  */
 function protoReviewsIndex(host) {
-    const humanas = PROTO_HUMAN_REVIEWS;
-    const duplicados = PROTO_DUPLICATE_REVIEWS;
+    // Frontera de Tenant: la bandeja sólo lista revisiones del Tenant activo.
+    const humanas = protoActiveTenantHumanReviews();
+    const duplicados = protoActiveTenantDuplicateReviews();
     host.innerHTML = `
     <h1 class="ws-page__title">Reviews</h1>
     <p class="ws-page__lead">Decisiones humanas gobernadas de LAB-001. Cada revisión empieza por su pregunta de decisión.</p>
@@ -87,8 +88,8 @@ function protoRenderHumanReview(host, review) {
  * REV-03 — Duplicate Review
  * ========================================================================= */
 function protoRenderDuplicateComparison(review) {
-    const cur = protoFindLead(review.currentLeadId);
-    const cand = protoFindLead(review.candidateLeadId);
+    const cur = protoFindLeadForActiveTenant(review.currentLeadId);
+    const cand = protoFindLeadForActiveTenant(review.candidateLeadId);
     const filas = review.comparison.map((c) => `
     <tr class="ws-dup__row ws-dup__row--${c.similarity.classification.toLowerCase()}">
       <th scope="row">${protoEsc(c.label)}${c.contextOnly ? ' <span class="ws-dup__ctx">sólo contexto</span>' : ""}</th>

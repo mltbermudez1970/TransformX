@@ -376,6 +376,12 @@ function protoWireAdm09(userId, tenantId, draft, set) {
             boton: btn,
             feedback,
             outcome: protoAdmParam("outcome") === "conflict" ? "business_conflict" : "success",
+            // ACCESS_CHANGE_CONFLICT (TX-UX-MTAC-AMD-001 §12): el acceso de esta
+            // persona cambió mientras se revisaba, no un error técnico genérico.
+            conflictMessage: {
+                mensaje: PROTO_TENANT_STATE_LABEL.ACCESS_CHANGE_CONFLICT,
+                detalle: "El acceso de esta persona cambió en esta organización mientras revisabas los cambios. Vuelve a la asignación para ver el estado vigente antes de confirmar.",
+            },
         });
         if (!aplicado)
             return;

@@ -160,6 +160,23 @@ const PROTO_LEAD_OPERATIONS: ProtoLeadOperations[] = [
     readinessSummary: "Todas las condiciones de readiness están satisfechas.",
     assignmentSummary: "Asignado por política estándar de territorio.",
   },
+  {
+    leadId: "LEAD-90001",
+    priority: {
+      code: "MEDIUM", label: PROTO_PRIORITY_LABEL.MEDIUM,
+      reasonSummary: "Falta cantidad y unidad para continuar la calificación.",
+      source: "SYSTEM_POLICY", policyVersion: "priority-policy-v3", computedAt: "2026-09-05T10:05:00-05:00",
+    },
+    nextBestAction: {
+      actionCode: "REQUEST_MISSING_INFORMATION", label: "Solicitar información faltante",
+      rationale: "Faltan cantidad y unidad para continuar la calificación.",
+      source: "SYSTEM_POLICY", confidence: null,
+      relatedWorkItemId: "WI-90001",
+      targetRoute: "workspace/missing-information/?leadId=LEAD-90001&workItemId=WI-90001",
+      generatedAt: "2026-09-05T10:05:00-05:00",
+    },
+    commercialOwner: { userId: "USR-001", displayName: "Ana Ruiz" },
+  },
 ];
 
 function protoGetLeadOperations(leadId: string): ProtoLeadOperations | null {
@@ -287,8 +304,13 @@ function protoResolveSavedView(
   const estados = filtros?.lifecycleStates ?? view.defaultFilters.lifecycleStates;
   const sort = orden ?? view.defaultSort;
 
+  const tenantId = protoGetActiveTenantId();
+
   const filas: ProtoLeadRow[] = [];
   PROTO_CANONICAL_LEADS.forEach((lead) => {
+    // Frontera de Tenant: un Lead de otra organización no entra a la lista,
+    // aunque su propietario comercial coincida con el actor (TX-UX-MTAC-AMD-001 §6).
+    if (lead.tenantId !== tenantId) return;
     const row = protoLeadRow(lead.leadId);
     if (!row) return;
     if (view.actorRelative && row.commercialOwner?.userId !== currentUserId) return;

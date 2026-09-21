@@ -341,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const host = document.querySelector("[data-opportunity-surface]");
     if (!host)
         return;
-    const lead = protoFindLead(protoOppLeadId());
+    const lead = protoFindLeadForActiveTenant(protoOppLeadId());
     if (!lead) {
         location.replace(protoRouteHref("system", { state: "not-found" }));
         return;

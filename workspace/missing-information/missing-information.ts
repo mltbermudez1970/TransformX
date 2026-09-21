@@ -263,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (protoRenderSys08IfResolved(host, protoUrlParam("workItemId"))) return;
 
   const leadId = protoUrlParam("leadId") ?? "LEAD-00042";
-  const lead = protoFindLead(leadId);
+  const lead = protoFindLeadForActiveTenant(leadId);
   if (!lead) {
     location.replace(protoRouteHref("system", { state: "not-found" }));
     return;

@@ -128,7 +128,7 @@ function protoRenderCampoCanonico(label, campo, requerido) {
     return `<div><dt>${protoEsc(label)}${requerido ? ' <span class="ws-req" title="Requerido para calificar">*</span>' : ""}</dt><dd>${valor}</dd></div>`;
 }
 function protoRenderLeadDetail(host, leadId, user) {
-    const lead = protoFindLead(leadId);
+    const lead = protoFindLeadForActiveTenant(leadId);
     if (!lead) {
         location.replace(protoRouteHref("system", { state: "not-found" }));
         return;

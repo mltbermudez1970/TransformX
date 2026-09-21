@@ -130,7 +130,7 @@ function protoRenderSys08IfResolved(host: HTMLElement, workItemId: string | null
   if (!item) return false;
   if (PROTO_WORK_ITEM_ACTIVE.includes(item.status)) return false;
 
-  const lead = protoFindLead(item.subject.leadId);
+  const lead = protoFindLeadForActiveTenant(item.subject.leadId);
   const opp = protoFindCreatedOpportunity(item.subject.leadId);
 
   host.innerHTML = `

@@ -16,7 +16,11 @@ let protoQueueRefrescada = false;
 
 function protoQueueItems(): ProtoWorkItem[] {
   const base = protoGetWorkQueue();
-  return protoQueueRefrescada ? [...base, ...PROTO_INCOMING_WORK_ITEMS] : base;
+  if (!protoQueueRefrescada) return base;
+  // Frontera de Tenant: el trabajo entrante simulado también respeta el
+  // Tenant activo, igual que el resto de la cola.
+  const entrante = PROTO_INCOMING_WORK_ITEMS.filter((w) => w.tenantId === protoGetActiveTenantId());
+  return [...base, ...entrante];
 }
 
 function protoRenderWorkQueue(): void {

@@ -216,6 +216,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const leadId = protoUrlParam("leadId") ?? "LEAD-00046";
 
+  // Frontera de Tenant: un lead de otra organización no expone su excepción
+  // de asignación ni su historial, ni siquiera por acceso directo a la URL.
+  if (!protoLeadEnTenantActivo(leadId)) {
+    location.replace(protoRouteHref("system", { state: "not-found" }));
+    return;
+  }
+
   if (protoUrlParam("view") === "history") {
     protoRenderAssignmentHistory(host, leadId);
     return;

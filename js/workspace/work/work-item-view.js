@@ -123,7 +123,7 @@ function protoRenderSys08IfResolved(host, workItemId) {
         return false;
     if (PROTO_WORK_ITEM_ACTIVE.includes(item.status))
         return false;
-    const lead = protoFindLead(item.subject.leadId);
+    const lead = protoFindLeadForActiveTenant(item.subject.leadId);
     const opp = protoFindCreatedOpportunity(item.subject.leadId);
     host.innerHTML = `
     <p class="ws-code">SYS-08 · WORKITEM_NO_LONGER_ACTIVE</p>

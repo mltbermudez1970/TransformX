@@ -222,12 +222,25 @@ const PROTO_HUMAN_REVIEWS: ProtoHumanReview[] = [
   },
 ];
 
+/**
+ * Frontera de Tenant — TX-UX-MTAC-AMD-001 §4/§6. Una revisión no tiene su
+ * propio `tenantId`: pertenece al Tenant de su Lead. `?reviewId=` es
+ * navegable por URL, así que este es un punto real de acceso directo/deep
+ * link que debe fallar en cerrado igual que `protoFindLeadForActiveTenant()`.
+ */
 function protoFindHumanReview(reviewId: string): ProtoHumanReview | null {
-  return PROTO_HUMAN_REVIEWS.find((r) => r.reviewId === reviewId) ?? null;
+  const r = PROTO_HUMAN_REVIEWS.find((x) => x.reviewId === reviewId) ?? null;
+  return r && protoLeadEnTenantActivo(r.context.leadId) ? r : null;
 }
 
 function protoHumanReviewForLead(leadId: string): ProtoHumanReview | null {
+  if (!protoLeadEnTenantActivo(leadId)) return null;
   return PROTO_HUMAN_REVIEWS.find((r) => r.context.leadId === leadId) ?? null;
+}
+
+/** Revisiones humanas abiertas del Tenant activo, para la bandeja REV-01. */
+function protoActiveTenantHumanReviews(): ProtoHumanReview[] {
+  return PROTO_HUMAN_REVIEWS.filter((r) => protoLeadEnTenantActivo(r.context.leadId));
 }
 
 /* ---------------------------------------------------------------------------
@@ -320,9 +333,16 @@ const PROTO_DUPLICATE_REVIEWS: ProtoDuplicateReview[] = [
 ];
 
 function protoFindDuplicateReview(reviewId: string): ProtoDuplicateReview | null {
-  return PROTO_DUPLICATE_REVIEWS.find((r) => r.reviewId === reviewId) ?? null;
+  const r = PROTO_DUPLICATE_REVIEWS.find((x) => x.reviewId === reviewId) ?? null;
+  return r && protoLeadEnTenantActivo(r.currentLeadId) ? r : null;
 }
 
 function protoDuplicateReviewForLead(leadId: string): ProtoDuplicateReview | null {
+  if (!protoLeadEnTenantActivo(leadId)) return null;
   return PROTO_DUPLICATE_REVIEWS.find((r) => r.currentLeadId === leadId) ?? null;
+}
+
+/** Revisiones de duplicado abiertas del Tenant activo, para la bandeja REV-01. */
+function protoActiveTenantDuplicateReviews(): ProtoDuplicateReview[] {
+  return PROTO_DUPLICATE_REVIEWS.filter((r) => protoLeadEnTenantActivo(r.currentLeadId));
 }

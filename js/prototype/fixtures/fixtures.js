@@ -47,6 +47,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00041",
         leadReference: "LD-2026-00041",
+        tenantId: "tn-novaplast",
         lifecycleState: "CAPTURED",
         receivedAt: "2026-09-01T13:05:00-05:00",
         source: "WEB",
@@ -73,6 +74,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00042",
         leadReference: "LD-2026-00042",
+        tenantId: "tn-novaplast",
         lifecycleState: "NEEDS_INFORMATION",
         receivedAt: "2026-09-04T13:14:00-05:00",
         source: "WEB",
@@ -99,6 +101,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00043",
         leadReference: "LD-2026-00043",
+        tenantId: "tn-novaplast",
         lifecycleState: "NEEDS_INFORMATION",
         receivedAt: "2026-09-04T09:00:00-05:00",
         source: "EMAIL",
@@ -125,6 +128,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00044",
         leadReference: "LD-2026-00044",
+        tenantId: "tn-novaplast",
         lifecycleState: "DUPLICATE_REVIEW",
         receivedAt: "2026-09-02T09:12:00-05:00",
         source: "EVENT",
@@ -151,6 +155,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00045",
         leadReference: "LD-2026-00045",
+        tenantId: "tn-novaplast",
         lifecycleState: "UNDER_QUALIFICATION",
         receivedAt: "2026-09-03T08:02:00-05:00",
         source: "REFERRAL",
@@ -177,6 +182,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00046",
         leadReference: "LD-2026-00046",
+        tenantId: "tn-novaplast",
         lifecycleState: "UNDER_QUALIFICATION",
         receivedAt: "2026-09-03T16:48:00-05:00",
         source: "WEB",
@@ -203,6 +209,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00047",
         leadReference: "LD-2026-00047",
+        tenantId: "tn-novaplast",
         lifecycleState: "QUALIFIED",
         receivedAt: "2026-09-02T11:25:00-05:00",
         source: "WEB",
@@ -230,6 +237,7 @@ const PROTO_CANONICAL_LEADS = [
     {
         leadId: "LEAD-00048",
         leadReference: "LD-2026-00048",
+        tenantId: "tn-novaplast",
         lifecycleState: "QUALIFIED",
         receivedAt: "2026-09-01T15:40:00-05:00",
         source: "WEB",
@@ -252,6 +260,38 @@ const PROTO_CANONICAL_LEADS = [
         canonicalVersion: 8,
         availableActions: ["VIEW_LEAD", "VIEW_QUALIFICATION", "VIEW_ASSIGNMENT", "VIEW_OPPORTUNITY_READINESS", "CONVERT_TO_OPPORTUNITY"],
         guion: "S-08 Ready for conversion: readiness satisfecho y actor con opportunity.convert.",
+    },
+    /**
+     * Dataset mínimo de Empresa ABC — TX-UX-MTAC-AMD-001 §11 (VJ-11).
+     * Único propósito: demostrar que el Tenant activo aísla los datos
+     * operativos de LAB-001. No reemplaza ni redistribuye S-01…S-10.
+     */
+    {
+        leadId: "LEAD-90001",
+        leadReference: "LD-2026-90001",
+        tenantId: "tn-abc",
+        lifecycleState: "NEEDS_INFORMATION",
+        receivedAt: "2026-09-05T10:00:00-05:00",
+        source: "WEB",
+        channel: "TRANSFORMX_PUBLIC_FORM",
+        company: { companyId: "COMP-90001", companyName: "ABC Distribuidora Regional" },
+        contact: { contactId: "CONT-90001", fullName: "Renata Solano", email: "renata.solano@ejemplo-abc.test", phone: null },
+        commercialNeed: {
+            commercialNeedId: "NEED-90001", version: 1,
+            productOffering: protoCanon("Pallet plástico reforzado"),
+            quantity: PROTO_FIELD_MISSING,
+            unit: PROTO_FIELD_MISSING,
+            geographyDestination: protoCanon("Guayaquil, EC"),
+            recurringDemand: protoCanon("MONTHLY"),
+            material: PROTO_FIELD_NOT_PROVIDED,
+            dimensionsOrCapacity: PROTO_FIELD_NOT_PROVIDED,
+            requestedOrRequiredDate: PROTO_FIELD_NOT_PROVIDED,
+            specialRequirements: PROTO_FIELD_NOT_PROVIDED,
+        },
+        updatedAt: "2026-09-05T10:05:00-05:00",
+        canonicalVersion: 2,
+        availableActions: ["VIEW_LEAD", "REQUEST_MISSING_INFORMATION", "VIEW_COMMUNICATIONS"],
+        guion: "S-11 Empresa ABC isolation fixture: visible sólo con tn-abc como Tenant activo.",
     },
 ];
 /* ---------------------------------------------------------------------------
@@ -340,6 +380,37 @@ const PROTO_FIXTURE_SETS = [
  * ------------------------------------------------------------------------- */
 function protoFindLead(leadId) {
     return PROTO_CANONICAL_LEADS.find((l) => l.leadId === leadId) ?? null;
+}
+/**
+ * Autoridad central de aislamiento por Tenant — TX-UX-MTAC-AMD-001 §4/§6.
+ *
+ * `protoFindLead()` se deja sin cambios porque también lo usa el catálogo de
+ * escenarios (`renderScenarioCatalog`), que necesita contar leads de un
+ * escenario aunque no pertenezca al Tenant activo. Toda superficie operativa
+ * que resuelve un Lead a partir de un `leadId` de navegación (URL, fila de
+ * lista, WorkItem) debe usar esta variante en su lugar: el Tenant activo es
+ * la frontera de acceso, no un filtro de la interfaz.
+ */
+function protoLeadTenantId(leadId) {
+    return protoFindLead(leadId)?.tenantId ?? null;
+}
+/** ¿Este Lead pertenece al Tenant activo de la sesión? */
+function protoLeadEnTenantActivo(leadId) {
+    const tenantId = protoGetActiveTenantId();
+    if (!tenantId)
+        return false;
+    return protoLeadTenantId(leadId) === tenantId;
+}
+/**
+ * Único punto que las superficies operativas deben usar para resolver un
+ * Lead por `leadId`. Devuelve `null` —el mismo contrato que un Lead
+ * inexistente— cuando el Lead existe pero pertenece a otro Tenant: el
+ * llamador ya sabe tratar ese caso como SYS-02 "no encontramos ese elemento",
+ * así que el acceso a otra organización falla en cerrado sin una superficie
+ * de error nueva.
+ */
+function protoFindLeadForActiveTenant(leadId) {
+    return protoLeadEnTenantActivo(leadId) ? protoFindLead(leadId) : null;
 }
 function protoGetFixtureSet(fixtureSetId) {
     return PROTO_FIXTURE_SETS.find((s) => s.fixtureSetId === fixtureSetId) ?? null;

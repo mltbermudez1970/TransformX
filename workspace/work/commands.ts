@@ -131,6 +131,12 @@ interface ProtoCommandOptions {
   feedback: HTMLElement;
   /** Desenlace por defecto si el escenario o la URL no fuerzan otro. */
   outcome?: ProtoOutcomeKind;
+  /**
+   * Copy específico para `business_conflict`, cuando el genérico ("la acción
+   * no es válida para el estado actual del registro") no describe el caso.
+   * Opcional: no cambia el contrato ni el desenlace del mock, sólo el texto.
+   */
+  conflictMessage?: { mensaje: string; detalle: string };
   /** Se ejecuta sólo cuando el comando se aplica realmente. */
   alAplicar?: () => void;
 }
@@ -205,8 +211,8 @@ async function protoRunCommand(o: ProtoCommandOptions): Promise<boolean> {
       // Resultado de negocio, NO error técnico.
       protoRenderFeedback(o.feedback, {
         severidad: "warning",
-        mensaje: "La acción no es válida para el estado actual del registro.",
-        detalle: "No es una falla del sistema: el estado cambió o la política no la permite. Recarga para ver la versión vigente.",
+        mensaje: o.conflictMessage?.mensaje ?? "La acción no es válida para el estado actual del registro.",
+        detalle: o.conflictMessage?.detalle ?? "No es una falla del sistema: el estado cambió o la política no la permite. Recarga para ver la versión vigente.",
       });
       return false;
 
