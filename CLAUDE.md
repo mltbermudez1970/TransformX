@@ -123,6 +123,7 @@ Todo vive como custom properties en `css/variables.css` — reusar estos tokens,
 - Al agregar/cambiar header/footer/nav, replicar en **todas** las páginas HTML comerciales.
 
 **De negocio / alcance** (ver `PLAN.md` para el detalle completo):
+- **Acceso a `/workspace/` en producción**: se publica sin control de acceso **a propósito** mientras dure la validación UX — lo expuesto son fixtures sintéticos, no hay nada que proteger y el control añadiría fricción a las sesiones. Decisión registrada (R-11 / OD-05, §10 de `docs/ux/UX14-PROTOTYPE-OPEN-RISKS.md`). **Vuelve a ser exigible y bloqueante al implementar backend real**: Cloudflare Access sobre `/workspace/*`, sin cambios de código. No reabrir el debate mientras no haya datos reales.
 - No implementar backend real, autenticación real, ni envío real de emails/leads — todo formulario nuevo debe seguir el patrón simulado existente (validación cliente + confirmación falsa con `setTimeout`).
 - No conectar Capio público a un LLM productivo — discovery determinístico en `ts/capio.ts` (LAB-001/002/003 + rechazo de contexto privado).
 - No publicar precios definitivos ($49/$149), Cap Credits incluidos, consultas Capio por plan, BizCaps “incluidas” en suscripción, SLA 99.9% ni integraciones como disponibles sin evidencia.

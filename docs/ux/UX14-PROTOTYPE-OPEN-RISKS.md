@@ -78,7 +78,7 @@ Se registran para que no se lean como cobertura silenciada:
 | **R-08** | Huecos de numeración de pantallas (MI-02, REV-01) y LEAD-02 como vista guardada, no como ruta | Trazabilidad incompleta frente al material fuente | 4 | UX |
 | **R-09** | Dashboard, Configuration y Administration son marcadores de navegación sin contrato de interacción | Un participante puede pedirlos y encontrar una superficie vacía | 3 | UX |
 | **R-10** | El prototipo **exige JavaScript**: el chrome del workspace se renderiza desde `shell.ts` | Sin JS no hay navegación en `workspace/` | 3 | Arquitectura (ligado a **OD-14**) |
-| **R-11** | `/workspace/` se publica con `noindex` + `Disallow`, **sin control de acceso real** | Cualquiera con la URL entra al prototipo | 2 | Infra (ligado a **OD-05**) |
+| **R-11** | `/workspace/` se publica con `noindex` + `Disallow`, **sin control de acceso real** | Cualquiera con la URL entra al prototipo | 2 | **ACEPTADO mientras dure la validación UX** (ver §10). Vuelve a ser exigible al implementar el backend |
 | **R-12** | El estado simulado vive en `sessionStorage`; una pestaña nueva empieza limpia | Un participante que abra en otra pestaña pierde el escenario | 4 | QA de sesión |
 
 ---
@@ -94,7 +94,7 @@ Siguen **abiertas** y no pueden resolverse desde el prototipo:
 |---|--------------------|--------------------------|--------------|
 | **OD-03** | Hosting/ruta definitiva del workspace | Subcarpeta `/workspace/` del mismo origen | Infra + DNS |
 | **OD-04** | Si `communications/` y `dashboard/` tienen escenario propio | Cubiertas dentro de S-09 y S-01 | UX |
-| **OD-05** | Si el prototipo se publica en producción o sólo en previews | `noindex` + `Disallow`, sin autenticación real | Infra + Seguridad |
+| **OD-05** | Si el prototipo se publica en producción o sólo en previews | **RESUELTA:** se publica en producción sin control de acceso durante la validación (ver §10) | — |
 | **OD-07** | Uso de marcas reales de terceros en la prueba social | Presentadas con disclaimer visible como referencias de validación | Legal + Marketing |
 | **OD-08** | Si `playground.html` pertenece a PROT-001 | Excluido: laboratorio interno de componentes | UX |
 | **OD-10** | Estructura definitiva de navegación del workspace | Árbol del prompt maestro, LAB-001 anidado bajo BizCaps | UX |
@@ -156,3 +156,30 @@ Siguen **abiertas** y no pueden resolverse desde el prototipo:
 | `journey-p0` | Recorrido My Work → Conversión/Handoff | **PASS** |
 
 **1 916 comprobaciones, 0 fallos**, sobre navegador limpio (Chrome 152 headless).
+
+---
+
+## 10. Decisión sobre el acceso a `/workspace/` (R-11 / OD-05)
+
+**Resuelta: se acepta publicar el prototipo sin control de acceso mientras dure
+la validación UX. El control pasa a ser requisito al implementar el backend.**
+
+El razonamiento es proporcional al riesgo real: lo que hoy está expuesto son
+**fixtures sintéticos**. No hay datos de clientes, ni credenciales que
+comparar, ni operaciones con efecto — todo comando pasa por `protoMockRequest`
+y el propio prototipo lo declara en un banner permanente. Proteger un prototipo
+de datos inventados añade fricción a las sesiones de validación sin proteger
+nada.
+
+**Qué cambia esa decisión.** En el momento en que exista backend real —es
+decir, datos de clientes, sesiones reales o cualquier operación con efecto—,
+el control de acceso vuelve a ser exigible y **bloqueante**. No es una decisión
+que caduque sola: hay que aplicarla antes de conectar el primer dato real.
+
+**Cómo se implementa cuando toque.** Cloudflare Access sobre `/workspace/*`,
+desde el panel. No requiere cambios de código.
+
+**Efecto secundario a tener presente mientras tanto.** Cualquiera que llegue al
+prototipo y acepte el banner de consentimiento genera datos de analítica que se
+mezclan con los de los participantes. Se separan filtrando
+`is_moderated_session = true`, que es justo para lo que existe esa propiedad.
